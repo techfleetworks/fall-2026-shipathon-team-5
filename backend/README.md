@@ -40,8 +40,23 @@ the front end before making them.
 | GET | `/api/quiz` | nothing | list of quiz pictures with answers and explanations | **Placeholder data** |
 
 Errors return `{"detail": "<plain-language message for the visitor>"}` with
-status 413 (picture too large), 415 (not a picture) or 422 (message too short
-or too long).
+status 413 (picture too large), 415 (not a picture), 422 (message too short
+or too long) or 429 (too many checks; wait a minute).
+
+## Rate limiting
+
+Each visitor (by IP address) can run 10 checks per minute across
+`/api/check-image` and `/api/check-text`, set with `APP_RATE_LIMIT`. Counts are
+kept in memory. When deploying behind a hosting proxy, start uvicorn with
+`--proxy-headers --forwarded-allow-ips="<proxy address>"`, or every visitor
+will share one limit. Why and trade-offs: [ADR 0002](../docs/adr/0002-in-memory-rate-limiting.md).
+
+## Automatic checks on GitHub
+
+Every pull request that touches `backend/` runs the tests on Python 3.10 and
+3.12 and a `pip-audit` scan for known security vulnerabilities
+(`.github/workflows/backend-tests.yml`). Dependabot opens weekly pull requests
+to update dependencies (`.github/dependabot.yml`).
 
 ## Privacy
 
@@ -54,5 +69,4 @@ framework in a temporary file that's deleted when the request ends.
 1. Read C2PA content credentials from uploaded pictures.
 2. Add a pretrained AI-image classifier (weights go in `models/`, which git ignores).
 3. Add an ML scam-message classifier on top of the rules.
-4. Set up CI to run the tests on every pull request.
-5. Install the team's standards checks from the enterprise-software-AI-skills repo (`.claude/skills/bootstrap`).
+4. Install the team's standards checks from the enterprise-software-AI-skills repo (`.claude/skills/bootstrap`).

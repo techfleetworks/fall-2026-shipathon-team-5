@@ -28,6 +28,19 @@ def paste_long_message(ctx):
     ctx["text"] = "a" * (get_settings().max_text_chars + 1)
 
 
+@given("a visitor has already used all their checks for this minute")
+def use_up_checks(ctx, client):
+    ctx["text"] = "Hi Grandma, see you at lunch on Sunday. I'll bring the dessert."
+    allowed = int(get_settings().rate_limit.split("/")[0])
+    for _ in range(allowed):
+        assert client.post("/api/check-text", json={"text": ctx["text"]}).status_code == 200
+
+
+@then("the visitor is asked to wait a minute")
+def asked_to_wait(ctx):
+    assert "wait a minute" in ctx["response"].json()["detail"]
+
+
 @when("they check the message")
 def check_message(ctx, client):
     ctx["response"] = client.post("/api/check-text", json={"text": ctx["text"]})
