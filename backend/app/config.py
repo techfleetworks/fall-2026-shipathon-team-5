@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     max_image_bytes: int = 10 * 1024 * 1024
     min_text_chars: int = 20
     max_text_chars: int = 10_000
+    rate_limit: str = "10/minute"
 
 
 @lru_cache

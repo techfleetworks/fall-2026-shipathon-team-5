@@ -29,3 +29,10 @@ Feature: Check a suspicious message
     Given a visitor pastes a message longer than the allowed length
     When they check the message
     Then the request is refused with status 422
+
+  @audience:visitor @usecase:too-many-checks @category:adverse @quality:reliability @severity:high
+  Scenario: A visitor who runs too many checks is kindly asked to wait
+    Given a visitor has already used all their checks for this minute
+    When they check the message
+    Then the request is refused with status 429
+    And the visitor is asked to wait a minute

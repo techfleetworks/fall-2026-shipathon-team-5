@@ -76,3 +76,16 @@ def test_cors_blocks_unknown_site(client):
         headers={"Origin": "https://evil.example", "Access-Control-Request-Method": "POST"},
     )
     assert "access-control-allow-origin" not in r.headers
+
+
+def test_limit_applies_to_image_checks_too(client):
+    allowed = int(get_settings().rate_limit.split("/")[0])
+    upload = {"file": ("photo.png", PNG_BYTES, "image/png")}
+    codes = [client.post("/api/check-image", files=upload).status_code for _ in range(allowed + 1)]
+    assert codes[:allowed] == [200] * allowed
+    assert codes[-1] == 429
+
+
+def test_health_is_not_rate_limited(client):
+    allowed = int(get_settings().rate_limit.split("/")[0])
+    assert all(client.get("/api/health").status_code == 200 for _ in range(allowed + 5))

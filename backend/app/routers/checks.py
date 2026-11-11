@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile
 
 from app.config import Settings, get_settings
+from app.rate_limit import check_limit, limiter
 from app.schemas import (
     ErrorResponse,
     ImageCheckResult,
@@ -24,10 +25,15 @@ def health() -> dict[str, str]:
 @router.post(
     "/check-image",
     response_model=ImageCheckResult,
-    responses={413: {"model": ErrorResponse}, 415: {"model": ErrorResponse}},
+    responses={
+        413: {"model": ErrorResponse},
+        415: {"model": ErrorResponse},
+        429: {"model": ErrorResponse},
+    },
 )
+@limiter.limit(check_limit)
 async def check_image(
-    file: UploadFile, settings: Settings = Depends(get_settings)
+    request: Request, file: UploadFile, settings: Settings = Depends(get_settings)
 ) -> ImageCheckResult:
     # Read in chunks and stop as soon as the limit is passed. Note: the web
     # framework buffers uploads over 1 MB in a temporary file that is deleted
@@ -55,10 +61,11 @@ async def check_image(
 @router.post(
     "/check-text",
     response_model=TextCheckResult,
-    responses={422: {"model": ErrorResponse}},
+    responses={422: {"model": ErrorResponse}, 429: {"model": ErrorResponse}},
 )
+@limiter.limit(check_limit)
 def check_text(
-    body: TextCheckRequest, settings: Settings = Depends(get_settings)
+    request: Request, body: TextCheckRequest, settings: Settings = Depends(get_settings)
 ) -> TextCheckResult:
     text = body.text.strip()
     if len(text) < settings.min_text_chars:
