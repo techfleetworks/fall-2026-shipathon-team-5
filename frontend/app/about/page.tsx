@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <main className="flex-1 py-16">
       <Container>
-        <h1 className="font-heading text-h2 font-bold md:text-h1">About Us</h1>
+        <h1 className="font-heading text-h2 font-bold md:text-h1">About us</h1>
         <p className="mt-6 max-w-2xl text-body-lg text-ink-muted">Content coming soon.</p>
       </Container>
     </main>

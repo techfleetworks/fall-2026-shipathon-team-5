@@ -13,7 +13,7 @@ export type Section = PageLink & {
 export const sections: Section[] = [
   {
     number: 1,
-    title: "Spot the Slop",
+    title: "Learn to spot the slop",
     href: "/spot-the-slop",
     description: "Checklists for spotting AI-generated audio, images and video.",
     children: [
@@ -25,7 +25,7 @@ export const sections: Section[] = [
   },
   {
     number: 2,
-    title: "Understand AI",
+    title: "Let's understand AI",
     href: "/understand-ai",
     description: "Plain-language AI terms and real hoaxes that went viral.",
     children: [
@@ -35,7 +35,7 @@ export const sections: Section[] = [
   },
   {
     number: 3,
-    title: "Check Before You Believe",
+    title: "Tools to double-check",
     href: "/check-before-you-believe",
     description: "Tools and steps for checking something before you share it.",
     children: [
@@ -46,14 +46,14 @@ export const sections: Section[] = [
   },
   {
     number: 4,
-    title: "Skill Check",
+    title: "Quiz your skills",
     href: "/skill-check",
     description: "Test yourself: can you tell what's real?",
     children: [{ title: "Real or AI?", href: "/skill-check/real-or-ai" }],
   },
   {
     number: 5,
-    title: "About Us",
+    title: "About us",
     href: "/about",
     description: "Who we are and why we built this.",
     children: [],

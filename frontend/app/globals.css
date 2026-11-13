@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
 /*
-  Veritas design tokens, copied from the Figma style guide.
-  Figma variable name -> Tailwind class, e.g. brand-primary -> bg-primary / text-primary.
   Change a value here and every page updates.
 */
 @theme {

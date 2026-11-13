@@ -4,25 +4,22 @@ import { ButtonLink } from "@/components/ui/Button";
 import VerdictBadge from "@/components/ui/VerdictBadge";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 
-// Home page, following the Figma home layout. Links point at sitemap #4 pages.
-// Images are grey placeholders until real ones are added to /public.
-
 const steps = [
-  {
-    title: "Check",
-    text: "Download the free browser extension to check an image, with the reasons and sources behind it.",
-    href: "/check-before-you-believe",
-  },
   {
     title: "Learn",
     text: "Short guides on AI images, voice clones and how to trace a claim back to its source.",
     href: "/spot-the-slop",
   },
   {
+    title: "Check",
+    text: "Download the free browser extension to check an image, with the reasons and sources behind it.",
+    href: "/check-before-you-believe",
+  },
+  {
     title: "Practice",
     text: "A Real or AI? challenge, so the skill sticks.",
     href: "/skill-check",
-  },
+  }
 ];
 
 const guides = [
