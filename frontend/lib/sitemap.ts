@@ -1,10 +1,7 @@
-// Single source of truth for the site's pages (sitemap #4).
-// The header nav, footer and section index pages all read from this list,
-// so to add or rename a page you change it here and add its page.tsx.
-
 export type PageLink = {
   title: string;
   href: string;
+  shortTitle?: string; // used in the section tabs, e.g. "Images"
 };
 
 export type Section = PageLink & {
@@ -20,10 +17,10 @@ export const sections: Section[] = [
     href: "/spot-the-slop",
     description: "Checklists for spotting AI-generated audio, images and video.",
     children: [
-      { title: "Checklist: audio and voice", href: "/spot-the-slop/audio-and-voice" },
-      { title: "Checklist: images and visuals", href: "/spot-the-slop/images-and-visuals" },
-      { title: "Checklist: video and motion", href: "/spot-the-slop/video-and-motion" },
-      { title: "AI on your feed", href: "/spot-the-slop/ai-on-your-feed" },
+      { title: "Checklist: audio and voice", href: "/spot-the-slop/audio-and-voice", shortTitle: "Audio" },
+      { title: "Checklist: images and visuals", href: "/spot-the-slop/images-and-visuals", shortTitle: "Images" },
+      { title: "Checklist: video and motion", href: "/spot-the-slop/video-and-motion", shortTitle: "Video" },
+      { title: "AI on your feed", href: "/spot-the-slop/ai-on-your-feed", shortTitle: "On your feed" },
     ],
   },
   {
@@ -32,8 +29,8 @@ export const sections: Section[] = [
     href: "/understand-ai",
     description: "Plain-language AI terms and real hoaxes that went viral.",
     children: [
-      { title: "AI terms glossary", href: "/understand-ai/glossary" },
-      { title: "Real-life AI hoaxes that went viral", href: "/understand-ai/viral-hoaxes" },
+      { title: "AI terms glossary", href: "/understand-ai/glossary", shortTitle: "Glossary" },
+      { title: "Real-life AI hoaxes that went viral", href: "/understand-ai/viral-hoaxes", shortTitle: "Viral hoaxes" },
     ],
   },
   {
@@ -42,9 +39,9 @@ export const sections: Section[] = [
     href: "/check-before-you-believe",
     description: "Tools and steps for checking something before you share it.",
     children: [
-      { title: "Using Veritas to verify", href: "/check-before-you-believe/using-veritas" },
-      { title: "How to do a reverse image search", href: "/check-before-you-believe/reverse-image-search" },
-      { title: "Trusted fact-checkers", href: "/check-before-you-believe/fact-checkers" },
+      { title: "Using Veritas to verify", href: "/check-before-you-believe/using-veritas", shortTitle: "Using Veritas" },
+      { title: "How to do a reverse image search", href: "/check-before-you-believe/reverse-image-search", shortTitle: "Reverse image search" },
+      { title: "Trusted fact-checkers", href: "/check-before-you-believe/fact-checkers", shortTitle: "Fact-checkers" },
     ],
   },
   {
@@ -56,7 +53,7 @@ export const sections: Section[] = [
   },
   {
     number: 5,
-    title: "About us",
+    title: "About Us",
     href: "/about",
     description: "Who we are and why we built this.",
     children: [],
@@ -76,3 +73,29 @@ export function findPage(href: string): { page: PageLink; section: Section } {
   }
   throw new Error(`No page in sitemap for ${href}`);
 }
+
+// Footer columns. Grouped like the Figma footer (Learn / Tools / About),
+// but every link points at a page from sitemap #4.
+export const footerGroups: { title: string; links: PageLink[] }[] = [
+  {
+    title: "Learn",
+    links: [
+      { title: "Spot the Slop", href: "/spot-the-slop" },
+      { title: "AI on your feed", href: "/spot-the-slop/ai-on-your-feed" },
+      { title: "Understand AI", href: "/understand-ai" },
+      { title: "AI terms glossary", href: "/understand-ai/glossary" },
+    ],
+  },
+  {
+    title: "Tools",
+    links: [
+      { title: "Check Before You Believe", href: "/check-before-you-believe" },
+      { title: "Using Veritas to verify", href: "/check-before-you-believe/using-veritas" },
+      { title: "Skill Check", href: "/skill-check" },
+    ],
+  },
+  {
+    title: "About",
+    links: [{ title: "About Us", href: "/about" }],
+  },
+];
