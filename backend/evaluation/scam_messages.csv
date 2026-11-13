@@ -1,0 +1,121 @@
+id,label,message_type,region,channel,based_on,text
+scam-001,scam,delivery,US,sms,ftc-2025-top-text-scams,USPS: Your package is on hold due to an incomplete address. Update your details within 24 hours: https://usps-redelivery.example/track
+scam-002,scam,delivery,US,sms,ftc-2025-top-text-scams,USPS notice: we attempted delivery but could not reach you. Pay a small fee of $1.99 to reschedule at usps-reschedule.example
+scam-003,scam,delivery,US,sms,ftc-2025-top-text-scams,FedEx: package 7731-02 awaiting delivery confirmation. Confirm here: http://fedex-confirm.example/7731
+scam-004,scam,delivery,US,email,ftc-2025-top-text-scams,Your UPS shipment could not be delivered. A redelivery fee of $2.50 is required. Click the link to pay and choose a new delivery date.
+scam-005,scam,delivery,UK,sms,resolver-text-email-scams,Royal Mail: your parcel is being held. Pay a small fee within 24 hours to rebook: www.royalmail-rebook.example
+scam-006,scam,delivery,UK,sms,resolver-text-email-scams,DPD: we missed you today. Rebook your delivery here http://dpd-rebook.example/uk
+scam-007,scam,delivery,UK,sms,which-sneaky-texts,Evri: your package cannot be delivered due to missing or incorrect information. Reply Y to activate the link.
+scam-008,scam,delivery,UK,sms,resolver-text-email-scams,Royal Mail: a customs charge of 2.99 GBP is due on your parcel. Final notice before it is returned: royalmail-customs.example
+scam-009,scam,delivery,US,sms,team-written,Amazon: delivery failed. Your order will be returned to sender unless you confirm your address immediately at amzn-delivery.example
+scam-010,scam,toll,US,sms,ftc-2025-unpaid-tolls,E-ZPass: You have an unpaid toll balance of $4.15. Pay immediately to avoid a $50 late fee: https://ezpass-tolls.example/pay
+scam-011,scam,toll,US,sms,ftc-2025-unpaid-tolls,FasTrak notice: outstanding toll charges on your account. Settle today to avoid suspension of your license: fastrak-pay.example
+scam-012,scam,toll,US,sms,ftc-2025-unpaid-tolls,SunPass: Our records show your vehicle has an unpaid toll of $3.75. Final reminder. Pay now http://sunpass-billing.example
+scam-013,scam,toll,US,sms,ftc-2025-unpaid-tolls,"The Toll Roads: we noticed an outstanding toll invoice. To avoid fines, pay within 12 hours at tollroads-invoice.example"
+scam-014,scam,bank,US,sms,ftc-2025-top-text-scams,"Bank of America alert: Did you attempt a purchase of $1,248.00 at Walmart? Reply YES or NO. If not you, call 1-800-555-0137 immediately."
+scam-015,scam,bank,US,sms,ftc-2025-top-text-scams,Chase Fraud Dept: your account has been locked due to suspicious activity. Verify your identity at https://chase-secure.example
+scam-016,scam,bank,US,phone-script,team-written,"This is your bank's fraud department. Your savings are at risk. Move your money to a safe account using Zelle and don't tell the branch staff, they may be involved."
+scam-017,scam,bank,US,sms,ftc-2025-top-text-scams,Wells Fargo: unusual sign-in detected. Please confirm your one-time passcode by replying to this message.
+scam-018,scam,bank,UK,sms,resolver-text-email-scams,"Barclays: a new payee has been added to your account. If this was not you, visit barclays-payee-cancel.example to cancel."
+scam-019,scam,bank,UK,sms,resolver-text-email-scams,"HSBC: we have authorised a new payment of 650.00 GBP from your account. If you did not make this payment, call us on 020 7946 0321."
+scam-020,scam,bank,UK,phone-script,team-written,This is the fraud team at your bank. Someone in the branch is stealing from customers. Please withdraw your savings and keep this a secret while we investigate.
+scam-021,scam,bank,UK,sms,team-written,"Lloyds: your card has been frozen. To reactivate, confirm your card details and security code at lloyds-reactivate.example"
+scam-022,scam,bank,US,email,team-written,"Dear customer, your online banking access will be suspended. Log in and update your password today to keep your account active."
+scam-023,scam,family,UK,whatsapp,which-sneaky-texts,"Hi Mum, I dropped my phone in the bath so this is my new number. Can you message me here? x"
+scam-024,scam,family,UK,whatsapp,which-sneaky-texts,"Hi mum it's me, new number. I need to pay a bill today but my banking app is locked on the new phone. Can you help? I'll pay you back tomorrow"
+scam-025,scam,family,US,sms,team-written,"Grandma it's me, I've been in a car accident and I'm at the police station. I need $2,000 for bail. Please don't tell Mom and Dad."
+scam-026,scam,family,US,phone-script,team-written,"Grandpa, I'm in trouble and I need you to buy gift cards and read me the numbers. Please keep this between us."
+scam-027,scam,family,UK,whatsapp,which-sneaky-texts,"Hello, it's your daughter. Dad is in hospital and I urgently need money for the train to get there. Can you send it by bank transfer?"
+scam-028,scam,family,US,sms,team-written,"Hey Dad, this is my new number. Can you send me $800 through Cash App? I'll explain later, it's urgent."
+scam-029,scam,prize,US,sms,team-written,"Congratulations! You have won a $1,000 Walmart gift card. Claim your reward now: walmart-winner.example"
+scam-030,scam,prize,UK,email,team-written,"You are the lucky winner of our customer prize draw. To release your prize, pay a small fee for delivery."
+scam-031,scam,prize,US,phone-script,team-written,"You've won the national sweepstakes lottery! To collect your $2.5 million, send the processing fee by Western Union."
+scam-032,scam,government,UK,sms,resolver-text-email-scams,HMRC: you are due a tax rebate of 264.82 GBP. Claim your refund at hmrc-rebate.example
+scam-033,scam,government,UK,sms,resolver-text-email-scams,HMRC: your National Insurance number has been compromised. Call us immediately on 0161 496 0754 to avoid arrest.
+scam-034,scam,government,US,phone-script,team-written,This is the Social Security Administration. Your Social Security number has been suspended due to suspicious activity. Press 1 to speak to an officer.
+scam-035,scam,government,US,sms,team-written,IRS: you have an outstanding tax balance. Failure to pay today will result in a warrant. Pay with gift cards at the nearest store.
+scam-036,scam,government,UK,email,team-written,"DVLA: your vehicle tax payment failed. Update your details within 24 hours to avoid a fine of 1,000 GBP."
+scam-037,scam,utility,UK,sms,which-sneaky-texts,EE: we failed to take payment for your recent bill. Please update your account information to avoid disconnection: ee-billing.example
+scam-038,scam,utility,UK,sms,which-sneaky-texts,Vodafone: your contract will be disabled. Follow the link to accept the new terms: vodafone-terms.example
+scam-039,scam,utility,UK,phone-script,resolver-text-email-scams,"This is important, your internet is being disconnected in two hours. Press 1 to speak to a technician."
+scam-040,scam,utility,US,sms,team-written,Your electric service will be shut off in 1 hour due to an unpaid balance. Pay now with Zelle to avoid disconnection.
+scam-041,scam,utility,UK,sms,team-written,Ofgem: you are eligible for a 400 GBP energy bill rebate. Apply before it expires today: energy-rebate.example
+scam-042,scam,tech-support,US,popup,team-written,WARNING: Your computer has been infected with a virus. Do not turn off your computer. Call Microsoft Support at 1-888-555-0199 immediately.
+scam-043,scam,tech-support,US,email,team-written,"Your Norton subscription has been renewed for $399.99. If you did not authorise this, call our refund team within 24 hours."
+scam-044,scam,tech-support,UK,phone-script,team-written,I'm calling from your broadband provider. Your router has been hacked. Please install the remote access app so I can fix it.
+scam-045,scam,account,US,email,team-written,Your Apple ID has been locked for security reasons. Verify your password here: https://appleid-verify.example
+scam-046,scam,account,US,sms,team-written,Netflix: your payment was declined and your membership is suspended. Update your card details: netflix-billing.example
+scam-047,scam,account,UK,sms,team-written,Your Amazon account will be closed. Confirm your verification code to keep it open.
+scam-048,scam,account,US,sms,team-written,PayPal: we've limited your account. Log in at paypal-resolution.example to restore access.
+scam-049,scam,job,US,sms,ftc-2025-top-text-scams,"Hi, I'm a recruiter. We have a flexible remote job rating products online, earn $300-$800 a day. Interested? Reply for details."
+scam-050,scam,job,US,whatsapp,ftc-2025-top-text-scams,Great work on today's tasks! To unlock your commission you need to top up your account with $150 in crypto first.
+scam-051,scam,job,UK,whatsapp,team-written,Part-time job: like YouTube videos from home and get paid 50 GBP daily. Message me on WhatsApp to start.
+scam-052,scam,wrong-number,US,sms,ftc-2025-top-text-scams,"Hi, is this Jessica? We met at the yoga retreat last month."
+scam-053,scam,wrong-number,US,sms,ftc-2025-top-text-scams,"Sorry, wrong number! You seem nice though. Where are you from?"
+scam-054,scam,romance,US,messenger,team-written,"My darling, I'm stuck at the oil rig and my bank card is blocked. Could you send $500 in Apple gift cards so I can come home to you?"
+scam-055,scam,romance,UK,messenger,team-written,"I have an amazing crypto investment opportunity my uncle taught me. Start with just 500 GBP and you will double it in a week. Don't tell your children, they won't understand."
+scam-056,scam,investment,US,email,team-written,"Exclusive opportunity: guaranteed 30% monthly returns with our bitcoin trading program. Spaces are limited, act now."
+scam-057,scam,investment,UK,social-ad,team-written,Famous TV presenter reveals the investment secret banks don't want you to know. Invest 250 GBP and earn thousands: www.quick-wealth.example
+scam-058,scam,charity,US,phone-script,team-written,We're collecting donations for hurricane victims. Can you give today by gift card or wire transfer?
+scam-059,scam,medicare,US,phone-script,team-written,This is Medicare. We're issuing new cards and need to verify your Medicare number and bank details to avoid losing coverage.
+scam-060,scam,refund,US,email,team-written,"We overcharged you by $500 on your last renewal. To process your refund, please share your bank account details."
+ok-001,ok,family,US,sms,team-written,"Hi Grandma, see you at lunch on Sunday. I'll bring the dessert."
+ok-002,ok,family,UK,whatsapp,team-written,"Hi Mum, just landed safely. I'll ring you tonight when I'm at the hotel x"
+ok-003,ok,family,US,sms,team-written,"Dad, can you pick up milk on your way home? Thanks!"
+ok-004,ok,family,UK,sms,team-written,Happy birthday Nan! Lots of love from all of us. Can't wait to see you on Saturday.
+ok-005,ok,family,US,sms,team-written,"Don't forget to pin the photo of the grandkids to the fridge, they made it for you!"
+ok-006,ok,family,UK,whatsapp,team-written,"The kids want to video call you after school, around 4pm? Is that ok?"
+ok-007,ok,family,US,sms,team-written,"Mom, I sent the pictures from the wedding to your email. Let me know if you can't open them."
+ok-008,ok,family,US,sms,team-written,"I paid you back for the concert tickets through Venmo, thanks again!"
+ok-009,ok,family,UK,whatsapp,team-written,"Don't tell Dad, but we're planning a surprise party for his 70th. Can you help with the cake?"
+ok-010,ok,family,US,sms,team-written,"Running late, traffic is terrible. Be there in 20 minutes."
+ok-011,ok,health,UK,sms,team-written,Your appointment at Riverside Surgery is confirmed for Tue 18 Nov at 10:20. Reply CANCEL if you can no longer attend.
+ok-012,ok,health,US,sms,team-written,Reminder: your appointment with Dr. Patel is tomorrow at 2:30 PM. Please bring your insurance card.
+ok-013,ok,health,UK,sms,team-written,"Your prescription is ready to collect from Boots, High Street."
+ok-014,ok,health,US,sms,team-written,CVS Pharmacy: your prescription is ready for pickup.
+ok-015,ok,health,UK,letter,team-written,You are invited for your flu vaccination. Please call the surgery to book a time that suits you.
+ok-016,ok,delivery,US,sms,team-written,Your package was delivered to the front porch at 3:42 PM.
+ok-017,ok,delivery,UK,sms,team-written,Your Royal Mail parcel will be delivered today between 11:00 and 13:00.
+ok-018,ok,delivery,US,email,team-written,Your order has shipped and is expected to arrive Thursday. Track it in your account on our website.
+ok-019,ok,delivery,UK,sms,team-written,Tesco: your grocery delivery is on its way and will arrive between 6 and 7pm.
+ok-020,ok,delivery,US,sms,team-written,Your pharmacy order is out for delivery and will arrive by 5pm today.
+ok-021,ok,bank,US,sms,team-written,Your monthly statement is now available. Sign in to the app to view it.
+ok-022,ok,bank,UK,sms,team-written,"Your salary of 1,850.00 GBP has been paid into your account."
+ok-023,ok,bank,US,sms,team-written,"You have a new direct deposit of $1,432.10 from SSA TREAS 310."
+ok-024,ok,bank,UK,letter,team-written,Your new debit card is on its way. It will arrive within 7 working days. Your existing card will continue to work until then.
+ok-025,ok,bank,US,sms,team-written,Your verification code is 482913. We will never call you to ask for this code. Do not share it with anyone.
+ok-026,ok,bank,UK,sms,team-written,"Your one-time passcode to sign in is 771204. If you did not request this, you can ignore this message."
+ok-027,ok,utility,UK,email,team-written,Your energy bill for October is ready. You can view it in your online account.
+ok-028,ok,utility,US,email,team-written,Thank you for your payment of $86.40. Your account is up to date.
+ok-029,ok,utility,UK,sms,team-written,Planned water works on Elm Road tomorrow 9am-12pm. Supply may be interrupted briefly.
+ok-030,ok,community,US,email,team-written,The library book club meets Thursday at 2pm. This month we're reading a mystery novel.
+ok-031,ok,community,UK,email,team-written,Church coffee morning this Saturday at 10am. All welcome!
+ok-032,ok,community,US,sms,team-written,Senior center reminder: chair yoga is moved to Wednesday this week.
+ok-033,ok,community,UK,email,team-written,The garden club summer outing is to Kew Gardens. Coach leaves the village hall at 8:30.
+ok-034,ok,community,US,email,team-written,Neighborhood watch: please remember to lock your car doors at night. There have been some break-ins nearby.
+ok-035,ok,community,UK,sms,team-written,Bingo night is cancelled this week due to the storm. See you next Friday.
+ok-036,ok,work,US,email,team-written,Thanks for volunteering at the food bank on Saturday. We served over 200 families!
+ok-037,ok,work,UK,email,team-written,Your volunteer rota for December is attached. Let me know if any dates don't work.
+ok-038,ok,shopping,US,email,team-written,Thank you for your order. Your receipt is attached.
+ok-039,ok,shopping,UK,email,team-written,Your click and collect order is ready at the Westfield store.
+ok-040,ok,shopping,US,email,team-written,Our winter sale starts this weekend with 20% off sweaters in store.
+ok-041,ok,shopping,UK,email,team-written,Your gift card balance is 15.00 GBP. Thank you for shopping with us.
+ok-042,ok,travel,UK,sms,team-written,Your train to Manchester at 09:15 is running on time from platform 4.
+ok-043,ok,travel,US,email,team-written,Your flight to Phoenix is confirmed. Check-in opens 24 hours before departure.
+ok-044,ok,travel,UK,email,team-written,Your hotel booking at Seaview Hotel for 3 nights is confirmed. We look forward to welcoming you.
+ok-045,ok,government,UK,letter,team-written,Your State Pension will increase from April. The new amount will be shown on your next statement.
+ok-046,ok,government,US,letter,team-written,Your Medicare card will arrive by mail. You do not need to do anything.
+ok-047,ok,government,UK,email,team-written,Your council tax bill for this year is available in your online account.
+ok-048,ok,government,US,email,team-written,Your ballot has been received and will be counted. Thank you for voting.
+ok-049,ok,friends,US,sms,team-written,Want to grab coffee Friday morning? My treat.
+ok-050,ok,friends,UK,whatsapp,team-written,Lovely to see you at the market today! Here's that recipe for the lemon cake.
+ok-051,ok,friends,US,sms,team-written,Did you watch the game last night? What a finish!
+ok-052,ok,friends,UK,sms,team-written,Fancy a walk round the park tomorrow if it's dry?
+ok-053,ok,friends,US,sms,team-written,"I'll keep it a surprise for now, but you're going to love your birthday present!"
+ok-054,ok,tech,US,email,team-written,Your phone software update is available. You can install it from Settings at any time.
+ok-055,ok,tech,UK,email,team-written,"You signed in on a new device. If this was you, there's nothing you need to do."
+ok-056,ok,tech,US,sms,team-written,Welcome to your new phone plan! Your first bill will arrive on the 5th.
+ok-057,ok,tech,UK,email,team-written,"Your password was changed successfully. If you didn't make this change, contact us through our website."
+ok-058,ok,events,US,email,team-written,You're invited to Lily's 6th birthday party on Saturday at 1pm at the park pavilion!
+ok-059,ok,events,UK,email,team-written,Congratulations on your retirement! The team has organised a lunch for you on Friday.
+ok-060,ok,events,US,sms,team-written,The winner of the pie contest at the county fair will be announced at 4pm. Good luck!
