@@ -1,26 +1,89 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  Veritas design tokens, copied from the Figma style guide.
+  Figma variable name -> Tailwind class, e.g. brand-primary -> bg-primary / text-primary.
+  Change a value here and every page updates.
+*/
+@theme {
+  /* Light (reading) */
+  --color-canvas: #f3f3f1; /* bg-canvas: page background */
+  --color-surface: #ffffff; /* bg-surface: cards, sheets, inputs */
+  --color-subtle: #e7e7e3; /* bg-subtle: quiet fills, tracks */
+  --color-line: #d6d6d1; /* border-default: rules and outlines */
+  --color-ink: #16171a; /* text-primary: headings and body */
+  --color-ink-muted: #55575e; /* text-secondary: supporting text */
+
+  /* Dark (framing): header, hero, challenge band, footer */
+  --color-deep: #16171a; /* brand-deep */
+  --color-deep-raised: #26282d; /* brand-deep-raised: panels and buttons on dark */
+  --color-inverse: #ffffff; /* text-inverse */
+  --color-inverse-muted: #b4b6bc; /* text-inverse-muted */
+
+  /* Accent: aqua is for buttons and active tabs only, always with black text */
+  --color-primary: #41dcc6; /* brand-primary */
+  --color-on-primary: #16171a; /* text-on-accent */
+  --color-primary-soft: #edebe6; /* brand-primary-soft: selected chips, highlighted rows */
+
+  /* Verdicts: never show by color alone, always add the word and icon */
+  --color-authentic: #12a36b;
+  --color-authentic-soft: #e3f6ee;
+  --color-authentic-text: #0b7a4f;
+  --color-uncertain: #d98a00;
+  --color-uncertain-soft: #fdf3de;
+  --color-uncertain-text: #8a5a00;
+  --color-misleading: #e5484d;
+  --color-misleading-soft: #fde8e8;
+  --color-misleading-text: #b4232a;
+
+  /* Type scale, website. Use with a weight: headings are font-heading font-bold. */
+  --text-display: 72px;
+  --text-display--line-height: 72px;
+  --text-h1: 60px;
+  --text-h1--line-height: 62px;
+  --text-h2: 48px;
+  --text-h2--line-height: 52px;
+  --text-h3: 36px;
+  --text-h3--line-height: 40px;
+  --text-h4: 28px;
+  --text-h4--line-height: 32px;
+  --text-h5: 22px;
+  --text-h5--line-height: 28px;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 28px;
+  --text-body: 16px;
+  --text-body--line-height: 26px;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 22px;
+  --text-label: 14px;
+  --text-label--line-height: 20px;
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+
+  /* Corners: squared for content, a little rounding only on things you tap */
+  --radius-image: 2px;
+  --radius-card: 4px;
+  --radius-control: 6px;
+
+  /* Spacing: Tailwind's default 4px grid already matches (p-1 = 4px, p-30 = 120px). */
 }
 
+/* Fonts are loaded in app/layout.tsx. "inline" lets these point at next/font's variables. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-heading: var(--font-archivo-narrow), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-public-sans), Arial, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-public-sans), Arial, sans-serif;
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+}
+
+/* Visible keyboard focus everywhere (4.5:1 against light and dark). */
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
 }
