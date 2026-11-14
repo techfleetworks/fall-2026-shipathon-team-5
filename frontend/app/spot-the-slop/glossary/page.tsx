@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Container from "@/components/ui/Container";
+import GlossaryBrowser from "@/components/GlossaryBrowser";
 import { glossary } from "@/lib/content/glossary";
 
 export const metadata: Metadata = { title: "AI terms glossary" };
+
+// A to Z, so new terms can be added anywhere in lib/content/glossary.ts.
+const sortedTerms = [...glossary].sort((a, b) => a.term.localeCompare(b.term));
 
 export default function Page() {
   return (
@@ -18,14 +22,9 @@ export default function Page() {
         <p className="mt-4 max-w-2xl text-body-lg text-ink-muted">
           The words you&apos;ll see on this site and in the news.
         </p>
-        <dl className="mt-10 max-w-3xl border-t border-line">
-          {glossary.map((item) => (
-            <div key={item.term} id={item.term.toLowerCase().replace(/[^a-z0-9]+/g, "-")} className="border-b border-line py-6">
-              <dt className="font-heading text-h5 font-bold">{item.term}</dt>
-              <dd className="mt-2 text-body text-ink-muted">{item.definition}</dd>
-            </div>
-          ))}
-        </dl>
+        <div className="mt-10">
+          <GlossaryBrowser terms={sortedTerms} />
+        </div>
       </Container>
     </main>
   );

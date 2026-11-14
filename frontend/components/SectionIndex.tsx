@@ -11,7 +11,7 @@ export default function SectionIndex({ href }: { href: string }) {
         <h1 className="font-heading text-h2 font-bold md:text-h1">{section.title}</h1>
         <p className="mt-4 max-w-2xl text-body-lg text-ink-muted">{section.description}</p>
         <ul className="mt-10 grid gap-4 sm:grid-cols-2">
-          {section.children.map((page, i) => (
+          {section.children.map((page) => (
             <li key={page.href}>
               <Link
                 href={page.href}
