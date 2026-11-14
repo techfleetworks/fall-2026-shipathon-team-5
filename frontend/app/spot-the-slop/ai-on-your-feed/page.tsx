@@ -1,8 +1,6 @@
-import type { Metadata } from "next";
-import PlaceholderPage from "@/components/PlaceholderPage";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "AI on your feed" };
-
+// The platform list lives on the Learn page, so send visitors there.
 export default function Page() {
-  return <PlaceholderPage href="/spot-the-slop/ai-on-your-feed" />;
+  redirect("/spot-the-slop#ai-on-your-feed");
 }

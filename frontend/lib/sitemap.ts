@@ -1,7 +1,10 @@
+export type PageGroup = "checklists" | "platforms";
+
 export type PageLink = {
   title: string;
   href: string;
   shortTitle?: string; // used in the section tabs, e.g. "Images"
+  group?: PageGroup; // pages in the same group share a tab bar
 };
 
 export type Section = PageLink & {
@@ -10,34 +13,47 @@ export type Section = PageLink & {
   children: PageLink[];
 };
 
+// Groups of related pages inside a section. "backHref" is where the
+// "← All ..." link in the tab bar goes.
+export const pageGroups: Record<PageGroup, { title: string; backLabel: string; backHref: string }> = {
+  checklists: {
+    title: "Checklist",
+    backLabel: "All checklists",
+    backHref: "/spot-the-slop#checklists",
+  },
+  platforms: {
+    title: "AI on your feed",
+    backLabel: "All platforms",
+    backHref: "/spot-the-slop#ai-on-your-feed",
+  },
+};
+
 export const sections: Section[] = [
   {
     number: 1,
     title: "Learn to spot the slop",
     href: "/spot-the-slop",
-    description: "Checklists for spotting AI-generated audio, images and video.",
+    description:
+      "Click on a section below to get started.",
     children: [
-      { title: "Checklist: audio and voice", href: "/spot-the-slop/audio-and-voice", shortTitle: "Audio" },
-      { title: "Checklist: images and visuals", href: "/spot-the-slop/images-and-visuals", shortTitle: "Images" },
-      { title: "Checklist: video and motion", href: "/spot-the-slop/video-and-motion", shortTitle: "Video" },
-      { title: "AI on your feed", href: "/spot-the-slop/ai-on-your-feed", shortTitle: "On your feed" },
+      { title: "Checklist: audio and voice", href: "/spot-the-slop/audio-and-voice", shortTitle: "Audio", group: "checklists" },
+      { title: "Checklist: images and visuals", href: "/spot-the-slop/images-and-visuals", shortTitle: "Images", group: "checklists" },
+      { title: "Checklist: video and motion", href: "/spot-the-slop/video-and-motion", shortTitle: "Video", group: "checklists" },
+      { title: "TikTok: what to check before you share", href: "/spot-the-slop/ai-on-your-feed/tiktok", shortTitle: "TikTok", group: "platforms" },
+      { title: "YouTube: what to check before you share", href: "/spot-the-slop/ai-on-your-feed/youtube", shortTitle: "YouTube", group: "platforms" },
+      { title: "Instagram: what to check before you share", href: "/spot-the-slop/ai-on-your-feed/instagram", shortTitle: "Instagram", group: "platforms" },
+      { title: "Facebook and Messenger: what to check before you share", href: "/spot-the-slop/ai-on-your-feed/facebook-messenger", shortTitle: "Facebook and Messenger", group: "platforms" },
+      { title: "WhatsApp: what to check before you share", href: "/spot-the-slop/ai-on-your-feed/whatsapp", shortTitle: "WhatsApp", group: "platforms" },
+      { title: "X (formerly Twitter): what to check before you share", href: "/spot-the-slop/ai-on-your-feed/x", shortTitle: "X (formerly Twitter)", group: "platforms" },
+      { title: "Real-life AI hoaxes that went viral", href: "/spot-the-slop/viral-hoaxes", shortTitle: "Viral hoaxes" },
+      { title: "AI terms glossary", href: "/spot-the-slop/glossary", shortTitle: "Glossary" },
     ],
   },
   {
     number: 2,
-    title: "Let's understand AI",
-    href: "/understand-ai",
-    description: "Plain-language AI terms and real hoaxes that went viral.",
-    children: [
-      { title: "AI terms glossary", href: "/understand-ai/glossary", shortTitle: "Glossary" },
-      { title: "Real-life AI hoaxes that went viral", href: "/understand-ai/viral-hoaxes", shortTitle: "Viral hoaxes" },
-    ],
-  },
-  {
-    number: 3,
     title: "Tools to double-check",
     href: "/check-before-you-believe",
-    description: "Tools and steps for checking something before you share it.",
+    description: "Tools and steps for checking content before you share it.",
     children: [
       { title: "Using Veritas to verify", href: "/check-before-you-believe/using-veritas", shortTitle: "Using Veritas" },
       { title: "How to do a reverse image search", href: "/check-before-you-believe/reverse-image-search", shortTitle: "Reverse image search" },
@@ -45,14 +61,14 @@ export const sections: Section[] = [
     ],
   },
   {
-    number: 4,
+    number: 3,
     title: "Quiz your skills",
     href: "/skill-check",
     description: "Test yourself: can you tell what's real?",
     children: [{ title: "Real or AI?", href: "/skill-check/real-or-ai" }],
   },
   {
-    number: 5,
+    number: 4,
     title: "About us",
     href: "/about",
     description: "Who we are and why we built this.",
@@ -74,28 +90,27 @@ export function findPage(href: string): { page: PageLink; section: Section } {
   throw new Error(`No page in sitemap for ${href}`);
 }
 
-// Footer columns. Grouped like the Figma footer (Learn / Tools / About),
-// but every link points at a page from sitemap #4.
+// Footer columns (desktop only). Grouped like the Figma footer: Learn / Tools / About.
 export const footerGroups: { title: string; links: PageLink[] }[] = [
   {
     title: "Learn",
     links: [
-      { title: "Spot the Slop", href: "/spot-the-slop" },
-      { title: "AI on your feed", href: "/spot-the-slop/ai-on-your-feed" },
-      { title: "Understand AI", href: "/understand-ai" },
-      { title: "AI terms glossary", href: "/understand-ai/glossary" },
+      { title: "Learn to spot the slop", href: "/spot-the-slop" },
+      { title: "AI on your feed", href: "/spot-the-slop#ai-on-your-feed" },
+      { title: "Real-life AI hoaxes", href: "/spot-the-slop/viral-hoaxes" },
+      { title: "AI terms glossary", href: "/spot-the-slop/glossary" },
     ],
   },
   {
     title: "Tools",
     links: [
-      { title: "Check Before You Believe", href: "/check-before-you-believe" },
+      { title: "Tools to double-check", href: "/check-before-you-believe" },
       { title: "Using Veritas to verify", href: "/check-before-you-believe/using-veritas" },
-      { title: "Skill Check", href: "/skill-check" },
+      { title: "Quiz your skills", href: "/skill-check" },
     ],
   },
   {
     title: "About",
-    links: [{ title: "About Us", href: "/about" }],
+    links: [{ title: "About us", href: "/about" }],
   },
 ];
