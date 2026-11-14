@@ -4,7 +4,7 @@ import Container from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import HoaxCard from "@/components/HoaxCard";
 import { findSection } from "@/lib/sitemap";
-import { hoaxes } from "@/lib/content/hoaxes";
+import { featuredHoaxes } from "@/lib/content/hoaxes";
 import { glossary } from "@/lib/content/glossary";
 
 export const metadata: Metadata = { title: "Learn to spot the slop" };
@@ -118,7 +118,7 @@ export default function Page() {
             </ButtonLink>
           </div>
           <ul className="mt-8 grid gap-6 md:grid-cols-3">
-            {hoaxes.slice(0, 3).map((hoax) => (
+            {featuredHoaxes.map((hoax) => (
               <li key={hoax.title}>
                 <HoaxCard hoax={hoax} />
               </li>
