@@ -18,7 +18,6 @@ export default function SectionIndex({ href }: { href: string }) {
                 className="block h-full rounded-card border border-line bg-surface p-6 hover:border-ink"
               >
                 <span className="text-caption font-medium text-ink-muted">
-                  {section.number}.{i + 1}
                 </span>
                 <span className="mt-1 block font-heading text-h4 font-bold">{page.title}</span>
               </Link>

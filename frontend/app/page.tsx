@@ -40,24 +40,6 @@ const guides = [
   },
 ];
 
-const hoaxes = [
-  {
-    year: "2011 · Edited photo",
-    title: "The shark on the flooded highway",
-    tell: "Reverse image search finds the shark in an older photo.",
-  },
-  {
-    year: "2023 · AI image",
-    title: "The Pope in a white puffer coat",
-    tell: "The hands, glasses and chain warp up close.",
-  },
-  {
-    year: "2024 · Voice clone ad",
-    title: "The celebrity cookware giveaway",
-    tell: "The brand's own site had no giveaway.",
-  },
-];
-
 export default function Home() {
   return (
     <main className="flex-1">
@@ -66,7 +48,7 @@ export default function Home() {
         <Container className="grid items-center gap-12 py-20 lg:grid-cols-2 lg:py-28">
           <div>
             <p className="inline-flex items-center gap-1.5 rounded-card bg-surface px-2 py-1 text-caption font-medium text-ink">
-              <span aria-hidden="true">★</span> Free · 3 minutes · no sign-up
+              <span aria-hidden="true">★</span> Free · No sign-up
             </p>
             <h1 className="mt-4 font-heading text-h2 font-bold sm:text-h1 lg:text-display">
               Can you spot the fake?
@@ -185,42 +167,6 @@ export default function Home() {
               </ButtonLink>
             </div>
           </div>
-        </Container>
-      </section>
-
-      {/* Fakes that fooled millions */}
-      <section className="bg-surface py-20">
-        <Container>
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 className="font-heading text-h3 font-bold md:text-h2">
-                Fakes that fooled millions
-              </h2>
-              <p className="mt-3 text-body-lg text-ink-muted">
-                What happened, and the clue that would have caught it.
-              </p>
-            </div>
-            <ButtonLink href="/understand-ai/viral-hoaxes" variant="outline">
-              See all viral hoaxes
-            </ButtonLink>
-          </div>
-          <ul className="mt-10 grid gap-6 md:grid-cols-3">
-            {hoaxes.map((hoax) => (
-              <li
-                key={hoax.title}
-                className="overflow-hidden rounded-card border border-line bg-canvas"
-              >
-                <ImagePlaceholder label={hoax.title} dark className="aspect-[2/1] rounded-none" />
-                <div className="p-5">
-                  <p className="text-caption font-medium text-ink-muted">{hoax.year}</p>
-                  <h3 className="mt-1 font-heading text-h5 font-bold">{hoax.title}</h3>
-                  <p className="mt-3 rounded-card bg-primary-soft p-3 text-body-sm">
-                    <strong className="font-semibold">The tell:</strong> {hoax.tell}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
         </Container>
       </section>
     </main>
