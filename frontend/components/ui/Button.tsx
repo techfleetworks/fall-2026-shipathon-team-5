@@ -1,11 +1,14 @@
 import Link from "next/link";
 
-type Variant = "primary" | "dark" | "outline";
+type Variant = "primary" | "dark" | "outline" | "outline-teal";
 
 const variants: Record<Variant, string> = {
   primary: "bg-primary text-on-primary hover:brightness-95",
   dark: "bg-deep-raised text-inverse hover:bg-[#33363c]",
   outline: "border border-line bg-surface text-ink hover:bg-subtle",
+  // white with a grey outline, turns teal on hover (like the jump buttons on the Learn page)
+  "outline-teal":
+    "border border-line bg-surface text-ink hover:border-primary hover:bg-primary hover:text-on-primary",
 };
 
 const base =

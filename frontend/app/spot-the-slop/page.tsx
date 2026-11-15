@@ -3,9 +3,11 @@ import Link from "next/link";
 import Container from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import HoaxCard from "@/components/HoaxCard";
+import PlatformCard from "@/components/PlatformCard";
 import { findSection } from "@/lib/sitemap";
-import { featuredHoaxes } from "@/lib/content/hoaxes";
+import { featuredHoaxes, hoaxSizers } from "@/lib/content/hoaxes";
 import { glossary } from "@/lib/content/glossary";
+import { platforms } from "@/lib/content/platforms";
 
 export const metadata: Metadata = { title: "Learn to spot the slop" };
 
@@ -17,12 +19,13 @@ const parts = [
   { id: "glossary", label: "AI terms glossary" },
 ];
 
+const featuredSizers = hoaxSizers(featuredHoaxes);
+
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
 export default function Page() {
   const section = findSection("/spot-the-slop");
   const checklists = section.children.filter((p) => p.group === "checklists");
-  const platforms = section.children.filter((p) => p.group === "platforms");
 
   return (
     <main className="flex-1">
@@ -85,16 +88,11 @@ export default function Page() {
           <p className="mt-3 max-w-2xl text-body-lg text-ink-muted">
             Each app labels AI content differently.
           </p>
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {platforms.map((page) => (
-              <li key={page.href}>
-                <Link
-                  href={page.href}
-                  className="flex h-full items-center justify-between gap-4 rounded-card border border-line bg-surface p-6 hover:border-ink"
-                >
-                  <span className="font-heading text-h5 font-bold">{page.shortTitle}</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
+          {/* auto-rows-fr makes every row, and so every card, the same height */}
+          <ul className="mt-8 grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {platforms.map((platform) => (
+              <li key={platform.slug}>
+                <PlatformCard platform={platform} />
               </li>
             ))}
           </ul>
@@ -120,7 +118,7 @@ export default function Page() {
           <ul className="mt-8 grid gap-6 md:grid-cols-3">
             {featuredHoaxes.map((hoax) => (
               <li key={hoax.title}>
-                <HoaxCard hoax={hoax} />
+                <HoaxCard hoax={hoax} sizers={featuredSizers} />
               </li>
             ))}
           </ul>
