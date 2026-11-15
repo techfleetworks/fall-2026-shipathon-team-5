@@ -88,3 +88,14 @@ export const hoaxes: Hoax[] = [
 ];
 
 export const featuredHoaxes = hoaxes.filter((h) => h.featured);
+
+// The longest title, description and tell in a list of hoaxes. Every card in that
+// list reserves room for these (invisibly), so all the cards and "The tell" boxes
+// come out the same size no matter how much text each one has.
+export type HoaxSizers = Pick<Hoax, "title" | "description" | "tell">;
+
+export function hoaxSizers(list: Hoax[]): HoaxSizers {
+  const longest = (key: keyof HoaxSizers) =>
+    list.reduce((a, b) => (b[key].length > a.length ? b[key] : a), "");
+  return { title: longest("title"), description: longest("description"), tell: longest("tell") };
+}

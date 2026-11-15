@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Container from "@/components/ui/Container";
 import HoaxCard from "@/components/HoaxCard";
-import { hoaxes } from "@/lib/content/hoaxes";
+import { hoaxes, hoaxSizers } from "@/lib/content/hoaxes";
 
 export const metadata: Metadata = { title: "Real-life AI hoaxes that went viral" };
+
+// All six cards reserve room for the longest text, so they match in size.
+const sizers = hoaxSizers(hoaxes);
 
 export default function Page() {
   return (
@@ -24,7 +27,7 @@ export default function Page() {
         <ul className="mt-10 grid gap-6 md:grid-cols-3">
           {hoaxes.map((hoax) => (
             <li key={hoax.title}>
-              <HoaxCard hoax={hoax} />
+              <HoaxCard hoax={hoax} sizers={sizers} />
             </li>
           ))}
         </ul>
