@@ -36,9 +36,9 @@ export const sections: Section[] = [
     description:
       "Click on a section below to get started.",
     children: [
-      { title: "Checklist: audio and voice", href: "/spot-the-slop/audio-and-voice", shortTitle: "Audio", group: "checklists" },
-      { title: "Checklist: images and visuals", href: "/spot-the-slop/images-and-visuals", shortTitle: "Images", group: "checklists" },
-      { title: "Checklist: video and motion", href: "/spot-the-slop/video-and-motion", shortTitle: "Video", group: "checklists" },
+      { title: "Audio and voice", href: "/spot-the-slop/audio-and-voice", shortTitle: "Audio", group: "checklists" },
+      { title: "Images and visuals", href: "/spot-the-slop/images-and-visuals", shortTitle: "Images", group: "checklists" },
+      { title: "Video and motion", href: "/spot-the-slop/video-and-motion", shortTitle: "Video", group: "checklists" },
       { title: "TikTok: what to check before you share", href: "/spot-the-slop/ai-on-your-feed/tiktok", shortTitle: "TikTok", group: "platforms" },
       { title: "YouTube: what to check before you share", href: "/spot-the-slop/ai-on-your-feed/youtube", shortTitle: "YouTube", group: "platforms" },
       { title: "Instagram: what to check before you share", href: "/spot-the-slop/ai-on-your-feed/instagram", shortTitle: "Instagram", group: "platforms" },

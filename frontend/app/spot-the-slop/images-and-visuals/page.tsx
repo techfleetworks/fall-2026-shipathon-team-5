@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import PlaceholderPage from "@/components/PlaceholderPage";
+import ChecklistPage from "@/components/ChecklistPage";
 
 export const metadata: Metadata = { title: "Checklist: images and visuals" };
 
 export default function Page() {
-  return <PlaceholderPage href="/spot-the-slop/images-and-visuals" />;
+  return <ChecklistPage slug="images-and-visuals" />;
 }

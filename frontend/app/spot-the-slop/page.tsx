@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Container from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import HoaxCard from "@/components/HoaxCard";
 import PlatformCard from "@/components/PlatformCard";
+import ChecklistCard from "@/components/ChecklistCard";
 import { findSection } from "@/lib/sitemap";
 import { featuredHoaxes, hoaxSizers } from "@/lib/content/hoaxes";
 import { glossary } from "@/lib/content/glossary";
 import { platforms } from "@/lib/content/platforms";
+import { checklists } from "@/lib/content/checklists";
 
 export const metadata: Metadata = { title: "Learn to spot the slop" };
 
@@ -21,11 +22,9 @@ const parts = [
 
 const featuredSizers = hoaxSizers(featuredHoaxes);
 
-const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
-
 export default function Page() {
   const section = findSection("/spot-the-slop");
-  const checklists = section.children.filter((p) => p.group === "checklists");
+  const checklistPages = section.children.filter((p) => p.group === "checklists");
 
   return (
     <main className="flex-1">
@@ -60,19 +59,13 @@ export default function Page() {
           <p className="mt-3 max-w-2xl text-body-lg text-ink-muted">
             Different media types have different tells.
           </p>
-          <ul className="mt-8 grid gap-4 md:grid-cols-3">
-            {checklists.map((page) => (
+          <ul className="mt-8 grid gap-6 md:grid-cols-3">
+            {checklistPages.map((page) => (
               <li key={page.href}>
-                <Link
+                <ChecklistCard
                   href={page.href}
-                  className="block h-full rounded-card border border-line bg-canvas p-6 hover:border-ink"
-                >
-                  <span className="text-caption font-medium text-ink-muted">Checklist</span>
-                  <span className="mt-1 block font-heading text-h4 font-bold">
-                    {/* "Checklist: audio and voice" -> "Audio and voice" */}
-                    {capitalize(page.title.replace("Checklist: ", ""))}
-                  </span>
-                </Link>
+                  checklist={checklists[page.href.replace("/spot-the-slop/", "")]}
+                />
               </li>
             ))}
           </ul>
