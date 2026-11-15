@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import PlaceholderPage from "@/components/PlaceholderPage";
+import PlatformGuidePage from "@/components/PlatformGuidePage";
 
 export const metadata: Metadata = { title: "WhatsApp: what to check before you share" };
 
 export default function Page() {
-  return <PlaceholderPage href="/spot-the-slop/ai-on-your-feed/whatsapp" />;
+  return <PlatformGuidePage slug="whatsapp" />;
 }

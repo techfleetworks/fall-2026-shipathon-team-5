@@ -132,3 +132,8 @@ export const glossary: Term[] = [
       "The practice of crafting instructions (prompts) to guide an AI toward producing the desired outputs.",
   },
 ];
+
+// Turns "Content Credentials (C2PA)" into "content-credentials-c2pa", the #link
+// for that term on the glossary page.
+export const termId = (term: string) =>
+  term.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
