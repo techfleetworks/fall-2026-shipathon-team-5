@@ -17,7 +17,7 @@ export const platforms: Platform[] = [
     guideName: "TikTok",
     description: "Edited clips, AI voiceovers, and old footage reposted as new.",
     checks: ["Find the original upload and its date", "Read the comments for context and corrections"],
-    logo: "/images/platforms/tiktok.webp",
+    logo: "/images/platforms/tiktok-v2.webp",
   },
   {
     slug: "youtube",
@@ -28,7 +28,7 @@ export const platforms: Platform[] = [
       "Check the channel’s history and other videos",
       "Look for an AI-generated or altered content label",
     ],
-    logo: "/images/platforms/youtube.webp",
+    logo: "/images/platforms/youtube-v2.webp",
   },
   {
     slug: "instagram",
@@ -39,7 +39,7 @@ export const platforms: Platform[] = [
       "Check the account’s handle, age, and followers",
       "Visit the brand’s real site before you click",
     ],
-    logo: "/images/platforms/instagram.webp",
+    logo: "/images/platforms/instagram-v2.webp",
   },
   {
     slug: "facebook-messenger",
@@ -50,7 +50,7 @@ export const platforms: Platform[] = [
       "Call the person on a number you already have",
       "Search the claim before you share it to a group",
     ],
-    logo: "/images/platforms/facebook.webp",
+    logo: "/images/platforms/facebook-v2.webp",
   },
   {
     slug: "whatsapp",
@@ -58,7 +58,7 @@ export const platforms: Platform[] = [
     guideName: "WhatsApp",
     description: "Voice notes and images forwarded with no source.",
     checks: ["A “Forwarded many times” label means slow down", "Ask the sender where it came from"],
-    logo: "/images/platforms/whatsapp.webp",
+    logo: "/images/platforms/whatsapp-v2.webp",
   },
   {
     slug: "x",
@@ -69,6 +69,6 @@ export const platforms: Platform[] = [
       "A checkmark can be bought, so it doesn’t prove identity",
       "Look for a community note or a fact-check",
     ],
-    logo: "/images/platforms/x.webp",
+    logo: "/images/platforms/x-v2.webp",
   },
 ];

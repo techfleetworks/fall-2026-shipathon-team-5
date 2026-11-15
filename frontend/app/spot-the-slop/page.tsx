@@ -111,7 +111,7 @@ export default function Page() {
                 What happened, and the clue that would have caught it.
               </p>
             </div>
-            <ButtonLink href="/spot-the-slop/viral-hoaxes" variant="outline">
+            <ButtonLink href="/spot-the-slop/viral-hoaxes" variant="outline-teal">
               See all hoaxes
             </ButtonLink>
           </div>
@@ -135,7 +135,7 @@ export default function Page() {
                   Words commonly used on this site and elsewhere.
               </p>
             </div>
-            <ButtonLink href="/spot-the-slop/glossary" variant="outline">
+            <ButtonLink href="/spot-the-slop/glossary" variant="outline-teal">
               See all terms
             </ButtonLink>
           </div>

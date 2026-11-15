@@ -1,13 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Term } from "@/lib/content/glossary";
+import { termId, type Term } from "@/lib/content/glossary";
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-
-// Turns "Content Credentials (C2PA)" into "content-credentials-c2pa" for #links.
-const termId = (term: string) =>
-  term.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 // Search box, A–Z letter filter and term cards for the glossary page.
 export default function GlossaryBrowser({ terms }: { terms: Term[] }) {
