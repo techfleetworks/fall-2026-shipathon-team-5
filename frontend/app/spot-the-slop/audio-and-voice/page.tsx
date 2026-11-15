@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import PlaceholderPage from "@/components/PlaceholderPage";
+import ChecklistPage from "@/components/ChecklistPage";
 
 export const metadata: Metadata = { title: "Checklist: audio and voice" };
 
 export default function Page() {
-  return <PlaceholderPage href="/spot-the-slop/audio-and-voice" />;
+  return <ChecklistPage slug="audio-and-voice" />;
 }

@@ -51,10 +51,10 @@ export default function Home() {
               <span aria-hidden="true">★</span> Free · No sign-up
             </p>
             <h1 className="mt-4 font-heading text-h2 font-bold sm:text-h1 lg:text-display">
-              Can you spot the fake?
+              Can you spot the slop?
             </h1>
             <p className="mt-6 max-w-xl text-body-lg text-inverse-muted">
-              AI images, cloned voices and made-up quotes are everywhere. Veritas helps you check
+              AI images and inauthentic videos are everywhere. Veritas helps you check
               what you see and teaches you to spot fakes on your own.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">

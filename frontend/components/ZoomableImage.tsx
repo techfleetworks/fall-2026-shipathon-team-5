@@ -9,6 +9,7 @@ type Props = {
   caption?: string;
   position?: string; // object-position for the cropped preview
   sizes?: string;
+  aspectClass?: string; // shape of the preview, e.g. "aspect-[4/3]"
 };
 
 const MIN = 1;
@@ -17,7 +18,7 @@ const clamp = (n: number) => Math.min(MAX, Math.max(MIN, n));
 
 // A cropped preview that opens the full photo in a pop-up. In the pop-up you can
 // zoom (buttons, + / - keys, scroll wheel or double-click) and drag to look around.
-export default function ZoomableImage({ src, alt, caption, position, sizes }: Props) {
+export default function ZoomableImage({ src, alt, caption, position, sizes, aspectClass = "aspect-[2/1]" }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; y: number } | null>(null);
@@ -65,7 +66,7 @@ export default function ZoomableImage({ src, alt, caption, position, sizes }: Pr
       <button
         type="button"
         onClick={() => dialogRef.current?.showModal()}
-        className="group relative block aspect-[2/1] w-full cursor-zoom-in bg-deep"
+        className={`group relative block ${aspectClass} w-full cursor-zoom-in bg-deep`}
         aria-label={`Enlarge photo: ${alt}`}
       >
         <Image
