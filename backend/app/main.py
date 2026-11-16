@@ -10,9 +10,9 @@ from app.routers import checks
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
-        title="AI Image & Scam Checker API",
+        title="Veritas API",
         version="0.1.0",
-        description="Helps older adults check pictures and messages. "
+        description="Helps people check pictures and messages before they believe or share them. "
         "Uploaded pictures and messages are processed in memory and never stored.",
     )
     app.state.limiter = limiter

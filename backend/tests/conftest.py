@@ -1,12 +1,30 @@
+import io
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
+from PIL import Image
 
 from app.main import app
 from app.rate_limit import limiter
 
-PNG_BYTES = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
-JPEG_BYTES = b"\xff\xd8\xff\xe0" + b"\x00" * 64
-WEBP_BYTES = b"RIFF\x00\x00\x00\x00WEBP" + b"\x00" * 64
+FIXTURES = Path(__file__).parent / "fixtures" / "images"
+
+
+def _picture(fmt: str) -> bytes:
+    buffer = io.BytesIO()
+    Image.new("RGB", (16, 12), (40, 120, 200)).save(buffer, fmt)
+    return buffer.getvalue()
+
+
+# Small, real pictures with no content credentials.
+PNG_BYTES = _picture("PNG")
+JPEG_BYTES = _picture("JPEG")
+WEBP_BYTES = _picture("WEBP")
+
+
+def fixture_bytes(name: str) -> bytes:
+    return (FIXTURES / name).read_bytes()
 
 
 @pytest.fixture

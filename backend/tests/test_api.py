@@ -19,6 +19,16 @@ def test_detect_image_type(data, expected):
     assert detect_image_type(data) == expected
 
 
+def test_junk_with_a_picture_header_is_rejected_quickly(client):
+    import time
+
+    junk = b"\x89PNG\r\n\x1a\n" + b"\x00" * 5_000_000
+    start = time.monotonic()
+    r = client.post("/api/check-image", files={"file": ("photo.png", junk, "image/png")})
+    assert r.status_code == 415
+    assert time.monotonic() - start < 2
+
+
 def test_image_type_is_judged_by_content_not_name(client):
     # A PDF renamed to .png must be rejected.
     r = client.post("/api/check-image", files={"file": ("photo.png", b"%PDF-1.7", "image/png")})
