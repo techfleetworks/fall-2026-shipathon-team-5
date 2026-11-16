@@ -20,15 +20,12 @@ COPY app ./app
 RUN useradd --create-home --uid 10001 appuser
 USER appuser
 
-# Hosts like Render set PORT. FORWARDED_ALLOW_IPS tells uvicorn which proxy to
-# trust for the visitor's real IP address, which the rate limit relies on.
-# "*" is only safe when the container can't be reached except through the
-# host's proxy, as on Render. Locally it has no effect.
-ENV PORT=8000 \
-    FORWARDED_ALLOW_IPS="*"
+# Hosts like Render set PORT. Forwarded-address headers are deliberately not
+# trusted (visitors can fake them); see app/rate_limit.py.
+ENV PORT=8000
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
     CMD python -c "import os, urllib.request; urllib.request.urlopen(f'http://127.0.0.1:{os.environ[\"PORT\"]}/api/health')"
 
-CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port \"$PORT\" --proxy-headers --forwarded-allow-ips \"$FORWARDED_ALLOW_IPS\""]
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port \"$PORT\" --no-proxy-headers"]

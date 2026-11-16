@@ -19,9 +19,9 @@ address to call.
 Package the backend as a Docker image (`backend/Dockerfile`) and deploy it to
 Render's free web service plan using a Blueprint (`render.yaml`). Render
 deploys from `develop` only after GitHub's checks pass, and uses
-`/api/health` as its health check. The image runs as a non-root user and
-trusts Render's proxy for the visitor's address (`--proxy-headers`), so the
-rate limit applies per visitor.
+`/api/health` as its health check. The image runs as a non-root user. The rate
+limit tells visitors apart by the `True-Client-IP` header Cloudflare sets in
+front of Render (`APP_CLIENT_IP_HEADER`).
 
 ## Consequences
 
@@ -29,9 +29,11 @@ rate limit applies per visitor.
   Fly.io or another Docker host without code changes.
 * The free plan sleeps when idle: the first request after a quiet spell can
   take up to a minute. The front end must show a patient loading message.
-* Trusting all forwarded addresses (`FORWARDED_ALLOW_IPS="*"`) is only safe
-  because Render's containers can't be reached except through its proxy.
-  Revisit this on any host where the container is directly reachable.
+* `X-Forwarded-For` is not trusted. A live test on 2026-11-16 showed that
+  Render passes on entries the visitor adds, so trusting it let a script
+  claim a new address per request and skip the rate limit. On another host,
+  set `APP_CLIENT_IP_HEADER` to that host's equivalent header, or leave it
+  unset.
 * Only one instance runs, which matches the in-memory rate limiter (ADR 0002).
   Scaling out needs Redis first.
 * Front-end addresses are configured in Render (`APP_ALLOWED_ORIGINS`, and
