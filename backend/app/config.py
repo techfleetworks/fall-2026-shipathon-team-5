@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     min_text_chars: int = 20
     max_text_chars: int = 10_000
     rate_limit: str = "10/minute"
+    # Header the hosting provider sets to the visitor's real address and that
+    # visitors can't fake (on Render: True-Client-IP, set by Cloudflare).
+    # Leave unset when running without such a provider.
+    client_ip_header: str | None = None
 
 
 @lru_cache

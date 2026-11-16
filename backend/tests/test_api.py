@@ -118,3 +118,27 @@ def test_cors_pattern_allows_preview_addresses_only(monkeypatch):
         assert "access-control-allow-origin" not in bad.headers
     finally:
         get_settings.cache_clear()
+
+
+def _texts(client, headers, n):
+    body = {"text": "Hi Grandma, see you at lunch on Sunday. I will bring the dessert."}
+    return [client.post("/api/check-text", json=body, headers=headers(i)).status_code for i in range(n)]
+
+
+def test_fake_forwarded_addresses_do_not_bypass_the_limit(client):
+    allowed = int(get_settings().rate_limit.split("/")[0])
+    codes = _texts(client, lambda i: {"X-Forwarded-For": f"203.0.113.{i}"}, allowed + 1)
+    assert codes[-1] == 429
+
+
+def test_trusted_header_separates_visitors(client, monkeypatch):
+    monkeypatch.setenv("APP_CLIENT_IP_HEADER", "True-Client-IP")
+    get_settings.cache_clear()
+    try:
+        allowed = int(get_settings().rate_limit.split("/")[0])
+        first = _texts(client, lambda i: {"True-Client-IP": "198.51.100.1"}, allowed + 1)
+        other = _texts(client, lambda i: {"True-Client-IP": "198.51.100.2"}, 1)
+        assert first[-1] == 429
+        assert other == [200]
+    finally:
+        get_settings.cache_clear()

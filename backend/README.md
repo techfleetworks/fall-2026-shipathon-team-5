@@ -133,9 +133,10 @@ const data = await res.json();
 
 Each visitor (by IP address) can run 10 checks per minute across
 `/api/check-image` and `/api/check-text`, set with `APP_RATE_LIMIT`. Counts are
-kept in memory. Behind a hosting proxy, uvicorn must trust the proxy's
-forwarded address or every visitor shares one limit; the Dockerfile does this
-with `--proxy-headers` and `FORWARDED_ALLOW_IPS`. Why and trade-offs: [ADR 0002](../docs/adr/0002-in-memory-rate-limiting.md).
+kept in memory. Visitors are told apart by `APP_CLIENT_IP_HEADER` when it's
+set (on Render: `True-Client-IP`, which Cloudflare sets and visitors can't
+fake), otherwise by the connection's address. `X-Forwarded-For` is never
+used, because visitors can add fake entries to it. Why and trade-offs: [ADR 0002](../docs/adr/0002-in-memory-rate-limiting.md).
 
 ## Automatic checks on GitHub
 

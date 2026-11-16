@@ -25,3 +25,7 @@ services:
         sync: false
       - key: APP_RATE_LIMIT
         value: 10/minute
+      # Real visitor address, set by Cloudflare in front of Render. Visitors
+      # can't fake it, unlike X-Forwarded-For.
+      - key: APP_CLIENT_IP_HEADER
+        value: True-Client-IP
