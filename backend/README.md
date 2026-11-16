@@ -4,7 +4,7 @@ Python + FastAPI. Why we chose it: [ADR 0001](../docs/adr/0001-use-python-fastap
 
 ## Run it locally (Windows)
 
-Needs Python 3.10 or newer.
+Needs Python 3.11 or newer.
 
 ```powershell
 cd backend
@@ -139,8 +139,8 @@ with `--proxy-headers` and `FORWARDED_ALLOW_IPS`. Why and trade-offs: [ADR 0002]
 
 ## Automatic checks on GitHub
 
-Every pull request that touches `backend/` runs the tests on Python 3.10 and
-3.12 and a `pip-audit` scan for known security vulnerabilities
+Every pull request that touches `backend/` runs the tests on Python 3.11, 3.12 and
+3.14 and a `pip-audit` scan for known security vulnerabilities
 (`.github/workflows/backend-tests.yml`). Dependabot opens weekly pull requests
 to update dependencies (`.github/dependabot.yml`).
 
