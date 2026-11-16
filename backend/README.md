@@ -51,13 +51,69 @@ label: `urgency`, `payment`, `link`, `secrecy`, `credentials`, `prize`,
 still include flags, which are things worth a second look rather than warnings.
 How the risk level is worked out: [ADR 0003](../docs/adr/0003-weighted-scam-warning-signs.md).
 
+## Run it with Docker (optional)
+
+```powershell
+cd backend
+docker build -t team5-backend .
+docker run --rm -p 8000:8000 team5-backend
+```
+
+Then open http://localhost:8000/docs. A GitHub workflow
+(`.github/workflows/backend-docker.yml`) builds the image and checks it answers
+on every pull request.
+
+## Deploy to Render
+
+`render.yaml` in the repo root describes the service.
+
+1. Sign in to [Render](https://render.com) with GitHub and give it access to
+   this repository. You may need someone with admin rights on `techfleetworks`
+   to approve that.
+2. Choose **New → Blueprint**, pick this repository, and confirm.
+3. When asked, set:
+   * `APP_ALLOWED_ORIGINS`: the front end's address as a JSON list, for example
+     `["https://your-site.vercel.app"]`
+   * `APP_ALLOWED_ORIGIN_REGEX`: optional, to also allow Vercel preview links,
+     for example `https://your-project-.*\.vercel\.app`. Leave blank otherwise.
+4. Render builds the Docker image and gives you an address like
+   `https://team5-backend.onrender.com`. Check `/api/health` returns `{"status":"ok"}`.
+
+It deploys from `develop` automatically once GitHub's checks pass. Change
+`branch` in `render.yaml` to `main` for launch.
+
+**Free plan:** the service goes to sleep when unused, so the first check after a
+quiet spell can take up to a minute. The front end should show a friendly
+"checking…" message rather than appearing broken.
+
+## Connecting the front end
+
+The front end needs the backend address in an environment variable, for
+example `NEXT_PUBLIC_API_URL`:
+
+* Locally, in `frontend/.env.local`: `NEXT_PUBLIC_API_URL=http://localhost:8000`
+* On Vercel: Project → Settings → Environment Variables, set to the Render address
+
+Example call:
+
+```ts
+const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/check-text`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ text }),
+});
+const data = await res.json();
+// res.ok -> data.risk, data.red_flags (with start/end to highlight), data.message
+// otherwise -> data.detail is a plain-language message to show the visitor
+```
+
 ## Rate limiting
 
 Each visitor (by IP address) can run 10 checks per minute across
 `/api/check-image` and `/api/check-text`, set with `APP_RATE_LIMIT`. Counts are
-kept in memory. When deploying behind a hosting proxy, start uvicorn with
-`--proxy-headers --forwarded-allow-ips="<proxy address>"`, or every visitor
-will share one limit. Why and trade-offs: [ADR 0002](../docs/adr/0002-in-memory-rate-limiting.md).
+kept in memory. Behind a hosting proxy, uvicorn must trust the proxy's
+forwarded address or every visitor shares one limit; the Dockerfile does this
+with `--proxy-headers` and `FORWARDED_ALLOW_IPS`. Why and trade-offs: [ADR 0002](../docs/adr/0002-in-memory-rate-limiting.md).
 
 ## Automatic checks on GitHub
 

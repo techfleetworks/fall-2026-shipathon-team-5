@@ -90,3 +90,21 @@ def test_limit_applies_to_image_checks_too(client):
 def test_health_is_not_rate_limited(client):
     allowed = int(get_settings().rate_limit.split("/")[0])
     assert all(client.get("/api/health").status_code == 200 for _ in range(allowed + 5))
+
+
+def test_cors_pattern_allows_preview_addresses_only(monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from app.main import create_app
+
+    monkeypatch.setenv("APP_ALLOWED_ORIGIN_REGEX", r"https://team5-[a-z0-9-]+\.vercel\.app")
+    get_settings.cache_clear()
+    try:
+        client = TestClient(create_app())
+        preflight = {"Access-Control-Request-Method": "POST"}
+        ok = client.options("/api/check-text", headers={"Origin": "https://team5-git-abc.vercel.app", **preflight})
+        bad = client.options("/api/check-text", headers={"Origin": "https://evil-team5.vercel.app", **preflight})
+        assert ok.headers.get("access-control-allow-origin") == "https://team5-git-abc.vercel.app"
+        assert "access-control-allow-origin" not in bad.headers
+    finally:
+        get_settings.cache_clear()
