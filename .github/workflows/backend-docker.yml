@@ -31,6 +31,11 @@ jobs:
             -H 'Content-Type: application/json' \
             -d '{"text":"USPS: pay a small fee within 24 hours at usps-redelivery.example"}' \
             | grep -q '"risk"'
+          # Content Credentials are read inside the image (C2PA library + trust lists).
+          curl -fsS -F "file=@backend/tests/fixtures/images/ai_generated.jpg;type=image/jpeg" \
+            http://localhost:8000/api/check-image | tee /tmp/image.json
+          grep -q '"source":"ai_generated"' /tmp/image.json
+          grep -q '"status":"untrusted_signer"' /tmp/image.json
       - name: Show logs if something failed
         if: failure()
         run: docker logs api

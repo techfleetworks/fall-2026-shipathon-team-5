@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile
+from fastapi.concurrency import run_in_threadpool
 
 from app.config import Settings, get_settings
 from app.rate_limit import check_limit, limiter
@@ -50,12 +51,19 @@ async def check_image(
             )
 
     # Trust the file's actual bytes, not the name or declared type.
-    if image_check.detect_image_type(bytes(data)) is None:
+    picture = bytes(data)
+    if image_check.detect_image_type(picture) is None:
         raise HTTPException(
             415,
             "Please upload a picture in JPG, PNG or WEBP format.",
         )
-    return image_check.check_image(bytes(data))
+    if not image_check.is_complete_picture(picture):
+        raise HTTPException(
+            415,
+            "This file looks damaged or incomplete. Please try saving the picture again.",
+        )
+    # Reading credentials is CPU work; run it off the event loop.
+    return await run_in_threadpool(image_check.check_image, picture)
 
 
 @router.post(

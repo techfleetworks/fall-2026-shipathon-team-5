@@ -17,8 +17,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Oldest version we support, and a current one.
-        python-version: ["3.10", "3.12"]
+        # Oldest version we support, the Docker image's, and the newest.
+        python-version: ["3.11", "3.12", "3.14"]
     defaults:
       run:
         working-directory: backend

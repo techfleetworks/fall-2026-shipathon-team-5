@@ -6,7 +6,7 @@ import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
 
 from app.config import get_settings
-from tests.conftest import PNG_BYTES
+from tests.conftest import PNG_BYTES, fixture_bytes
 
 scenarios("checks/check-text.feature", "checks/check-image.feature")
 
@@ -81,6 +81,11 @@ def png_picture(ctx):
     ctx["upload"] = ("photo.png", PNG_BYTES, "image/png")
 
 
+@given(parsers.parse('a visitor has the test picture "{name}"'))
+def named_test_picture(ctx, name):
+    ctx["upload"] = (name, fixture_bytes(name), "image/jpeg")
+
+
 @given(parsers.parse('a visitor has a PDF file named "{name}"'))
 def pdf_file(ctx, name):
     ctx["upload"] = (name, b"%PDF-1.7 fake", "image/png")
@@ -96,10 +101,26 @@ def upload(ctx, client):
     ctx["response"] = client.post("/api/check-image", files={"file": ctx["upload"]})
 
 
-@then("they receive an estimate between 0 and 1")
-def estimate_in_range(ctx):
+@then(parsers.parse('the verdict is "{verdict}"'))
+def verdict_is(ctx, verdict):
     assert ctx["response"].status_code == 200
-    assert 0 <= ctx["response"].json()["ai_likelihood"] <= 1
+    assert ctx["response"].json()["verdict"] == verdict
+
+
+@then("no estimate is given")
+def no_estimate(ctx):
+    assert ctx["response"].json()["ai_likelihood"] is None
+
+
+@then(parsers.parse('the content credentials status is "{status}"'))
+def credentials_status(ctx, status):
+    assert ctx["response"].json()["content_credentials"]["status"] == status
+
+
+@then(parsers.parse('a clue mentions "{words}"'))
+def clue_mentions(ctx, words):
+    signals = ctx["response"].json()["signals"]
+    assert any(words.lower() in (s["label"] + " " + s["explanation"]).lower() for s in signals)
 
 
 @then("they receive at least one clue with an explanation")
