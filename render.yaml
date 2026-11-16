@@ -6,8 +6,9 @@ services:
     name: team5-backend
     runtime: docker
     rootDir: backend
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    # With rootDir set, Render reads these paths from inside backend/.
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     plan: free
     region: virginia
     # Deploy from develop while testing; switch to main for launch.
