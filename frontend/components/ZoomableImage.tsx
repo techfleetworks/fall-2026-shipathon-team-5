@@ -10,6 +10,7 @@ type Props = {
   position?: string; // object-position for the cropped preview
   sizes?: string;
   aspectClass?: string; // shape of the preview, e.g. "aspect-[4/3]"
+  fit?: "cover" | "contain"; // "contain" shows the whole photo, with dark bars if needed
 };
 
 const MIN = 1;
@@ -18,7 +19,15 @@ const clamp = (n: number) => Math.min(MAX, Math.max(MIN, n));
 
 // A cropped preview that opens the full photo in a pop-up. In the pop-up you can
 // zoom (buttons, + / - keys, scroll wheel or double-click) and drag to look around.
-export default function ZoomableImage({ src, alt, caption, position, sizes, aspectClass = "aspect-[2/1]" }: Props) {
+export default function ZoomableImage({
+  src,
+  alt,
+  caption,
+  position,
+  sizes,
+  aspectClass = "aspect-[2/1]",
+  fit = "cover",
+}: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; y: number } | null>(null);
@@ -74,7 +83,7 @@ export default function ZoomableImage({ src, alt, caption, position, sizes, aspe
           alt=""
           fill
           sizes={sizes ?? "(min-width: 768px) 400px, 100vw"}
-          className="object-cover"
+          className={fit === "contain" ? "object-contain" : "object-cover"}
           style={{ objectPosition: position ?? "center" }}
         />
         <span
