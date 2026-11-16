@@ -36,3 +36,23 @@ Feature: Check a suspicious message
     When they check the message
     Then the request is refused with status 429
     And the visitor is asked to wait a minute
+
+  @audience:visitor @usecase:genuine-security-code @category:edge @quality:functional @severity:high
+  Scenario: A genuine security code message is not treated as a scam
+    Given a visitor pastes the message "Your verification code is 482913. We will never call you to ask for this code. Do not share it with anyone."
+    When they check the message
+    Then the risk is "low"
+    And no warning signs are shown
+
+  @audience:visitor @usecase:lookalike-web-address @category:negative @quality:security @severity:critical
+  Scenario: A fake company web address without www or https is flagged
+    Given a visitor pastes the message "EE: we failed to take payment for your bill. Update your account to avoid disconnection: ee-billing.example"
+    When they check the message
+    Then the risk is "high"
+    And the warning signs include "link" and "urgency"
+
+  @audience:visitor @usecase:single-everyday-word @category:edge @quality:functional @severity:medium
+  Scenario: One everyday word on its own doesn't raise a warning
+    Given a visitor pastes the message "I paid you back for the concert tickets through Venmo, thanks again!"
+    When they check the message
+    Then the risk is "low"

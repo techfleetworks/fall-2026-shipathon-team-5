@@ -119,3 +119,43 @@ ok-057,ok,tech,UK,email,team-written,"Your password was changed successfully. If
 ok-058,ok,events,US,email,team-written,You're invited to Lily's 6th birthday party on Saturday at 1pm at the park pavilion!
 ok-059,ok,events,UK,email,team-written,Congratulations on your retirement! The team has organised a lunch for you on Friday.
 ok-060,ok,events,US,sms,team-written,The winner of the pie contest at the county fair will be announced at 4pm. Good luck!
+r2-scam-001,scam,delivery,UK,sms,team-written,Parcelforce: your item has arrived at our depot but there is 1.45 GBP unpaid postage. Settle it here to release your parcel: parcelforce-postage.example
+r2-scam-002,scam,delivery,US,sms,team-written,USPS: The shipment could not be delivered because the house number was missing. Please confirm your address within 12 hours or it will be returned: usps-addr.example/c
+r2-scam-003,scam,toll,US,sms,team-written,"NC Quick Pass: You have an outstanding toll of $6.99. To avoid a late fee and DMV hold, pay today at ncquickpass-billing.example"
+r2-scam-004,scam,bank,UK,phone-script,team-written,"Hello, this is the fraud team at NatWest. We've stopped a suspicious payment. To secure your account, please read me the code we've just texted you."
+r2-scam-005,scam,bank,US,sms,team-written,Your debit card has been temporarily restricted. Visit https://cardholder-restore.example and sign in to remove the restriction.
+r2-scam-006,scam,family,US,sms,team-written,"Hi Grandpa, it's Josh. I'm abroad and lost my wallet. Can you wire me $1,500 through Western Union? Please don't tell Mom, she'll worry."
+r2-scam-007,scam,family,UK,whatsapp,team-written,"Hey mum, my phone broke so I'm using a friend's. Can you send me 300 quid for rent? I'll sort it Friday x"
+r2-scam-008,scam,government,US,phone-script,team-written,This is Officer Daniels with the IRS criminal division. A warrant has been issued in your name. To resolve this today you must pay with prepaid cards.
+r2-scam-009,scam,government,UK,email,team-written,HMRC: we have identified that you are entitled to a tax refund of 312.40 GBP. Submit your bank details to receive the payment.
+r2-scam-010,scam,utility,US,phone-script,team-written,This is your power company. Your account is past due and a technician is on the way to disconnect your service in 30 minutes unless you pay now.
+r2-scam-011,scam,tech-support,UK,popup,team-written,Your PC is infected! 5 viruses found. Call Windows Defender support on 0808 157 0192 now. Do not close this window.
+r2-scam-012,scam,prize,US,email,team-written,"Publishers Prize Center: you have been selected as a finalist for $5,000 a week for life. To claim, pay the 19.99 processing fee."
+r2-scam-013,scam,romance,US,messenger,team-written,"Sweetheart, customs is holding the gold I sent you. I need $2,000 to release it and then we can finally be together. This must stay between us."
+r2-scam-014,scam,investment,UK,whatsapp,team-written,"Join our VIP crypto group. Members are making 2,000 GBP a week with our signals. First deposit only 200 GBP."
+r2-scam-015,scam,job,US,sms,team-written,"Amazon HR: we reviewed your resume online. Remote part-time position, $250 per day, no experience needed. Text START to begin."
+r2-scam-016,scam,account,UK,email,team-written,Your Microsoft 365 mailbox is almost full and will stop receiving email. Verify your account password here to upgrade storage for free.
+r2-scam-017,scam,charity,UK,phone-script,team-written,I'm calling from a children's charity. Could you donate today? We can take it right now by card if you give me the long number and security code.
+r2-scam-018,scam,medicare,US,phone-script,team-written,"Hi, I'm calling about your free back brace covered by Medicare. I just need to confirm your Medicare number to ship it."
+r2-scam-019,scam,refund,UK,phone-script,team-written,You're owed compensation for a mis-sold pension. To release the money we need a small admin fee paid by bank transfer.
+r2-scam-020,scam,wrong-number,UK,sms,team-written,"Hello David, is the house viewing still on for Saturday? Oh sorry, I think I have the wrong number."
+r2-ok-001,ok,bank,US,sms,team-written,"Chase: A $52.17 card purchase at Safeway was made on 11/14. If you don't recognize it, call the number on the back of your card."
+r2-ok-002,ok,bank,UK,sms,team-written,Monzo: you received 20.00 GBP from Sarah Jones. Reference: Pizza.
+r2-ok-003,ok,bank,US,sms,team-written,Your Zelle payment of $40 to Linda was sent.
+r2-ok-004,ok,delivery,US,sms,team-written,USPS: your item was delivered in or at the mailbox at 1:12 pm. Track at usps.com
+r2-ok-005,ok,delivery,UK,sms,team-written,"Royal Mail: we have your parcel. We'll redeliver tomorrow, or collect it from your local office. More info at royalmail.com"
+r2-ok-006,ok,family,US,sms,team-written,"Hey Mom, it's Ana. I got a work phone, so this is my new number for weekdays. Save it in your contacts!"
+r2-ok-007,ok,family,UK,whatsapp,team-written,"Don't tell Grandad about the cake, it's a surprise for his birthday tomorrow!"
+r2-ok-008,ok,family,US,sms,team-written,Thanks for the birthday gift card Grandma! I'm going to buy books with it.
+r2-ok-009,ok,health,US,sms,team-written,Walgreens: your flu shot appointment is Tuesday at 11:00 AM. Reply C to confirm.
+r2-ok-010,ok,health,UK,sms,team-written,NHS: your hospital appointment letter is available in the NHS App.
+r2-ok-011,ok,government,US,letter,team-written,Social Security: your cost-of-living adjustment will appear in your January payment.
+r2-ok-012,ok,government,UK,letter,team-written,HMRC: your tax calculation for last year is ready. Sign in to your personal tax account on GOV.UK to view it.
+r2-ok-013,ok,utility,US,email,team-written,Your water bill of $41.20 is due on November 28. Pay online or by phone. Late payments may incur a $5 late fee.
+r2-ok-014,ok,tech,UK,email,team-written,"We noticed a new sign-in to your account from Chrome on Windows. If this was you, you don't need to do anything."
+r2-ok-015,ok,community,US,email,team-written,"The church bake sale raised $1,200 for the food pantry. Thank you to everyone who donated!"
+r2-ok-016,ok,community,UK,email,team-written,Our quiz night winner was the Thursday Walking Group. Congratulations!
+r2-ok-017,ok,work,US,email,team-written,We'd love you back as a volunteer driver this winter. Training is on Monday at 10 at the community center.
+r2-ok-018,ok,shopping,UK,email,team-written,Your M&S order has been dispatched. You can track it in the app.
+r2-ok-019,ok,friends,US,sms,team-written,Do you want to split an Uber to the concert? You can Venmo me after.
+r2-ok-020,ok,travel,UK,sms,team-written,"Your coach to Bath departs at 08:40 from Victoria Coach Station, bay 12. Have a lovely trip!"

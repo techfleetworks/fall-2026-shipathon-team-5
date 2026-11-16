@@ -36,12 +36,20 @@ the front end before making them.
 |---|---|---|---|---|
 | GET | `/api/health` | nothing | `{"status": "ok"}` | Works |
 | POST | `/api/check-image` | form upload, field `file` (JPG/PNG/WEBP, max 10 MB) | `ai_likelihood`, `verdict`, `content_credentials`, `signals`, `message` | **Placeholder results** (`is_example: true`); upload checks are real |
-| POST | `/api/check-text` | JSON `{"text": "..."}` (20–10,000 characters) | `risk`, `red_flags` (with `start`/`end` positions to highlight), `message` | Works, rule-based (English, tuned for US and UK scams) |
+| POST | `/api/check-text` | JSON `{"text": "..."}` (20–10,000 characters) | `risk`, `red_flags` (with `start`/`end` positions to highlight), `message` | Works, weighted rules (English, US and UK scams). Measured in `evaluation/` |
 | GET | `/api/quiz` | nothing | list of quiz pictures with answers and explanations | **Placeholder data** |
 
 Errors return `{"detail": "<plain-language message for the visitor>"}` with
 status 413 (picture too large), 415 (not a picture), 422 (message too short
 or too long) or 429 (too many checks; wait a minute).
+
+## Scam warning types
+
+Each item in `red_flags` has a `type` the front end can use for an icon or
+label: `urgency`, `payment`, `link`, `secrecy`, `credentials`, `prize`,
+`new_contact`, `unrealistic_offer`, `remote_access`. A low-risk result can
+still include flags, which are things worth a second look rather than warnings.
+How the risk level is worked out: [ADR 0003](../docs/adr/0003-weighted-scam-warning-signs.md).
 
 ## Rate limiting
 

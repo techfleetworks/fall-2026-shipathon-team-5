@@ -4,6 +4,7 @@ Run from the backend folder:
 
     python -m evaluation.evaluate_scam_checker            # summary
     python -m evaluation.evaluate_scam_checker --details  # also list every mistake
+    python -m evaluation.evaluate_scam_checker --holdout  # the held-out set (see README)
 
 A message counts as "flagged" when the checker rates it medium or high risk.
 """
@@ -17,6 +18,7 @@ from pathlib import Path
 from app.services.scam_rules import check_text
 
 DATASET = Path(__file__).with_name("scam_messages.csv")
+HOLDOUT = Path(__file__).with_name("scam_messages_holdout.csv")
 
 
 @dataclass(frozen=True)
@@ -94,9 +96,10 @@ def evaluate(examples: list[Example]) -> Report:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--details", action="store_true", help="list every mistake")
+    parser.add_argument("--holdout", action="store_true", help="use the held-out set")
     args = parser.parse_args()
 
-    r = evaluate(load_examples())
+    r = evaluate(load_examples(HOLDOUT if args.holdout else DATASET))
     print(f"Scams caught:   {r.caught}/{r.scams} ({r.catch_rate:.0%})")
     print(f"False alarms:   {r.false_alarms}/{r.ordinary} ordinary messages ({r.false_alarm_rate:.0%})")
     print("\nCaught by scam type:")

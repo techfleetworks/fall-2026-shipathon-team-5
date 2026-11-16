@@ -43,8 +43,9 @@ def test_flag_positions_point_at_the_flagged_words():
     text = "Your account is blocked. Send a gift card now."
     for flag in check_text(text).red_flags:
         assert text[flag.start:flag.end].strip() != ""
-    words = {text[f.start:f.end].lower() for f in check_text(text).red_flags}
-    assert {"blocked", "gift card"} <= words
+    words = [text[f.start:f.end].lower() for f in check_text(text).red_flags]
+    assert any("blocked" in w for w in words)
+    assert any("gift card" in w for w in words)
 
 
 def test_uk_delivery_scam_is_flagged():
