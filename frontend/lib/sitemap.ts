@@ -65,7 +65,7 @@ export const sections: Section[] = [
     title: "Quiz your skills",
     href: "/skill-check",
     description: "Test yourself: can you tell what's real?",
-    children: [{ title: "Real or AI?", href: "/skill-check/real-or-ai" }],
+    children: [], // the quiz is on the /skill-check page itself
   },
   {
     number: 4,

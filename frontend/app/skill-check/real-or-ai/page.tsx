@@ -1,8 +1,6 @@
-import type { Metadata } from "next";
-import PlaceholderPage from "@/components/PlaceholderPage";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Real or AI?" };
-
+// The quiz now lives directly on /skill-check. Old links land there.
 export default function Page() {
-  return <PlaceholderPage href="/skill-check/real-or-ai" />;
+  redirect("/skill-check");
 }
