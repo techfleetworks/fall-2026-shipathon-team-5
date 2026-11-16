@@ -9,7 +9,7 @@ import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 const steps = [
   {
     title: "Learn",
-    text: "Short guides on AI images, voice clones and how to trace a claim back to its source.",
+    text: "Short guides on AI images, voice clones, and how to trace a claim back to its source.",
     href: "/spot-the-slop",
   },
   {

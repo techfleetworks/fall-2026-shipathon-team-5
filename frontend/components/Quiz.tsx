@@ -34,7 +34,12 @@ export default function Quiz() {
     setPicked(answer);
     if (answer === q.answer) setScore((s) => s + 1);
     // Move keyboard and screen reader focus to the result.
-    requestAnimationFrame(() => feedbackRef.current?.focus());
+    // Bring the whole quiz into view (picture, answer and result), then move
+    // keyboard and screen reader focus to the result without scrolling again.
+    requestAnimationFrame(() => {
+      topRef.current?.scrollIntoView({ block: "start" });
+      feedbackRef.current?.focus({ preventScroll: true });
+    });
   };
 
   const next = () => {
@@ -43,7 +48,10 @@ export default function Quiz() {
       setStep((s) => s + 1);
       setPicked(null);
     }
-    requestAnimationFrame(() => topRef.current?.focus());
+    requestAnimationFrame(() => {
+      topRef.current?.scrollIntoView({ block: "start" });
+      topRef.current?.focus({ preventScroll: true });
+    });
   };
 
   const restart = () => {
@@ -52,13 +60,16 @@ export default function Quiz() {
     setPicked(null);
     setScore(0);
     setDone(false);
-    requestAnimationFrame(() => topRef.current?.focus());
+    requestAnimationFrame(() => {
+      topRef.current?.scrollIntoView({ block: "start" });
+      topRef.current?.focus({ preventScroll: true });
+    });
   };
 
   // Style for the Real / AI-generated buttons, depending on what was picked.
   const answerClass = (option: QuizAnswer) => {
     const base =
-      "flex min-h-16 items-center justify-center gap-2 rounded-control border-2 px-4 text-body-lg font-semibold transition-colors";
+      "flex min-h-12 items-center justify-center gap-2 rounded-control border-2 px-3 text-body font-semibold transition-colors";
     if (!picked) return `${base} border-line bg-surface hover:border-primary hover:bg-primary hover:text-on-primary`;
     if (option === picked)
       return `${base} text-inverse ${isCorrect ? "border-authentic-text bg-authentic-text" : "border-misleading-text bg-misleading-text"}`;
@@ -76,7 +87,12 @@ export default function Quiz() {
   return (
     <div>
       {/* Progress: one bar per image */}
-      <div ref={topRef} tabIndex={-1} className="flex items-center gap-2 outline-none">
+      <div
+        ref={topRef}
+        tabIndex={-1}
+        // scroll-mt leaves room for the sticky header on phones
+        className="flex scroll-mt-20 items-center gap-2 outline-none lg:scroll-mt-4"
+      >
         <div className="flex flex-1 gap-1.5" aria-hidden="true">
           {order.map((_, i) => (
             <span
@@ -93,7 +109,7 @@ export default function Quiz() {
       </div>
 
       {done ? (
-        <section className="mt-8 rounded-card border border-line bg-surface p-8">
+        <section className="mt-4 rounded-card border border-line bg-surface p-6 md:p-8">
           <h2 className="font-heading text-h3 font-bold">
             You got {score} of {total} right.
           </h2>
@@ -113,20 +129,23 @@ export default function Quiz() {
         </section>
       ) : (
         <>
-          <div className="mt-8 overflow-hidden rounded-image">
+          {/* The picture shrinks on shorter screens so the answer and result fit
+              without scrolling. "contain" keeps the whole photo visible. */}
+          <div className="mt-4 overflow-hidden rounded-image">
             <ZoomableImage
               key={q.image}
               src={q.image}
               alt={q.alt}
               caption={`Image ${step + 1} of ${total}`}
-              aspectClass="aspect-[3/2]"
+              aspectClass="h-[min(calc((100vw-3rem)*2/3),calc(100dvh-27rem))] min-h-32 md:h-[min(calc((100vw-3rem)*2/3),calc(100dvh-25rem),600px)]"
+              fit="contain"
               sizes="(min-width: 1024px) 900px, 100vw"
             />
           </div>
 
-          <fieldset className="mt-6">
+          <fieldset className="mt-3">
             <legend className="sr-only">Is this image real or AI-generated?</legend>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3">
               {(["real", "ai"] as QuizAnswer[]).map((option) => (
                 <button
                   key={option}
@@ -145,19 +164,19 @@ export default function Quiz() {
           </fieldset>
 
           {picked && (
-            <section className="mt-6 rounded-card border border-line bg-surface p-6">
+            <section className="mt-3 rounded-card border border-line bg-surface p-4 md:p-5">
               <h2
                 ref={feedbackRef}
                 tabIndex={-1}
-                className={`font-heading text-h5 font-bold outline-none ${
+                className={`font-heading text-body font-bold outline-none sm:text-body-lg md:text-h5 ${
                   isCorrect ? "text-authentic-text" : "text-misleading-text"
                 }`}
               >
                 {isCorrect ? q.correct : q.incorrect}
               </h2>
               {/* The explanation only shows after a wrong answer. */}
-              {!isCorrect && <p className="mt-2 text-body text-ink-muted">{q.explanation}</p>}
-              <div className="mt-5">
+              {!isCorrect && <p className="mt-1 text-body-sm text-ink-muted md:text-body">{q.explanation}</p>}
+              <div className="mt-3">
                 <Button onClick={next}>{step + 1 >= total ? "See your score" : "Next image"}</Button>
               </div>
             </section>
