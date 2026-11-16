@@ -1,0 +1,26 @@
+# Render Blueprint for the backend API (https://render.com/docs/blueprint-spec).
+# In Render: New > Blueprint > pick this repo. Render then asks for the values
+# marked "sync: false".
+services:
+  - type: web
+    name: team5-backend
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: virginia
+    # Deploy from develop while testing; switch to main for launch.
+    branch: develop
+    # Only deploy once GitHub's tests have passed.
+    autoDeployTrigger: checksPass
+    healthCheckPath: /api/health
+    envVars:
+      # JSON list of the front end's addresses, e.g. ["https://your-site.vercel.app"]
+      - key: APP_ALLOWED_ORIGINS
+        sync: false
+      # Optional pattern for Vercel preview links; leave blank if not needed.
+      - key: APP_ALLOWED_ORIGIN_REGEX
+        sync: false
+      - key: APP_RATE_LIMIT
+        value: 10/minute
