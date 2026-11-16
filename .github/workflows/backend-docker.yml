@@ -1,0 +1,43 @@
+name: Backend Docker image
+
+on:
+  pull_request:
+    paths: ["backend/**", ".github/workflows/backend-docker.yml"]
+  push:
+    branches: [main, develop]
+    paths: ["backend/**", ".github/workflows/backend-docker.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-smoke-test:
+    name: build and smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t team5-backend backend
+      - name: Start container
+        run: docker run -d --name api -p 8000:8000 team5-backend
+      - name: Check the API answers
+        run: |
+          for i in $(seq 1 20); do
+            if curl -fsS http://localhost:8000/api/health; then break; fi
+            sleep 1
+          done
+          curl -fsS http://localhost:8000/api/health | grep -q '"ok"'
+          curl -fsS -X POST http://localhost:8000/api/check-text \
+            -H 'Content-Type: application/json' \
+            -d '{"text":"USPS: pay a small fee within 24 hours at usps-redelivery.example"}' \
+            | grep -q '"risk"'
+          # Content Credentials are read inside the image (C2PA library + trust lists).
+          curl -fsS -F "file=@backend/tests/fixtures/images/ai_generated.jpg;type=image/jpeg" \
+            http://localhost:8000/api/check-image | tee /tmp/image.json
+          grep -q '"source":"ai_generated"' /tmp/image.json
+          grep -q '"status":"untrusted_signer"' /tmp/image.json
+      - name: Show logs if something failed
+        if: failure()
+        run: docker logs api
+      - name: Container runs as a normal user
+        run: test "$(docker exec api id -u)" != "0"
