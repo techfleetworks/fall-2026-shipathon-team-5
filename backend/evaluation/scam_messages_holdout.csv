@@ -1,0 +1,41 @@
+id,label,message_type,region,channel,based_on,text
+hold-scam-001,scam,delivery,US,sms,team-written,FedEx: We were unable to deliver your parcel today. A $3.20 handling charge is required before we can try again: fedex-handling.example
+hold-scam-002,scam,delivery,UK,email,team-written,"Your Evri parcel is waiting at the local hub. Due to an underpaid shipping cost, please pay 1.99 GBP to arrange delivery."
+hold-scam-003,scam,toll,US,sms,team-written,Illinois Tollway: Unpaid toll violation on your vehicle. Penalties will be applied after 11/20. Resolve now: il-tollway-pay.example
+hold-scam-004,scam,bank,US,phone-script,team-written,"Hi, this is Capital One security. We need to verify it's you before we can stop the fraud. What's the six-digit code we just sent to your phone?"
+hold-scam-005,scam,bank,UK,sms,team-written,Santander: your account has been temporarily on hold. Please log in via santander-online-verify.example to lift the hold.
+hold-scam-006,scam,family,US,sms,team-written,"Mom it's me, I'm texting from a friend's phone. I'm in a bit of trouble and need $400 right away. Can you send it on Cash App?"
+hold-scam-007,scam,family,UK,whatsapp,team-written,"Hi Dad, this is my new mobile. My old one stopped working. Are you free to chat? I need a favour."
+hold-scam-008,scam,government,US,email,team-written,Medicare: you are eligible for a refund on your premiums. Reply with your Medicare number and date of birth to receive it.
+hold-scam-009,scam,government,UK,sms,team-written,GOV.UK: you are eligible for the Cost of Living Payment. Apply now before the deadline: gov-uk-support-payment.example
+hold-scam-010,scam,utility,UK,phone-script,team-written,This is your energy supplier. Your smart meter has a fault and your supply will be cut off today unless you pay a call-out charge now.
+hold-scam-011,scam,tech-support,US,phone-script,team-written,I'm calling from Apple Support. We've detected hackers on your iCloud account. Please download our support app so I can secure it for you.
+hold-scam-012,scam,prize,UK,sms,team-written,"Congratulations, your number was drawn in our Christmas draw! Collect your 500 GBP Tesco voucher: tesco-prizes.example"
+hold-scam-013,scam,romance,UK,messenger,team-written,I love you so much. My bank account has been frozen while I'm overseas. Could you lend me 900 GBP? I'll pay you back as soon as I'm home.
+hold-scam-014,scam,investment,US,sms,team-written,"Hi, I'm Jenny's assistant. She asked me to share this stock tip with you. Join our free WhatsApp investment club for daily picks."
+hold-scam-015,scam,job,UK,sms,team-written,"Hello, we are recruiting for remote online reviewers. Earn up to 400 GBP weekly from your phone. Reply YES for details."
+hold-scam-016,scam,account,US,sms,team-written,"Your Amazon Prime membership will auto-renew at $139. If you did not authorize this, press 1 to speak to an agent."
+hold-scam-017,scam,charity,US,email,team-written,Help the flood victims today! We only accept donations by gift card or cryptocurrency to keep costs low.
+hold-scam-018,scam,refund,US,phone-script,team-written,"You were overcharged by your internet company. To send your refund, I need you to log in to your bank while I connect to your computer."
+hold-scam-019,scam,medicare,US,sms,team-written,Your Medicare benefits are about to expire. Call now to keep your coverage active.
+hold-scam-020,scam,wrong-number,US,sms,team-written,"Hey, are we still meeting for golf on Sunday? Oh sorry, wrong person! Nice to meet you anyway."
+hold-ok-001,ok,bank,US,sms,team-written,Wells Fargo: Did you use your card ending 4821 for $73.45 at Target? Reply YES or NO. We will never ask for your PIN or password.
+hold-ok-002,ok,bank,UK,sms,team-written,Nationwide: your new card PIN reminder has been posted to your home address.
+hold-ok-003,ok,delivery,US,email,team-written,Your Etsy order has shipped with USPS. Estimated delivery: Monday.
+hold-ok-004,ok,delivery,UK,sms,team-written,DPD: your parcel will arrive between 10:12 and 11:12 today. Your driver is Tom.
+hold-ok-005,ok,family,US,sms,team-written,Hi Grandma! Mom said you're learning to use Venmo. Want me to show you on Sunday?
+hold-ok-006,ok,family,UK,whatsapp,team-written,"Mum, my phone screen cracked so I'm on Dad's phone. Just to say I'll be late for tea!"
+hold-ok-007,ok,family,US,sms,team-written,Can you keep this a secret? I'm proposing to Maria on Saturday!
+hold-ok-008,ok,health,US,sms,team-written,Kaiser Permanente: your lab results are ready. Sign in to kp.org to view them.
+hold-ok-009,ok,health,UK,sms,team-written,Your GP surgery: please book your annual review by calling 01632 960123 or using the NHS App.
+hold-ok-010,ok,government,US,email,team-written,Your passport application has been received and is being processed. You can check its status on travel.state.gov.
+hold-ok-011,ok,utility,UK,sms,team-written,Thames Water: we're carrying out urgent repairs on your street. Water may be off for 2 hours this afternoon.
+hold-ok-012,ok,tech,US,email,team-written,"Your Apple ID was used to sign in on an iPad. If you recognize this, you can ignore this email."
+hold-ok-013,ok,community,US,email,team-written,Congratulations! You won the raffle at the senior center: a fruit basket. Pick it up at the front desk.
+hold-ok-014,ok,community,UK,email,team-written,Book club is going online this week. The video link will be sent by the organiser on Thursday.
+hold-ok-015,ok,work,UK,email,team-written,Thank you for applying to volunteer at the charity shop. We'd like to invite you for a chat next Tuesday.
+hold-ok-016,ok,shopping,US,email,team-written,Your Costco membership renews next month for $65. No action is needed.
+hold-ok-017,ok,friends,UK,sms,team-written,"Fancy fish and chips Friday? I'll pay this time, you got the last one!"
+hold-ok-018,ok,friends,US,sms,team-written,I sent you $25 on Zelle for the theater tickets.
+hold-ok-019,ok,travel,US,sms,team-written,Delta: your flight DL 1442 is delayed 40 minutes. New departure 3:15 PM.
+hold-ok-020,ok,events,UK,email,team-written,You're invited to the Christmas carol concert at St Mary's on 14 December.

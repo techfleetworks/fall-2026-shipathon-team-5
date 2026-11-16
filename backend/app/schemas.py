@@ -33,7 +33,10 @@ class TextCheckRequest(BaseModel):
     text: str
 
 
-RedFlagType = Literal["urgency", "payment", "link", "secrecy", "credentials", "prize"]
+RedFlagType = Literal[
+    "urgency", "payment", "link", "secrecy", "credentials", "prize",
+    "new_contact", "unrealistic_offer", "remote_access",
+]
 
 
 class RedFlag(BaseModel):
