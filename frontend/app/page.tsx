@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Container from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
-import VerdictBadge from "@/components/ui/VerdictBadge";
+import HeroQuizLoader from "@/components/HeroQuizLoader";
+import { checklists } from "@/lib/content/checklists";
+import Image from "next/image";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 
 const steps = [
@@ -22,16 +24,23 @@ const steps = [
   }
 ];
 
-const guides = [
+const guides: {
+  title: string;
+  meta: string;
+  href: string;
+  image?: { src: string; alt: string };
+}[] = [
   {
     title: "Spotting AI-generated images",
-    meta: "5 min · 8 checks",
+    meta: "4 min · 8 checks",
     href: "/spot-the-slop/images-and-visuals",
+    image: checklists["images-and-visuals"].cardImage, // same photo as on the Learn page
   },
   {
     title: "Spotting voice clones",
-    meta: "4 min · 3 steps",
+    meta: "3 min · 4 steps",
     href: "/spot-the-slop/audio-and-voice",
+    image: checklists["audio-and-voice"].cardImage, // same photo as on the Learn page
   },
   {
     title: "How to do a reverse image search",
@@ -58,31 +67,16 @@ export default function Home() {
               what you see and teaches you to spot fakes on your own.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/skill-check/real-or-ai">Take the 3-image skill check</ButtonLink>
-              <ButtonLink href="/check-before-you-believe" variant="dark">
-                Verify content
+              <ButtonLink href="/check-before-you-believe/using-veritas">Use the Veritas extension</ButtonLink>
+              <ButtonLink href="/spot-the-slop" variant="dark">
+                Start learning
               </ButtonLink>
             </div>
           </div>
 
           {/* Preview of the Real or AI? quiz. Hidden on phones. */}
           <div className="mx-auto hidden w-full max-w-md md:block">
-            <div className="flex justify-between text-body-sm">
-              <span className="font-semibold">Real or AI?</span>
-              <span className="text-inverse-muted">Round 1 of 3</span>
-            </div>
-            <ImagePlaceholder label="Festival photo" dark className="mt-3 aspect-[3/2] w-full" />
-            <div className="mt-3 grid grid-cols-2 gap-2" aria-hidden="true">
-              <span className="flex min-h-11 items-center justify-center rounded-control bg-deep-raised text-label font-semibold">
-                Real
-              </span>
-              <span className="flex min-h-11 items-center justify-center rounded-control bg-deep-raised text-label font-semibold">
-                AI-generated
-              </span>
-            </div>
-            <div className="mt-3">
-              <VerdictBadge verdict="misleading" />
-            </div>
+            <HeroQuizLoader />
           </div>
         </Container>
       </section>
@@ -119,7 +113,7 @@ export default function Home() {
                 Short, visual guides. Each one takes about 4 minutes.
               </p>
             </div>
-            <ButtonLink href="/spot-the-slop" variant="outline">
+            <ButtonLink href="/spot-the-slop" variant="outline-teal">
               See all guides
             </ButtonLink>
           </div>
@@ -130,7 +124,19 @@ export default function Home() {
                   href={guide.href}
                   className="grid overflow-hidden rounded-card border border-line bg-canvas hover:border-ink sm:grid-cols-[240px_1fr]"
                 >
-                  <ImagePlaceholder label={guide.title} className="aspect-[3/2] rounded-none" />
+                  {guide.image ? (
+                    <div className="relative aspect-[3/2] bg-deep">
+                      <Image
+                        src={guide.image.src}
+                        alt={guide.image.alt}
+                        fill
+                        sizes="(min-width: 640px) 240px, 100vw"
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <ImagePlaceholder label={guide.title} className="aspect-[3/2] rounded-none" />
+                  )}
                   <span className="flex flex-col justify-center p-6">
                     <span className="font-heading text-h5 font-bold">{guide.title}</span>
                     <span className="mt-1 text-body-sm text-ink-muted">{guide.meta}</span>
@@ -160,7 +166,7 @@ export default function Home() {
               </p>
               <ButtonLink
                 href="/check-before-you-believe/using-veritas"
-                variant="outline"
+                variant="outline-teal"
                 className="mt-6"
               >
                 How it works
