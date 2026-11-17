@@ -10,15 +10,19 @@ export type GuideCheck = {
 export type Annotation = {
   title: string;
   text: string;
-  // Where the numbered marker sits on the example image, as % from the left and top.
-  x: number;
-  y: number;
+  // Where the numbered marker sits on the placeholder image, as % from the left and top.
+  // Not needed when the example image already has the numbers drawn on it.
+  x?: number;
+  y?: number;
 };
 
 export type PlatformGuide = {
   title: string;
   checks: GuideCheck[];
   annotations: Annotation[];
+  // Example screenshot with the numbered markers already drawn on it.
+  // Leave out to show the grey placeholder phone instead.
+  example?: { src: string; alt: string };
   terms: string[]; // must match a term in lib/content/glossary.ts to link to it
 };
 
@@ -31,10 +35,33 @@ const placeholderAnnotations: Annotation[] = [
   { title: "Annotation title", text: "Short note on what to look for at this spot.", x: 50, y: 72 },
 ];
 
+const commonAnnotations: Annotation[] = [
+  {
+    title: "Who posted it?",
+    text: "Tap the account. Is it new? Does it post the same thing over and over?",
+  },
+  {
+    title: "Is there an AI label?",
+    text: "Some content is marked with a label as being AI-generated, though this is not always a guarantee.",
+  },
+  {
+    title: "Do the comments have any additional context?",
+    text: "People sometimes post the real source or a correction.",
+  },
+  {
+    title: "What is the sound?",
+    text: "“Original sound” with an AI voice over real footage is a common trick.",
+  },
+];
+
 export const platformGuides: Record<string, PlatformGuide> = {
   tiktok: {
     title: "TikTok: what to check before you share",
-    annotations: placeholderAnnotations,
+    annotations: commonAnnotations,
+    example: {
+      src: "/images/guides/tiktok-example.png",
+      alt: "Example TikTok video screen with numbered markers on the account name, AI-generated label, comments button and sound.",
+    },
     terms: ["Deepfake", "Voice clone", "Bot"], // placeholders
     checks: [
       {
@@ -57,7 +84,11 @@ export const platformGuides: Record<string, PlatformGuide> = {
   },
   youtube: {
     title: "YouTube: what to check before you share",
-    annotations: placeholderAnnotations,
+    annotations: commonAnnotations,
+    example: {
+      src: "/images/guides/youtube-example.png",
+      alt: "Example YouTube Shorts screen with numbered markers on the channel name, AI label, comments button and sound.",
+    },
     terms: ["Deepfake", "Voice clone", "Watermark"], // placeholders
     checks: [
       {
@@ -80,7 +111,17 @@ export const platformGuides: Record<string, PlatformGuide> = {
   },
   instagram: {
     title: "Instagram: what to check before you share",
-    annotations: placeholderAnnotations,
+    annotations: [
+      ...commonAnnotations,
+      {
+        title: "Is there additional information?",
+        text: "Instagram sometimes provides additional context in the “About this reel” section.",
+      },
+    ],
+    example: {
+      src: "/images/guides/instagram-example.png",
+      alt: "Example Instagram Reel screen with numbered markers on the account name, AI content label, comments button, sound and the more-options menu.",
+    },
     terms: ["Content Credentials (C2PA)", "Deepfake", "Voice clone"], // placeholders
     checks: [
       {

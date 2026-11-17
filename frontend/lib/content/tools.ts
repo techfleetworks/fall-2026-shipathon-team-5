@@ -22,7 +22,7 @@ export const toolSections: ToolSection[] = [
     id: "using-veritas",
     title: "Using Veritas to verify",
     intro: "Check a picture where you find it, and see the reasons behind the result.",
-    guideHref: "/check-before-you-believe/using-veritas",
+    guideHref: "/tools-to-double-check/using-veritas",
     guideLabel: "Read the Veritas guide",
     cards: [
       { title: "Veritas the browser extension", text: "Right-click on an image or video to verify." },
@@ -33,7 +33,7 @@ export const toolSections: ToolSection[] = [
     id: "reverse-image-search",
     title: "How to do a reverse image search",
     intro: "Search with a picture instead of words to find where it first appeared.",
-    guideHref: "/check-before-you-believe/reverse-image-search",
+    guideHref: "/tools-to-double-check/reverse-image-search",
     guideLabel: "Read the step-by-step guide",
     // Draft steps: replace with the team's wording.
     bullets: [
@@ -43,13 +43,12 @@ export const toolSections: ToolSection[] = [
     ],
   },
   {
-    id: "fact-checkers",
-    title: "Trusted fact-checkers",
-    intro: "Teams that research viral claims and show the sources behind their answers.",
-    guideHref: "/check-before-you-believe/fact-checkers",
-    guideLabel: "See all fact-checkers",
+    id: "educational-orgs",
+    title: "Educational orgs and initiatives",
+    intro: "Teams that educate on AI literacy and research viral claims and show the sources behind their answers.",
+    guideHref: "/tools-to-double-check/educational-orgs",
+    guideLabel: "See all educational orgs and initiatives",
     cards: [
-      // suggested sites: review before launch
       {
         title: "AP Fact Check",
         text: "The Associated Press checks viral claims, photos and videos in the news.",

@@ -38,7 +38,7 @@ export default function PlatformGuidePage({ slug }: { slug: string }) {
             <h1 className="mt-3 font-heading text-h2 font-bold md:text-h1">{guide.title}</h1>
 
             <div className="mt-8">
-              <AnnotatedExample annotations={guide.annotations} />
+              <AnnotatedExample annotations={guide.annotations} example={guide.example} />
             </div>
 
             <ul className="mt-10 space-y-8">
