@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Tools to double-check" };
 // Same pattern as the Learn to spot the slop page: title, jump buttons, then
 // sections that alternate between white and light grey backgrounds.
 export default function Page() {
-  const section = findSection("/check-before-you-believe");
+  const section = findSection("/tools-to-double-check");
 
   return (
     <main className="flex-1">

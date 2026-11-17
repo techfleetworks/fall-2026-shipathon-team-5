@@ -6,7 +6,7 @@ import { findSection } from "@/lib/sitemap";
 export const metadata: Metadata = { title: "Quiz your skills" };
 
 export default function Page() {
-  const section = findSection("/skill-check");
+  const section = findSection("/quiz-your-skills");
   return (
     <main className="flex-1 py-6 md:py-8">
       <Container>

@@ -83,7 +83,7 @@ export default function HeroQuiz() {
         </div>
         <div className="mt-3 grid grid-cols-2 gap-2">
           <Link
-            href="/skill-check"
+            href="/quiz-your-skills"
             className="flex min-h-11 items-center justify-center rounded-control bg-primary text-label font-semibold text-on-primary"
           >
             Take the full quiz

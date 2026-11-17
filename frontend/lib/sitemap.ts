@@ -52,20 +52,20 @@ export const sections: Section[] = [
   {
     number: 2,
     title: "Tools to double-check",
-    href: "/check-before-you-believe",
+    href: "/tools-to-double-check",
     description: "Tools and steps for checking content before you share it.",
     children: [
-      { title: "Using Veritas to verify", href: "/check-before-you-believe/using-veritas", shortTitle: "Using Veritas" },
-      { title: "How to do a reverse image search", href: "/check-before-you-believe/reverse-image-search", shortTitle: "Reverse image search" },
-      { title: "Trusted fact-checkers", href: "/check-before-you-believe/fact-checkers", shortTitle: "Fact-checkers" },
+      { title: "Using Veritas to verify", href: "/tools-to-double-check/using-veritas", shortTitle: "Using Veritas" },
+      { title: "How to do a reverse image search", href: "/tools-to-double-check/reverse-image-search", shortTitle: "Reverse image search" },
+      { title: "Educational orgs and initiatives", href: "/tools-to-double-check/educational-orgs", shortTitle: "Educational-orgs" },
     ],
   },
   {
     number: 3,
     title: "Quiz your skills",
-    href: "/skill-check",
+    href: "/quiz-your-skills",
     description: "Test yourself: can you tell what's real?",
-    children: [], // the quiz is on the /skill-check page itself
+    children: [], // the quiz is on the /quiz-your-skills page itself
   },
   {
     number: 4,
@@ -104,9 +104,9 @@ export const footerGroups: { title: string; links: PageLink[] }[] = [
   {
     title: "Tools",
     links: [
-      { title: "Tools to double-check", href: "/check-before-you-believe" },
-      { title: "Using Veritas to verify", href: "/check-before-you-believe/using-veritas" },
-      { title: "Quiz your skills", href: "/skill-check" },
+      { title: "Tools to double-check", href: "/tools-to-double-check" },
+      { title: "Using Veritas to verify", href: "/tools-to-double-check/using-veritas" },
+      { title: "Quiz your skills", href: "/quiz-your-skills" },
     ],
   },
   {

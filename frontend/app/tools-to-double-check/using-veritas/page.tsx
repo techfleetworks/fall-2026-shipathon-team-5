@@ -4,5 +4,5 @@ import PlaceholderPage from "@/components/PlaceholderPage";
 export const metadata: Metadata = { title: "Using Veritas to verify" };
 
 export default function Page() {
-  return <PlaceholderPage href="/check-before-you-believe/using-veritas" />;
+  return <PlaceholderPage href="/tools-to-double-check/using-veritas" />;
 }
