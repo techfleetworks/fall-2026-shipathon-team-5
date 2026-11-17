@@ -15,12 +15,12 @@ const steps = [
   {
     title: "Check",
     text: "Download the free browser extension to check an image, with the reasons and sources behind it.",
-    href: "/check-before-you-believe",
+    href: "/tools-to-double-check",
   },
   {
     title: "Practice",
     text: "A Real or AI? challenge, so the skill sticks.",
-    href: "/skill-check",
+    href: "/quiz-your-skills",
   }
 ];
 
@@ -45,7 +45,7 @@ const guides: {
   {
     title: "How to do a reverse image search",
     meta: "4 min · 4 steps",
-    href: "/check-before-you-believe/reverse-image-search",
+    href: "/tools-to-double-check/reverse-image-search",
   },
 ];
 
@@ -67,7 +67,7 @@ export default function Home() {
               what you see and teaches you to spot fakes on your own.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/check-before-you-believe/using-veritas">Use the Veritas extension</ButtonLink>
+              <ButtonLink href="/tools-to-double-check/using-veritas">Use the Veritas extension</ButtonLink>
               <ButtonLink href="/spot-the-slop" variant="dark">
                 Start learning
               </ButtonLink>
@@ -165,7 +165,7 @@ export default function Home() {
                 Labels AI images and adds context notes right inside your feed and on news sites.
               </p>
               <ButtonLink
-                href="/check-before-you-believe/using-veritas"
+                href="/tools-to-double-check/using-veritas"
                 variant="outline-teal"
                 className="mt-6"
               >
