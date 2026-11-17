@@ -46,6 +46,10 @@ const guides: {
     title: "How to do a reverse image search",
     meta: "4 min · 4 steps",
     href: "/tools-to-double-check/reverse-image-search",
+    image: {
+      src: "/images/reverse-search/reverse-image-home.webp",
+      alt: "A 3D search bar with a magnifying glass icon.",
+    },
   },
 ];
 
