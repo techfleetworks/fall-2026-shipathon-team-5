@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Container from "@/components/ui/Container";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
+import PictureChecker from "@/components/PictureChecker";
 import { findPage } from "@/lib/sitemap";
 import { usingVeritasIntro, veritasFeatures } from "@/lib/content/usingVeritas";
 
@@ -31,6 +32,21 @@ export default function Page() {
           </nav>
           <h1 className="mt-6 font-heading text-h2 font-bold md:text-h1">{page.title}</h1>
           <p className="mt-4 max-w-2xl text-body-lg text-ink-muted">{usingVeritasIntro}</p>
+        </Container>
+      </section>
+
+      <section id="check-a-picture" aria-labelledby="check-a-picture-title" className="scroll-mt-20 pb-16 md:pb-20">
+        <Container>
+          <h2 id="check-a-picture-title" className="font-heading text-h3 font-bold md:text-h2">
+            Check a picture now
+          </h2>
+          <p className="mt-4 max-w-2xl text-body-lg text-ink-muted">
+            Not sure about a picture you&rsquo;ve seen? Save it, then check it here. We&rsquo;ll tell
+            you what we found and how sure we can be.
+          </p>
+          <div className="mt-8">
+            <PictureChecker />
+          </div>
         </Container>
       </section>
 

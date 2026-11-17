@@ -71,7 +71,7 @@ export default function Home() {
               what you see and teaches you to spot fakes on your own.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/tools-to-double-check/using-veritas">Use the Veritas extension</ButtonLink>
+              <ButtonLink href="/tools-to-double-check/using-veritas#check-a-picture">Check a picture</ButtonLink>
               <ButtonLink href="/spot-the-slop" variant="dark">
                 Start learning
               </ButtonLink>
