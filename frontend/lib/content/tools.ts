@@ -1,3 +1,5 @@
+import { featuredOrgs } from "@/lib/content/educationalOrgs";
+
 // Sections on the "Tools to double-check" page. Each section links to its full guide.
 // Cards marked "placeholder" are stand-ins until the real content is ready.
 
@@ -15,6 +17,7 @@ export type ToolSection = {
   guideLabel: string;
   cards?: ToolCardContent[];
   bullets?: string[]; // shown as a bulleted list instead of cards
+  hideImages?: boolean; // cards without the image area on top
 };
 
 export const toolSections: ToolSection[] = [
@@ -45,25 +48,10 @@ export const toolSections: ToolSection[] = [
   {
     id: "educational-orgs",
     title: "Educational orgs and initiatives",
-    intro: "Teams that educate on AI literacy and research viral claims and show the sources behind their answers.",
+    intro: "Teams that educate on AI literacy, research viral claims, and show the sources behind their answers.",
     guideHref: "/tools-to-double-check/educational-orgs",
     guideLabel: "See all educational orgs and initiatives",
-    cards: [
-      {
-        title: "AP Fact Check",
-        text: "The Associated Press checks viral claims, photos and videos in the news.",
-        link: { label: "Visit AP Fact Check", href: "https://apnews.com/ap-fact-check" },
-      },
-      {
-        title: "Reuters Fact Check",
-        text: "Reuters looks into misleading posts, images and videos shared on social media.",
-        link: { label: "Visit Reuters Fact Check", href: "https://www.reuters.com/fact-check/" },
-      },
-      {
-        title: "Snopes",
-        text: "One of the oldest fact-checking sites, covering rumors, hoaxes and viral images.",
-        link: { label: "Visit Snopes", href: "https://www.snopes.com" },
-      },
-    ],
+    cards: featuredOrgs, // edit these in educationalOrgs.ts
+    hideImages: true,
   },
 ];
