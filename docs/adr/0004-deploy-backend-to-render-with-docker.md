@@ -18,7 +18,8 @@ address to call.
 
 Package the backend as a Docker image (`backend/Dockerfile`) and deploy it to
 Render's free web service plan using a Blueprint (`render.yaml`). Render
-deploys from `develop` only after GitHub's checks pass, and uses
+deploys from `main` (the branch the live site is built from) only after
+GitHub's checks pass, and uses
 `/api/health` as its health check. The image runs as a non-root user. The rate
 limit tells visitors apart by the `True-Client-IP` header Cloudflare sets in
 front of Render (`APP_CLIENT_IP_HEADER`).
