@@ -11,8 +11,9 @@ services:
     dockerContext: .
     plan: free
     region: virginia
-    # Deploy from develop while testing; switch to main for launch.
-    branch: develop
+    # The live site (Vercel) is built from main, so the backend deploys from
+    # main too. Changes reach both together when develop is merged into main.
+    branch: main
     # Only deploy once GitHub's tests have passed.
     autoDeployTrigger: checksPass
     healthCheckPath: /api/health
