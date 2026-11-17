@@ -1,4 +1,5 @@
 import type { ToolCardContent } from "@/lib/content/tools";
+import Image from "next/image";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 
 export default function ToolCard({
@@ -14,7 +15,20 @@ export default function ToolCard({
     <article
       className={`flex h-full flex-col overflow-hidden rounded-card border border-line ${onGrey ? "bg-surface" : "bg-canvas"}`}
     >
-      {showImage && <ImagePlaceholder label={card.title} className="aspect-[2/1] rounded-none" />}
+      {showImage &&
+        (card.image ? (
+          <div className="relative aspect-[2/1] bg-subtle">
+            <Image
+              src={card.image.src}
+              alt={card.image.alt}
+              fill
+              sizes="(min-width: 768px) 600px, 100vw"
+              className={card.image.fit === "contain" ? "object-contain py-3" : "object-cover object-top"}
+            />
+          </div>
+        ) : (
+          <ImagePlaceholder label={card.title} className="aspect-[2/1] rounded-none" />
+        ))}
       <div className="flex flex-1 flex-col p-6">
         <h3 className="font-heading text-h5 font-bold">{card.title}</h3>
         <p className="mt-2 text-body-sm text-ink-muted">{card.text}</p>
