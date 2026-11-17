@@ -4,7 +4,7 @@ import type { Verdict } from './types';
 // the toolbar badge always agree. "uncertain" must never look like "real":
 // older visitors may read a green tick as "safe to share".
 export const VERDICT_DISPLAY: Record<Verdict, { text: string; tone: 'ai' | 'unclear' | 'ok'; badge: string; badgeColor: string }> = {
-  likely_ai: { text: 'Likely made with AI', tone: 'ai', badge: 'AI', badgeColor: '#b42318' },
+  likely_ai: { text: 'Likely AI-generated', tone: 'ai', badge: 'AI', badgeColor: '#b42318' },
   uncertain: { text: "We can't tell", tone: 'unclear', badge: '?', badgeColor: '#8a5a00' },
   likely_real: { text: 'Likely a real photo', tone: 'ok', badge: 'OK', badgeColor: '#1f7a4d' },
 };

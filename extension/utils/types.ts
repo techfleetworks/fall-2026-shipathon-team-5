@@ -42,11 +42,14 @@ export interface PlatformLabel {
   text: string;
 }
 
-/** What the extension stores and passes between its parts. srcUrl is the image URL, or the first frame for videos. */
+/**
+ * What the extension stores and passes between its parts. srcUrl is the image URL, or the
+ * first frame for videos. pageUrl is the page the picture was on, shown in the side panel.
+ */
 export type CheckState =
-  | { status: 'checking'; srcUrl: string; startedAt: number }
-  | { status: 'done'; srcUrl: string; result: CheckImageResult; finishedAt: number }
-  | { status: 'error'; srcUrl: string; message: string };
+  | { status: 'checking'; srcUrl: string; pageUrl?: string; startedAt: number }
+  | { status: 'done'; srcUrl: string; pageUrl?: string; result: CheckImageResult; finishedAt: number }
+  | { status: 'error'; srcUrl: string; pageUrl?: string; message: string };
 
 export const RESULT_MESSAGE = 'veritas:state' as const;
 
@@ -60,4 +63,6 @@ export type SocialRequest =
   | { type: 'veritas:check-image'; srcUrl: string; label: PlatformLabel | null }
   // Video checks are switched off until the backend can judge video frames (see social.content.ts).
   | { type: 'veritas:check-frames'; frames: string[]; label: PlatformLabel | null }
-  | { type: 'veritas:capture-tab'; rect: { x: number; y: number; width: number; height: number }; dpr: number };
+  | { type: 'veritas:capture-tab'; rect: { x: number; y: number; width: number; height: number }; dpr: number }
+  // The "Why?" button on the picture's label.
+  | { type: 'veritas:open-panel' };

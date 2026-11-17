@@ -1,5 +1,7 @@
 import { CheckError, checkFrames, checkImage, dataUrlToBlob, downloadImage, fitForUpload } from '@/utils/api';
 import { PLATFORM_NAME } from '@/utils/platforms';
+import { GUIDE_LINKS, canSearch, googleLensUrl, tinEyeUrl } from '@/utils/links';
+import { openPanel, openPanelFromToolbar } from '@/utils/panel';
 import { lastCheck } from '@/utils/storage';
 import { displayFor } from '@/utils/verdicts';
 import {
@@ -11,32 +13,54 @@ import {
   type SocialRequest,
 } from '@/utils/types';
 
-const MENU_ID = 'veritas-check-image';
+// The right-click menu. With more than one item, the browser groups them under
+// "Veritas" with our icon, so this shows as Veritas > Check this image, and so on.
+const MENU = {
+  check: 'veritas-check-image',
+  original: 'veritas-find-original',
+  reverse: 'veritas-reverse-search',
+  lookFor: 'veritas-what-to-look-for',
+} as const;
 
 export default defineBackground(() => {
+  // The toolbar icon opens the side panel (Firefox: the sidebar).
+  openPanelFromToolbar();
+
   // Menus persist across restarts, so create them once on install/update.
   browser.runtime.onInstalled.addListener(() => {
-    browser.contextMenus.create({
-      id: MENU_ID,
-      title: 'Check with Veritas',
-      contexts: ['image'],
+    void browser.contextMenus.removeAll().then(() => {
+      const items: [string, string][] = [
+        [MENU.check, 'Check this image'],
+        [MENU.original, 'Find the original source'],
+        [MENU.reverse, 'Reverse image search'],
+        [MENU.lookFor, 'What should I look for?'],
+      ];
+      for (const [id, title] of items) browser.contextMenus.create({ id, title, contexts: ['image'] });
     });
   });
 
-  // Right-click flow: works on any site, for images only.
   browser.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId !== MENU_ID || !info.srcUrl || tab?.id == null) return;
+    const srcUrl = info.srcUrl;
+    if (!srcUrl) return;
 
-    // Must be called right away, inside the click, or the browser rejects it.
+    // The search items just open a new tab next to this one.
+    const openTab = (url: string) => void browser.tabs.create({ url, index: tab ? tab.index + 1 : undefined });
+    if (info.menuItemId === MENU.original) return openTab(canSearch(srcUrl) ? tinEyeUrl(srcUrl) : GUIDE_LINKS.reverseSearch);
+    if (info.menuItemId === MENU.reverse) return openTab(canSearch(srcUrl) ? googleLensUrl(srcUrl) : GUIDE_LINKS.reverseSearch);
+    if (info.menuItemId === MENU.lookFor) return openTab(GUIDE_LINKS.imageChecklist);
+    if (info.menuItemId !== MENU.check || tab?.id == null) return;
+
+    // These must be called right away, inside the click, or the browser rejects them.
+    void openPanel(tab);
     // Resolves true with no prompt when the user has already allowed it.
     const permission = browser.permissions.request({ origins: ['<all_urls>'] });
     const tabId = tab.id;
-    const srcUrl = info.srcUrl;
+    const pageUrl = tab.url;
 
     void (async () => {
       await injectCard(tabId);
       await permission.catch(() => false); // If they say no, same-site images still work via activeTab.
-      await runImageCheck(tabId, srcUrl, null);
+      await runImageCheck(tabId, srcUrl, null, pageUrl);
     })();
   });
 
@@ -45,10 +69,13 @@ export default defineBackground(() => {
     const tabId = sender.tab?.id;
     if (tabId == null) return;
 
-    if (msg.type === 'veritas:check-image') {
-      void runImageCheck(tabId, msg.srcUrl, msg.label);
+    if (msg.type === 'veritas:open-panel') {
+      void openPanel(sender.tab);
+    } else if (msg.type === 'veritas:check-image') {
+      void openPanel(sender.tab);
+      void runImageCheck(tabId, msg.srcUrl, msg.label, sender.tab?.url);
     } else if (msg.type === 'veritas:check-frames') {
-      void runFramesCheck(tabId, msg.frames, msg.label);
+      void runFramesCheck(tabId, msg.frames, msg.label, sender.tab?.url);
     } else if (msg.type === 'veritas:capture-tab') {
       captureArea(sender.tab!.windowId!, msg.rect, msg.dpr).then(sendResponse, () => sendResponse(undefined));
       return true; // keeps sendResponse open for the async reply
@@ -56,27 +83,27 @@ export default defineBackground(() => {
   });
 });
 
-async function runImageCheck(tabId: number, srcUrl: string, label: PlatformLabel | null) {
-  await publish(tabId, { status: 'checking', srcUrl, startedAt: Date.now() });
+async function runImageCheck(tabId: number, srcUrl: string, label: PlatformLabel | null, pageUrl?: string) {
+  await publish(tabId, { status: 'checking', srcUrl, pageUrl, startedAt: Date.now() });
   try {
     const original = await downloadImage(srcUrl);
     const { blob, resized } = await fitForUpload(original);
     const result = withLabel(await checkImage(blob, resized), label);
-    await finish(tabId, srcUrl, result);
+    await finish(tabId, srcUrl, result, pageUrl);
   } catch (err) {
-    await fail(tabId, srcUrl, err);
+    await fail(tabId, srcUrl, err, pageUrl);
   }
 }
 
-async function runFramesCheck(tabId: number, frames: string[], label: PlatformLabel | null) {
+async function runFramesCheck(tabId: number, frames: string[], label: PlatformLabel | null, pageUrl?: string) {
   const thumb = frames[0] ?? '';
-  await publish(tabId, { status: 'checking', srcUrl: thumb, startedAt: Date.now() });
+  await publish(tabId, { status: 'checking', srcUrl: thumb, pageUrl, startedAt: Date.now() });
   try {
     const blobs = await Promise.all(frames.map(dataUrlToBlob));
     const result = withLabel(await checkFrames(blobs), label);
-    await finish(tabId, thumb, result);
+    await finish(tabId, thumb, result, pageUrl);
   } catch (err) {
-    await fail(tabId, thumb, err);
+    await fail(tabId, thumb, err, pageUrl);
   }
 }
 
@@ -101,16 +128,16 @@ function withLabel(result: CheckImageResult, label: PlatformLabel | null): Check
   };
 }
 
-async function finish(tabId: number, srcUrl: string, result: CheckImageResult) {
-  await publish(tabId, { status: 'done', srcUrl, result, finishedAt: Date.now() });
+async function finish(tabId: number, srcUrl: string, result: CheckImageResult, pageUrl?: string) {
+  await publish(tabId, { status: 'done', srcUrl, pageUrl, result, finishedAt: Date.now() });
   const shown = displayFor(result.verdict);
   await setBadge(tabId, shown.badge, shown.badgeColor);
 }
 
-async function fail(tabId: number, srcUrl: string, err: unknown) {
+async function fail(tabId: number, srcUrl: string, err: unknown, pageUrl?: string) {
   const message = err instanceof CheckError ? err.message : 'Something went wrong. Please try again.';
   console.error('[Veritas]', err);
-  await publish(tabId, { status: 'error', srcUrl, message });
+  await publish(tabId, { status: 'error', srcUrl, pageUrl, message });
 }
 
 /**
@@ -144,12 +171,12 @@ async function injectCard(tabId: number) {
   try {
     await browser.scripting.executeScript({ target: { tabId }, files: ['/content-scripts/content.js'] });
   } catch (err) {
-    // Some pages (browser settings, the web store) block all extensions. The popup still works.
+    // Some pages (browser settings, the web store) block all extensions. The side panel still works.
     console.warn('[Veritas] Could not inject into this page', err);
   }
 }
 
-/** Save the state for the popup and tell the page's content script. */
+/** Save the state for the side panel and tell the page's content script. */
 async function publish(tabId: number, state: CheckState) {
   await lastCheck.setValue(state);
   const msg: ResultMessage = { type: RESULT_MESSAGE, state };
