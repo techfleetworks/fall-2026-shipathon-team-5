@@ -3,7 +3,7 @@ import { defineConfig } from 'wxt';
 
 // Where the FastAPI backend lives. Override in .env.local with WXT_API_URL.
 const env = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), 'WXT_');
-const API_URL = env.WXT_API_URL || 'http://localhost:8000';
+const API_URL = env.WXT_API_URL || 'https://team5-backend-lnzk.onrender.com';
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({

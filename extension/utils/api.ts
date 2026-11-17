@@ -1,10 +1,15 @@
 import type { CheckImageResult } from './types';
 
-export const API_URL: string = import.meta.env.WXT_API_URL ?? 'http://localhost:8000';
+// The live backend on Render. Override in .env.local with WXT_API_URL (e.g. http://localhost:8000).
+export const API_URL: string = import.meta.env.WXT_API_URL || 'https://team5-backend-lnzk.onrender.com';
 const USE_MOCK = import.meta.env.WXT_USE_MOCK === 'true';
 
-/** Vercel Functions reject request bodies over 4.5 MB. Stay under it with room for the form wrapper. */
-const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
+/** The backend accepts pictures up to 10 MB (APP_MAX_IMAGE_BYTES). */
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+/** Picture types the backend reads. Others are converted to JPEG first. */
+const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+/** The free Render server can take up to a minute to wake up. */
+const TIMEOUT_MS = 90_000;
 /** Refuse to even try past this. */
 const MAX_DOWNLOAD_BYTES = 25 * 1024 * 1024;
 /** Longest side after shrinking. Detectors don't need more. */
@@ -34,11 +39,14 @@ export async function downloadImage(srcUrl: string): Promise<Blob> {
 }
 
 /**
- * Send the original when it fits, because re-encoding strips C2PA Content Credentials.
- * Only shrink images that are over Vercel's upload limit.
+ * Send the original when the backend can read it, because re-encoding strips C2PA
+ * Content Credentials. Only convert pictures that are too large or in another format
+ * (GIF, AVIF...); `resized` then tells the result to say credentials may be lost.
  */
 export async function fitForUpload(image: Blob): Promise<{ blob: Blob; resized: boolean }> {
-  if (image.size <= MAX_UPLOAD_BYTES) return { blob: image, resized: false };
+  if (image.size <= MAX_UPLOAD_BYTES && ACCEPTED_TYPES.includes(image.type)) {
+    return { blob: image, resized: false };
+  }
 
   const bitmap = await createImageBitmap(image);
   const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
@@ -55,17 +63,39 @@ export async function fitForUpload(image: Blob): Promise<{ blob: Blob; resized: 
 
 /** Send the image to POST /api/check-image. */
 export async function checkImage(image: Blob, resized = false): Promise<CheckImageResult> {
-  if (USE_MOCK) return mockResult();
+  const result = USE_MOCK ? await mockResult() : await postImage(image);
+  if (!resized) return result;
+  // We had to convert the picture, which removes Content Credentials. Say so,
+  // so "no record found" isn't taken as meaningful.
+  return {
+    ...result,
+    signals: [
+      ...result.signals,
+      {
+        label: 'Picture was converted before checking',
+        explanation:
+          'This picture was too large or in a format we can\'t read, so Veritas converted it. ' +
+          'That removes any record of how it was made, so save the original and check it on the Veritas website if you can.',
+      },
+    ],
+  };
+}
 
+async function postImage(image: Blob): Promise<CheckImageResult> {
   const form = new FormData();
   form.append('file', image, 'image');
-  // Tells the backend that C2PA data may have been lost in resizing.
-  form.append('resized', String(resized));
 
   let res: Response;
   try {
-    res = await fetch(`${API_URL}/api/check-image`, { method: 'POST', body: form });
-  } catch {
+    res = await fetch(`${API_URL}/api/check-image`, {
+      method: 'POST',
+      body: form,
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'TimeoutError') {
+      throw new CheckError('The Veritas server took too long to answer. Please try again in a minute.');
+    }
     throw new CheckError("Couldn't reach the Veritas server. Check your connection and try again.");
   }
 
@@ -78,10 +108,15 @@ export async function checkImage(image: Blob, resized = false): Promise<CheckIma
   return (await res.json()) as CheckImageResult;
 }
 
-/** Vercel's 4.5 MB body limit applies to all frames together. */
-const MAX_FRAMES_BYTES = 4 * 1024 * 1024;
+/** Keep all frames together under the backend's upload limit. */
+const MAX_FRAMES_BYTES = 10 * 1024 * 1024;
 
-/** Send several video frames to POST /api/check-frames. The backend checks each and combines them. */
+/**
+ * Send several video frames to POST /api/check-frames.
+ * NOT USED YET: the backend has no /api/check-frames, and frames grabbed from a video
+ * never carry Content Credentials, so they need the planned AI-image classifier.
+ * Video checks are switched off in social.content.ts until then.
+ */
 export async function checkFrames(frames: Blob[]): Promise<CheckImageResult> {
   if (USE_MOCK) return { ...(await mockResult()), framesChecked: frames.length };
 
@@ -115,12 +150,20 @@ async function mockResult(): Promise<CheckImageResult> {
   await new Promise((r) => setTimeout(r, 800));
   return {
     verdict: 'likely_ai',
-    likelihood: 0.92,
-    source: 'mock',
+    ai_likelihood: 0.9,
+    content_credentials: {
+      found: true,
+      status: 'untrusted_signer',
+      source: 'ai_generated',
+      signed_by: 'Example signer',
+      issuer: null,
+      generator: 'Example Image Generator',
+      signed_at: null,
+    },
     signals: [
-      { level: 'bad', title: 'No camera data', detail: 'The file has no camera or editing history.' },
-      { level: 'warn', title: 'Detector score: 92%', detail: 'Patterns match images made by AI tools.' },
-      { level: 'good', title: 'No signs of editing', detail: 'Nothing was pasted in or retouched.' },
+      { label: 'Made with AI', explanation: "The picture's Content Credentials say it was created by an AI tool (Example Image Generator)." },
+      { label: "Signed, but we don't recognise the signer", explanation: 'Anyone can make a signature, so treat what it says with care. (Mock result.)' },
     ],
+    message: "This picture's own record says it was made with AI. (Mock result.)",
   };
 }

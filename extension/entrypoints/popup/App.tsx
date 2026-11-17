@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { lastCheck } from '@/utils/storage';
-import type { CheckState, Signal } from '@/utils/types';
+import type { CheckState } from '@/utils/types';
+import { NEXT_STEPS, displayFor } from '@/utils/verdicts';
 
 export default function App() {
   const [state, setState] = useState<CheckState | null>(null);
@@ -18,7 +19,7 @@ export default function App() {
         <h1>Veritas</h1>
       </header>
       {state ? <Result state={state} /> : <Empty />}
-      <p className="footnote">Veritas estimates likelihood, not certainty. Always check the source.</p>
+      <p className="footnote">No checker is perfect. Always check where a picture came from.</p>
     </main>
   );
 }
@@ -34,45 +35,44 @@ function Empty() {
 }
 
 function Result({ state }: { state: CheckState }) {
-  if (state.status === 'checking') return <section className="card">Checking this image…</section>;
+  if (state.status === 'checking') {
+    return (
+      <section className="card" aria-live="polite">
+        Checking this image…
+        <p className="hint">The first check can take up to a minute while the server wakes up.</p>
+      </section>
+    );
+  }
   if (state.status === 'error') return <section className="card" role="alert">{state.message}</section>;
 
   const { result } = state;
-  const pct = result.likelihood == null ? null : Math.round(result.likelihood * 100);
+  const shown = displayFor(result.verdict);
   return (
     <>
       <section className="card">
-        {state.srcUrl && <img className="thumb" src={state.srcUrl} alt="What you checked" />}
-        <p className={`pill ${result.verdict}`}>{VERDICT_TEXT[result.verdict]}</p>
-        {pct != null && <p>AI likelihood: <strong>{pct}%</strong></p>}
-        {result.framesChecked && <p>Based on {result.framesChecked} frames from the video.</p>}
-        {result.source === 'c2pa' && <p>This image carries signed Content Credentials.</p>}
+        {state.srcUrl && <img className="thumb" src={state.srcUrl} alt="The picture you checked" />}
+        <p className={`pill ${shown.tone}`}>{shown.text}</p>
+        <p className="message">{result.message}</p>
       </section>
       <h2>What we found</h2>
       <ul className="signals">
-        {result.signals.map((s, i) => <SignalRow key={i} signal={s} />)}
+        {result.signals.map((s) => (
+          <li key={s.label} className="signal">
+            <strong>{s.label}</strong>
+            <p>{s.explanation}</p>
+          </li>
+        ))}
+      </ul>
+      <h2>Before you share</h2>
+      <ul className="next">
+        {NEXT_STEPS.map((step) => (
+          <li key={step.href}>
+            <a className="button" href={step.href} target="_blank" rel="noreferrer">
+              {step.label}
+            </a>
+          </li>
+        ))}
       </ul>
     </>
   );
 }
-
-function SignalRow({ signal }: { signal: Signal }) {
-  const icon = { bad: '✕', warn: '!', good: '✓' }[signal.level];
-  return (
-    <li className={`signal ${signal.level}`}>
-      <span className="icon" aria-hidden>{icon}</span>
-      <div>
-        <strong>{signal.title}</strong>
-        <p>{signal.detail}</p>
-      </div>
-    </li>
-  );
-}
-
-const VERDICT_TEXT: Record<string, string> = {
-  verified_ai: 'Made with AI (signed or labeled)',
-  likely_ai: 'Likely AI-generated',
-  unclear: 'Unclear',
-  likely_real: 'Likely not AI',
-  verified_real: 'Signed by a camera',
-};

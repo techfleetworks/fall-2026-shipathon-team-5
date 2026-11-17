@@ -1,27 +1,37 @@
-// The contract between the extension and the backend
-// (POST /api/check-image and POST /api/check-frames).
-// Keep this in sync with backend/app/schemas.py.
+// The contract between the extension and the backend (POST /api/check-image).
+// Keep this in sync with backend/app/schemas.py; the full list of fields is at
+// <backend>/docs.
 
-export type Verdict = 'likely_ai' | 'unclear' | 'likely_real' | 'verified_ai' | 'verified_real';
-
-export type SignalLevel = 'bad' | 'warn' | 'good';
+export type Verdict = 'likely_ai' | 'uncertain' | 'likely_real';
 
 export interface Signal {
-  level: SignalLevel;
-  title: string;
-  detail: string;
+  label: string;
+  explanation: string;
 }
 
+export interface ContentCredentials {
+  found: boolean;
+  status: 'none' | 'trusted' | 'trusted_legacy' | 'untrusted_signer' | 'invalid' | 'unreadable';
+  source: 'ai_generated' | 'ai_modified' | 'camera' | 'computer_made' | 'unknown';
+  signed_by: string | null;
+  issuer: string | null;
+  generator: string | null;
+  signed_at: string | null;
+}
+
+/** What the backend returns. */
 export interface CheckImageResult {
   verdict: Verdict;
-  /** 0-1 likelihood that the media is AI-generated. Null when C2PA or a platform label gives a certain answer. */
-  likelihood: number | null;
-  /** "c2pa" | "sightengine" | "hf_model" | "mock" | "platform_label" */
-  source: string;
+  /** 0-1 likelihood that the picture is AI-made. Null when there's no evidence either way. */
+  ai_likelihood: number | null;
+  content_credentials: ContentCredentials;
   signals: Signal[];
-  /** Video only: how many frames the verdict is based on. */
+  /** One plain-language sentence for the visitor. Show this first. */
+  message: string;
+  /** Added by the extension, not the backend: the site's own AI label on the post. */
+  platformLabel?: PlatformLabel;
+  /** Added by the extension for video checks (switched off for now): frames sent. */
   framesChecked?: number;
-  // Later: learnMoreSlug, linking to a lesson on the Veritas website once it exists.
 }
 
 export type Platform = 'x' | 'facebook' | 'youtube' | 'other';
@@ -48,5 +58,6 @@ export interface ResultMessage {
 /** Messages from the social-site content script to the background worker. */
 export type SocialRequest =
   | { type: 'veritas:check-image'; srcUrl: string; label: PlatformLabel | null }
+  // Video checks are switched off until the backend can judge video frames (see social.content.ts).
   | { type: 'veritas:check-frames'; frames: string[]; label: PlatformLabel | null }
   | { type: 'veritas:capture-tab'; rect: { x: number; y: number; width: number; height: number }; dpr: number };

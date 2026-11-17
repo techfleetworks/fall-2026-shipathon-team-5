@@ -1,4 +1,5 @@
 import type { CheckState } from './types';
+import { displayFor } from './verdicts';
 
 // The result card drawn on top of the page, next to the checked image or video.
 // Shared by the right-click flow (content.ts) and the social-site buttons (social.content.ts).
@@ -28,10 +29,11 @@ export function renderCard(state: CheckState, anchor?: Element | null) {
       button { margin-top: 10px; border: 1px solid #ccc; background: #fff; border-radius: 6px;
         padding: 6px 12px; font: inherit; color: #111; cursor: pointer; }
       .note { margin-top: 8px; font-size: 13px; color: #555; }
+      .message { margin: 8px 0 0; font-size: 16px; font-weight: 600; }
     </style>
     <div class="card" role="dialog" aria-live="polite" aria-label="Veritas result">
       ${body(state)}
-      <div class="note">Veritas estimates likelihood, not certainty.</div>
+      <div class="note">No checker is perfect. Check where it came from too.</div>
       <button type="button" id="close">Close</button>
     </div>`;
 
@@ -44,21 +46,15 @@ export function removeCard() {
 }
 
 function body(state: CheckState): string {
-  if (state.status === 'checking') return '<div>Checking…</div>';
+  if (state.status === 'checking') {
+    return '<div>Checking…</div><div class="note">The first check can take up to a minute while the server wakes up.</div>';
+  }
   if (state.status === 'error') return `<div>${escapeHtml(state.message)}</div>`;
 
-  const { verdict, likelihood, framesChecked } = state.result;
-  const pct = likelihood == null ? '' : ` · ${Math.round(likelihood * 100)}%`;
-  const label: Record<string, [string, string]> = {
-    verified_ai: ['ai', 'Made with AI (signed or labeled)'],
-    likely_ai: ['ai', `Likely AI-generated${pct}`],
-    unclear: ['unclear', `Unclear${pct}`],
-    likely_real: ['ok', `Likely not AI${pct}`],
-    verified_real: ['ok', 'Camera-signed Content Credentials'],
-  };
-  const [cls, text] = label[verdict] ?? ['unclear', 'Unclear'];
-  const frames = framesChecked ? `<div class="note">Based on ${framesChecked} video frames.</div>` : '';
-  return `<span class="pill ${cls}">${escapeHtml(text)}</span>${frames}
+  const { verdict, message } = state.result;
+  const shown = displayFor(verdict);
+  return `<span class="pill ${shown.tone}">${escapeHtml(shown.text)}</span>
+    <p class="message">${escapeHtml(message)}</p>
     <div class="note">Click the Veritas icon in your toolbar to see why.</div>`;
 }
 

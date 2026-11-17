@@ -53,17 +53,29 @@ export function isCheckableImage(img: HTMLImageElement, platform: Platform): boo
 export function findPlatformLabel(media: Element, platform: Platform): PlatformLabel | null {
   if (platform === 'youtube') {
     // Shown in the description area of a watch page or Short.
-    const text = document.querySelector('ytd-watch-metadata, ytd-reel-video-renderer[is-active]')?.textContent ?? '';
-    const m = text.match(/Altered or synthetic content/i);
-    return m ? { platform, text: m[0] } : null;
+    const area = document.querySelector('ytd-watch-metadata, ytd-reel-video-renderer[is-active]');
+    return area && hasExactText(area, 'Altered or synthetic content') ? { platform, text: 'Altered or synthetic content' } : null;
   }
   if (platform === 'facebook') {
     const post = media.closest('[role="article"]') ?? media.closest('[role="dialog"]');
-    const m = post?.textContent?.match(/\bAI info\b/);
-    return m ? { platform, text: m[0] } : null;
+    return post && hasExactText(post, 'AI info') ? { platform, text: 'AI info' } : null;
   }
   // X has no standard AI label as of this build. Community Notes could be a later signal.
   return null;
+}
+
+/**
+ * True when some piece of text inside `root` is exactly `label` on its own, the way a
+ * site's badge or button is. A caption that merely mentions the words ("some AI info
+ * for you") doesn't count, so people can't trigger the label by writing it.
+ */
+function hasExactText(root: Element, label: string): boolean {
+  const want = label.toLowerCase();
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (node.textContent?.trim().toLowerCase() === want) return true;
+  }
+  return false;
 }
 
 export const PLATFORM_NAME: Record<Platform, string> = {

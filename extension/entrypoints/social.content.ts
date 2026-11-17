@@ -12,6 +12,12 @@ import { RESULT_MESSAGE, type ResultMessage, type SocialRequest } from '@/utils/
 // Right-click doesn't work well there: Facebook covers photos with invisible layers,
 // YouTube replaces the right-click menu, and videos stream in pieces with no file to save.
 
+// Video checks are off until the backend can judge video frames: frames grabbed from a
+// video never carry Content Credentials, so without the planned AI-image classifier the
+// answer would always be "we can't tell". The frame-grabbing code below is kept for then.
+// YouTube thumbnails and photos still get a Check button.
+const VIDEO_CHECKS = false;
+
 const FRAME_COUNT = 5;
 const FRAME_GAP_MS = 800;
 const FRAME_MAX_SIDE = 1280;
@@ -52,7 +58,7 @@ export default defineContentScript({
     function mediaAt(x: number, y: number): HTMLImageElement | HTMLVideoElement | null {
       for (const el of document.elementsFromPoint(x, y)) {
         if (el === host) return target; // pointer is on our button: keep the current target
-        if (el instanceof HTMLVideoElement) {
+        if (VIDEO_CHECKS && el instanceof HTMLVideoElement) {
           const r = el.getBoundingClientRect();
           if (r.width >= MIN_MEDIA_SIZE && r.height >= MIN_MEDIA_SIZE) return el;
         }

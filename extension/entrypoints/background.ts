@@ -1,6 +1,7 @@
 import { CheckError, checkFrames, checkImage, dataUrlToBlob, downloadImage, fitForUpload } from '@/utils/api';
 import { PLATFORM_NAME } from '@/utils/platforms';
 import { lastCheck } from '@/utils/storage';
+import { displayFor } from '@/utils/verdicts';
 import {
   RESULT_MESSAGE,
   type CheckImageResult,
@@ -79,20 +80,31 @@ async function runFramesCheck(tabId: number, frames: string[], label: PlatformLa
   }
 }
 
-/** A label the platform itself shows outranks a detector guess. */
+/**
+ * A label the site itself puts on the post outranks "we can't tell": the site
+ * has information we don't. It doesn't override a signed record, which is
+ * stronger, so it's added as the first clue either way.
+ */
 function withLabel(result: CheckImageResult, label: PlatformLabel | null): CheckImageResult {
   if (!label) return result;
+  const site = PLATFORM_NAME[label.platform];
   const signal = {
-    level: 'bad' as const,
-    title: `Labeled by ${PLATFORM_NAME[label.platform]}`,
-    detail: `${PLATFORM_NAME[label.platform]} shows "${label.text}" on this post.`,
+    label: `Labeled by ${site}`,
+    explanation: `${site} shows "${label.text}" on this post. That means ${site} believes it was made or changed with AI.`,
   };
-  return { ...result, verdict: 'verified_ai', source: 'platform_label', signals: [signal, ...result.signals] };
+  const labelled = { ...result, platformLabel: label, signals: [signal, ...result.signals] };
+  if (result.verdict !== 'uncertain') return labelled;
+  return {
+    ...labelled,
+    verdict: 'likely_ai',
+    message: `${site} has labeled this post as made or changed with AI.`,
+  };
 }
 
 async function finish(tabId: number, srcUrl: string, result: CheckImageResult) {
   await publish(tabId, { status: 'done', srcUrl, result, finishedAt: Date.now() });
-  await setBadge(tabId, result.verdict.includes('ai') ? 'AI' : result.verdict === 'unclear' ? '?' : 'OK');
+  const shown = displayFor(result.verdict);
+  await setBadge(tabId, shown.badge, shown.badgeColor);
 }
 
 async function fail(tabId: number, srcUrl: string, err: unknown) {
@@ -144,7 +156,7 @@ async function publish(tabId: number, state: CheckState) {
   await browser.tabs.sendMessage(tabId, msg).catch(() => {});
 }
 
-async function setBadge(tabId: number, text: string) {
+async function setBadge(tabId: number, text: string, color: string) {
   await browser.action.setBadgeText({ tabId, text });
-  await browser.action.setBadgeBackgroundColor({ tabId, color: text === 'OK' ? '#1f7a4d' : '#b42318' });
+  await browser.action.setBadgeBackgroundColor({ tabId, color });
 }
