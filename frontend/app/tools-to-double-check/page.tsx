@@ -61,7 +61,7 @@ export default function Page() {
               >
                 {part.cards.map((card, j) => (
                   <li key={`${card.title}-${j}`}>
-                    <ToolCard card={card} onGrey={i % 2 === 1} />
+                    <ToolCard card={card} onGrey={i % 2 === 1} showImage={!part.hideImages} />
                   </li>
                 ))}
               </ul>

@@ -1,14 +1,20 @@
 import type { ToolCardContent } from "@/lib/content/tools";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 
-// Card on the "Tools to double-check" page. Image is a placeholder for now.
-// `onGrey`: the card sits on a light grey section, so it uses a white background.
-export default function ToolCard({ card, onGrey = false }: { card: ToolCardContent; onGrey?: boolean }) {
+export default function ToolCard({
+  card,
+  onGrey = false,
+  showImage = true,
+}: {
+  card: ToolCardContent;
+  onGrey?: boolean;
+  showImage?: boolean;
+}) {
   return (
     <article
       className={`flex h-full flex-col overflow-hidden rounded-card border border-line ${onGrey ? "bg-surface" : "bg-canvas"}`}
     >
-      <ImagePlaceholder label={card.title} className="aspect-[2/1] rounded-none" />
+      {showImage && <ImagePlaceholder label={card.title} className="aspect-[2/1] rounded-none" />}
       <div className="flex flex-1 flex-col p-6">
         <h3 className="font-heading text-h5 font-bold">{card.title}</h3>
         <p className="mt-2 text-body-sm text-ink-muted">{card.text}</p>
