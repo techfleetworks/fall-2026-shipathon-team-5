@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Container from "@/components/ui/Container";
-import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
+import Image from "next/image";
 import PictureChecker from "@/components/PictureChecker";
 import { findPage } from "@/lib/sitemap";
 import { usingVeritasIntro, veritasFeatures } from "@/lib/content/usingVeritas";
@@ -17,7 +17,7 @@ export default function Page() {
 
   return (
     <main className="flex-1">
-      <section className="pt-12 pb-12">
+      <section className="pt-12 pb-8">
         <Container>
           <nav aria-label="Breadcrumb" className="text-body-sm text-ink-muted">
             <ol className="flex flex-wrap gap-2">
@@ -56,12 +56,16 @@ export default function Page() {
           <section
             key={feature.id}
             id={feature.id}
-            className={`scroll-mt-20 py-16 md:py-20 ${i % 2 === 0 ? "bg-surface" : ""}`}
+            className={`scroll-mt-20 py-10 md:py-12 ${i % 2 === 0 ? "bg-surface" : ""}`}
           >
-            <Container className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
-              <ImagePlaceholder
-                label={feature.imageLabel}
-                className={`aspect-[4/3] w-full ${imageFirst ? "md:order-first" : "md:order-last"}`}
+            <Container className="grid items-center gap-8 md:grid-cols-2 md:gap-12">
+              <Image
+                src={feature.image.src}
+                alt={feature.image.alt}
+                width={feature.image.width}
+                height={feature.image.height}
+                sizes="(min-width: 768px) 600px, 100vw"
+                className={`h-auto w-full rounded-image ${imageFirst ? "md:order-first" : "md:order-last"}`}
               />
               <div>
                 <h2 className="font-heading text-h3 font-bold md:text-h2">{feature.title}</h2>

@@ -162,7 +162,14 @@ export default function Home() {
             A browser extension is in the works. Right-click any image to check it with Veritas.
           </p>
           <div className="mt-10 grid items-center gap-8 rounded-card border border-line bg-surface p-6 md:grid-cols-2">
-            <ImagePlaceholder label="Browser extension preview" className="aspect-[16/9]" />
+            <Image
+              src="/images/veritas/veritas-extension.webp"
+              alt="The Veritas browser extension checking a news article, with a right-click menu and a panel of findings."
+              width={1600}
+              height={1075}
+              sizes="(min-width: 768px) 600px, 100vw"
+              className="h-auto w-full rounded-image border border-line"
+            />
             <div>
               <h3 className="font-heading text-h4 font-bold">Browser extension</h3>
               <p className="mt-2 text-body text-ink-muted">
