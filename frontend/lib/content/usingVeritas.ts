@@ -21,8 +21,8 @@ export const veritasFeatures: VeritasFeature[] = [
       "Works on social media platforms you view in the browser, such as YouTube, Facebook, and X.",
     ],
     image: {
-      src: "/images/veritas/veritas-extension.webp",
-      alt: "The Veritas browser extension checking a news article, with a right-click menu and a panel of findings.",
+      src: "/images/veritas/veritas-extension-new.webp",
+      alt: "The Veritas browser extension on a news article: the photo is outlined and labeled Likely AI-generated, the Veritas right-click menu is open, and the side panel shows the findings.",
       width: 1600,
       height: 1075,
     },

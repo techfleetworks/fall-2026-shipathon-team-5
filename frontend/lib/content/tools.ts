@@ -35,8 +35,8 @@ export const toolSections: ToolSection[] = [
         title: "Veritas the browser extension",
         text: "Right-click on an image or video to verify.",
         image: {
-          src: "/images/veritas/veritas-extension.webp",
-          alt: "The Veritas browser extension checking a news article.",
+          src: "/images/veritas/veritas-extension-new.webp",
+          alt: "The Veritas browser extension on a news article: the photo is outlined and labeled Likely AI-generated, the Veritas right-click menu is open, and the side panel shows the findings.",
         },
       },
       {
