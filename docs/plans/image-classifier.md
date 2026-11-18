@@ -1,29 +1,29 @@
 # Plan: AI-image classifier on the free Render plan
 
-Status: in progress. Written 2026-11-18. Branch: `backend/image-classifier`.
+Status: in progress (steps 1–4 done). Written 2026-11-18. Branch: `backend/image-classifier`.
 
 ## Progress
 
 Last updated 2026-11-18.
 
-* **Done, without the models (Hugging Face was blocked where this was built):**
-  * Step 1 tools: `evaluation/download_candidate_models.py` (pins each model's
-    revision and SHA-256s in `models/<name>/SOURCE.json`) and
-    `evaluation/image_testset.py` (`sample` builds the manifest, `download`
-    fetches and checks the pictures, `social` makes the social media versions).
-  * Step 2 tool: `evaluation/benchmark_image_classifiers.py` (catches, false
-    alarms, thresholds for 1/2/5% false alarms, memory, speed; one process per
-    model). How to run it at 0.1 CPU / 512 MB is in `evaluation/README.md`.
-  * Step 4: `app/services/classifier.py` and its use in `image_check.py`. Off
-    unless `APP_CLASSIFIER_MODEL_DIR` is set. Thresholds are placeholders
-    (0.9 / 0.5).
-  * Step 6, first part: unit tests and Gherkin scenarios with a tiny fake ONNX
-    model (`tests/fake_model.py`, `tests/test_classifier.py`,
-    `tests/test_image_evaluation.py`).
-* **Next:** on a machine that can reach Hugging Face, run the commands in
-  `evaluation/README.md` (check OpenFakeTiny's license and column names
-  first), commit `evaluation/image_testset.csv` and the numbers, then do
-  steps 3, 5, the rest of 6, and 7.
+* ✅ Steps 1–2: measured in `backend/evaluation/image_detectors/` (500
+  OpenFakeTiny test pictures, original and social media copies). Only SwinV2
+  is useful.
+* ✅ Step 3: SwinV2, "likely_ai" at 0.985 (at most 2% false alarms on the
+  tuning part), "no clear signs" below 0.5. See ADR 0006.
+* ✅ Step 4: `app/services/classifier.py`, used by `image_check.py`, in
+  low-memory mode. Off unless `APP_CLASSIFIER_MODEL_DIR` is set.
+* ✅ Step 6, partly: unit tests and Gherkin scenarios with a tiny fake model,
+  and `tests/test_image_detector_baseline.py` guarding the threshold.
+* ✅ Step 7, partly: ADR 0006 written.
+* **Next:**
+  * Step 5: download the SwinV2 files in the Docker build, pinned to a
+    revision and SHA-256s, and set `APP_CLASSIFIER_MODEL_DIR` in the image.
+  * Before turning it on: re-score the test set in low-memory mode with the
+    backend's own preprocessing and confirm the threshold (ADR 0006,
+    Confirmation).
+  * Step 6, rest: the Docker smoke test checks memory stays under 450 MB.
+  * Step 8: video checks.
 
 ## Why
 

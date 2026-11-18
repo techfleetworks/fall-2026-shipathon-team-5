@@ -190,6 +190,7 @@ class ImageClassifier:
         model_file: str | None = None,
         ai_label: str | None = None,
         threads: int = 1,
+        low_memory: bool = True,
     ) -> None:
         import onnxruntime as ort  # imported here so the API starts without it when no model is set
 
@@ -209,10 +210,15 @@ class ImageClassifier:
         options.intra_op_num_threads = threads
         options.inter_op_num_threads = 1
         options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
-        options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
-        # Give memory back between checks instead of keeping a growing pool;
-        # the free plan has 512 MB for everything.
-        options.enable_cpu_mem_arena = False
+        if low_memory:
+            # Measured with the SwinV2 model: about 1.4 GB peak with graph
+            # optimisations and memory pools, 382 MB without, scores within
+            # 0.01. The free plan has 512 MB for everything.
+            options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_DISABLE_ALL
+            options.enable_cpu_mem_arena = False
+            options.enable_mem_pattern = False
+        else:
+            options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
         self._session = ort.InferenceSession(str(self.path), options, providers=["CPUExecutionProvider"])
         self._input = self._session.get_inputs()[0].name
         # One check at a time: on 0.1 CPU running two together only makes both
@@ -277,6 +283,7 @@ def get_classifier() -> ImageClassifier | None:
         model_file=settings.classifier_model_file,
         ai_label=settings.classifier_ai_label,
         threads=settings.classifier_threads,
+        low_memory=settings.classifier_low_memory,
     )
     log.info("Loaded AI-image classifier %s", classifier.path)
     return classifier

@@ -65,18 +65,23 @@ The reader never contacts the internet while reading an upload. The trust
 lists are kept in `app/trust/` (see the README there for updating them). Why:
 [ADR 0005](../docs/adr/0005-read-content-credentials-for-picture-checks.md).
 
-### AI-image classifier (work in progress)
+### AI-image classifier (not in the Docker image yet)
 
-`app/services/classifier.py` runs a small quantized model with ONNX Runtime
-when `APP_CLASSIFIER_MODEL_DIR` points at a model folder. It's off by default,
-and stays off in production until a model and its thresholds have been
-measured: see [the plan](../docs/plans/image-classifier.md) and
-`evaluation/README.md`.
+`app/services/classifier.py` runs the SwinV2 AI-image detector with ONNX
+Runtime when `APP_CLASSIFIER_MODEL_DIR` points at its folder (the ONNX file,
+`config.json` and `preprocessor_config.json` from
+`SoldadoXara/ai-image-detector-deploy-ONNX`). It's off by default until the
+model is built into the Docker image. Why this model and these thresholds:
+[ADR 0006](../docs/adr/0006-swinv2-ai-image-classifier.md); measurements in
+`evaluation/image_detectors/`.
 
 * It only runs when the picture's own data doesn't settle the question; a
   signed record always wins.
-* A score at or above `APP_CLASSIFIER_HIGH_THRESHOLD` makes the verdict
-  `likely_ai`, with the score as `ai_likelihood`.
+* A score at or above `APP_CLASSIFIER_HIGH_THRESHOLD` (0.985) makes the
+  verdict `likely_ai`, with the score as `ai_likelihood`. On the test set
+  that catches about 54–66% of AI pictures and flags about 2% of real photos
+  or fewer.
+* It takes about 15 s per check on the free plan's 0.1 CPU.
 * Anything lower stays `uncertain` with `ai_likelihood` `null`, plus a clue
   saying whether the detector wasn't sure or found no clear signs of AI. The
   model never makes a picture `likely_real`.
@@ -172,7 +177,7 @@ framework in a temporary file that's deleted when the request ends.
 
 ## Next steps
 
-1. Finish the AI-image classifier: measure the candidates, pick one and its thresholds, and ship it in the Docker image ([plan](../docs/plans/image-classifier.md)).
+1. Ship the AI-image classifier in the Docker image ([plan](../docs/plans/image-classifier.md)).
 2. Read Content Credentials from video too.
 3. Add an ML scam-message classifier on top of the rules.
 4. Install the team's standards checks from the enterprise-software-AI-skills repo (`.claude/skills/bootstrap`).

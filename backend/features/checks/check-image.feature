@@ -58,11 +58,11 @@ Feature: Check a picture
 
   @audience:visitor @usecase:image-classifier-likely-ai @category:happy @quality:functional @severity:critical
   Scenario: Our detector is very sure a picture with no record was made with AI
-    Given our AI-image detector gives the picture a score of 0.97
+    Given our AI-image detector gives the picture a score of 0.99
     And a visitor has a PNG picture
     When they upload it for checking
     Then the verdict is "likely_ai"
-    And an estimate of 0.97 is given
+    And an estimate of 0.99 is given
     And a clue mentions "treat this as an estimate"
 
   @audience:visitor @usecase:image-classifier-never-real @category:edge @quality:safety @severity:critical

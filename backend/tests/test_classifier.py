@@ -214,3 +214,10 @@ def test_api_uses_the_configured_classifier(client, fake):
     response = client.post("/api/check-image", files={"file": ("p.png", picture(WHITE), "image/png")})
     assert response.status_code == 200
     assert response.json()["verdict"] == "likely_ai"
+
+
+def test_both_memory_modes_give_the_same_scores(model_dir):
+    low = ImageClassifier(model_dir, low_memory=True)
+    fast = ImageClassifier(model_dir, low_memory=False)
+    data = picture((140, 140, 140))
+    assert low.score_bytes(data) == pytest.approx(fast.score_bytes(data), abs=1e-6)
