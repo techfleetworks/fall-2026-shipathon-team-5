@@ -1,3 +1,8 @@
+# Test sets
+
+* [Scam checker](#scam-checker-test-sets)
+* [AI-image classifier](#ai-image-classifier-test-set)
+
 # Scam checker test sets
 
 Two labeled sets of messages of the kind older adults in the US and UK
@@ -90,3 +95,65 @@ reserved `.example` domain, and phone numbers use ranges set aside for fiction
 Add a row with a new id, run the evaluation, and if the new message shows a
 mistake, record it in your pull request. Never delete a row just because the
 checker gets it wrong.
+
+# AI-image classifier test set
+
+Measures candidate AI-image classifiers before one is shipped. Plan:
+[docs/plans/image-classifier.md](../../docs/plans/image-classifier.md).
+
+The pictures are **not committed** (licenses and repo size). `image_testset.csv`
+lists each one: dataset, row, label (`ai` or `real`), AI tool, license and a
+SHA-256 of its bytes. About a quarter of the pictures are held out
+(`split` = `holdout`, chosen from the id so it never changes). **Never choose
+thresholds on the holdout.**
+
+## Run it
+
+Needs access to `huggingface.co`, `cdn-lfs.huggingface.co` and
+`cas-bridge.xethub.hf.co`. From the `backend` folder:
+
+```powershell
+pip install -r requirements-eval.txt
+
+# 1. Download the three candidate models into models\ (git-ignored).
+#    Each folder gets a SOURCE.json with the revision and SHA-256s to pin later.
+python -m evaluation.download_candidate_models
+
+# 2. Build the manifest (once; commit image_testset.csv afterwards).
+#    Check each dataset's license and column names on its Hugging Face page first.
+python -m evaluation.image_testset sample ComplexDataLab/OpenFakeTiny --split test `
+    --label-column label --ai-values fake --real-values real `
+    --generator-column model --ai 150 --license <license>
+python -m evaluation.image_testset sample <real photo dataset> --fixed-label real `
+    --real 150 --license <license>
+
+# 3. Download the pictures and make the social media versions
+#    (1080 px wide, JPEG quality 70-85, metadata removed).
+python -m evaluation.image_testset download
+python -m evaluation.image_testset social
+
+# 4. Measure every candidate, each in its own process.
+python -m evaluation.benchmark_image_classifiers models\vit-distilled models\swinv2-deploy models\vit-cifake
+```
+
+Step 4 prints, for original and social media versions, the AI pictures caught
+and real photos wrongly called AI, at the configured threshold and at the
+thresholds that keep false alarms to 1%, 2% and 5% on the tuning part. It also
+prints memory and seconds per picture, and saves every score in
+`results/<model>-scores.csv` and a summary in `results/summary.json`.
+
+### Speed and memory on the free plan
+
+Your computer is much faster than Render's free plan (0.1 CPU, 512 MB). For
+honest numbers, run step 4 inside the backend's Docker image with the same
+limits (PowerShell, from the `backend` folder):
+
+```powershell
+docker build -t team5-backend .
+docker run --rm --cpus=0.1 --memory=512m -v ${PWD}:/work -w /work team5-backend `
+    python -m evaluation.benchmark_image_classifiers models/vit-distilled
+```
+
+## Results
+
+Not measured yet.

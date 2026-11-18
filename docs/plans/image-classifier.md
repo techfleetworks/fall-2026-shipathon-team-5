@@ -1,6 +1,29 @@
 # Plan: AI-image classifier on the free Render plan
 
-Status: ready to start. Written 2026-11-18. Branch: `backend/image-classifier`.
+Status: in progress. Written 2026-11-18. Branch: `backend/image-classifier`.
+
+## Progress
+
+Last updated 2026-11-18.
+
+* **Done, without the models (Hugging Face was blocked where this was built):**
+  * Step 1 tools: `evaluation/download_candidate_models.py` (pins each model's
+    revision and SHA-256s in `models/<name>/SOURCE.json`) and
+    `evaluation/image_testset.py` (`sample` builds the manifest, `download`
+    fetches and checks the pictures, `social` makes the social media versions).
+  * Step 2 tool: `evaluation/benchmark_image_classifiers.py` (catches, false
+    alarms, thresholds for 1/2/5% false alarms, memory, speed; one process per
+    model). How to run it at 0.1 CPU / 512 MB is in `evaluation/README.md`.
+  * Step 4: `app/services/classifier.py` and its use in `image_check.py`. Off
+    unless `APP_CLASSIFIER_MODEL_DIR` is set. Thresholds are placeholders
+    (0.9 / 0.5).
+  * Step 6, first part: unit tests and Gherkin scenarios with a tiny fake ONNX
+    model (`tests/fake_model.py`, `tests/test_classifier.py`,
+    `tests/test_image_evaluation.py`).
+* **Next:** on a machine that can reach Hugging Face, run the commands in
+  `evaluation/README.md` (check OpenFakeTiny's license and column names
+  first), commit `evaluation/image_testset.csv` and the numbers, then do
+  steps 3, 5, the rest of 6, and 7.
 
 ## Why
 
@@ -61,7 +84,7 @@ Excluded: non-commercial licenses (SMOGY, cc-by-nc), models over about 400 MB
    * below the low threshold → stays "uncertain" (never "likely_real" from the
      model alone, since the model can't prove a photo is real)
    * in between → "uncertain"
-4. Add `backend/app/services/classifier.py` (ONNX Runtime, load once, run in the
+4. ✅ Add `backend/app/services/classifier.py` (ONNX Runtime, load once, run in the
    thread pool). Combine with Content Credentials: a signed record beats the model.
 5. Ship the model file in the Docker image: download it at build time and check
    it against a pinned SHA-256. Don't download it at run time.

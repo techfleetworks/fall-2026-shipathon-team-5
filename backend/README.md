@@ -35,7 +35,7 @@ the front end before making them.
 | Method | Path | Sends | Returns | Status |
 |---|---|---|---|---|
 | GET | `/api/health` | nothing | `{"status": "ok"}` | Works |
-| POST | `/api/check-image` | form upload, field `file` (JPG/PNG/WEBP, max 10 MB) | `verdict`, `ai_likelihood` (or null), `content_credentials`, `signals`, `message` | Works: reads Content Credentials (C2PA) and AI labels. No AI-image classifier yet |
+| POST | `/api/check-image` | form upload, field `file` (JPG/PNG/WEBP, max 10 MB) | `verdict`, `ai_likelihood` (or null), `content_credentials`, `signals`, `message` | Works: reads Content Credentials (C2PA) and AI labels. AI-image classifier built but off until a model is chosen |
 | POST | `/api/check-text` | JSON `{"text": "..."}` (20–10,000 characters) | `risk`, `red_flags` (with `start`/`end` positions to highlight), `message` | Works, weighted rules (English, US and UK scams). Measured in `evaluation/` |
 | GET | `/api/quiz` | nothing | list of quiz pictures with answers and explanations | **Placeholder data** |
 
@@ -55,15 +55,33 @@ The checker reads what the picture says about itself:
   `ai_modified`, `camera`, `computer_made` or `unknown`.
 * **IPTC labels:** unsigned "made with AI" tags some tools add.
 
-There's no AI-image classifier yet. When a picture has neither, which is
-common because social media sites remove them, the verdict is `uncertain` and
-`ai_likelihood` is `null`. The front end should then point people to reverse
+When a picture has neither, which is common because social media sites
+remove them, the verdict is `uncertain` and `ai_likelihood` is `null`, unless
+the AI-image classifier is turned on (below). The front end should then point people to reverse
 image search and the checklists. A camera claim from an unrecognised signer is
 never reported as real, because anyone can sign a picture.
 
 The reader never contacts the internet while reading an upload. The trust
 lists are kept in `app/trust/` (see the README there for updating them). Why:
 [ADR 0005](../docs/adr/0005-read-content-credentials-for-picture-checks.md).
+
+### AI-image classifier (work in progress)
+
+`app/services/classifier.py` runs a small quantized model with ONNX Runtime
+when `APP_CLASSIFIER_MODEL_DIR` points at a model folder. It's off by default,
+and stays off in production until a model and its thresholds have been
+measured: see [the plan](../docs/plans/image-classifier.md) and
+`evaluation/README.md`.
+
+* It only runs when the picture's own data doesn't settle the question; a
+  signed record always wins.
+* A score at or above `APP_CLASSIFIER_HIGH_THRESHOLD` makes the verdict
+  `likely_ai`, with the score as `ai_likelihood`.
+* Anything lower stays `uncertain` with `ai_likelihood` `null`, plus a clue
+  saying whether the detector wasn't sure or found no clear signs of AI. The
+  model never makes a picture `likely_real`.
+* If the model fails on a picture, the check answers from the picture's own
+  data as before.
 
 ## Scam warning types
 
@@ -154,7 +172,7 @@ framework in a temporary file that's deleted when the request ends.
 
 ## Next steps
 
-1. Add a pretrained AI-image classifier (weights go in `models/`, which git ignores), measured on a labeled test set like the scam checker's.
+1. Finish the AI-image classifier: measure the candidates, pick one and its thresholds, and ship it in the Docker image ([plan](../docs/plans/image-classifier.md)).
 2. Read Content Credentials from video too.
 3. Add an ML scam-message classifier on top of the rules.
 4. Install the team's standards checks from the enterprise-software-AI-skills repo (`.claude/skills/bootstrap`).

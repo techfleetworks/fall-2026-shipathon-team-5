@@ -8,3 +8,5 @@ __pycache__/
 htmlcov/
 # Downloaded model weights stay out of git
 models/
+# AI-image test set pictures (licenses, size): only the manifest is committed
+evaluation/images/

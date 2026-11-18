@@ -1,0 +1,6 @@
+# Extra tools for building the AI-image test set and measuring candidate
+# models (evaluation/). Not needed to run the API.
+-r requirements.txt
+huggingface_hub>=0.26,<2
+datasets>=3,<5
+psutil>=6,<8
