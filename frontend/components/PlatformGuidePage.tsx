@@ -4,7 +4,8 @@ import { platformGuides } from "@/lib/content/platformGuides";
 import { termId } from "@/lib/content/glossary";
 import Container from "@/components/ui/Container";
 import SectionTabs from "@/components/SectionTabs";
-import AnnotatedExample from "@/components/AnnotatedExample";
+import AnnotatedExamples from "@/components/AnnotatedExamples";
+import { platformExamples } from "@/lib/content/platformExamples";
 
 // Layout for each "AI on your feed" guide: title, annotated example, the four
 // checks (with teal dots, not numbers) and an "AI terms on this page" box.
@@ -38,7 +39,7 @@ export default function PlatformGuidePage({ slug }: { slug: string }) {
             <h1 className="mt-3 font-heading text-h2 font-bold md:text-h1">{guide.title}</h1>
 
             <div className="mt-8">
-              <AnnotatedExample annotations={guide.annotations} example={guide.example} />
+              <AnnotatedExamples slug={slug} examples={platformExamples[slug]} />
             </div>
 
             <ul className="mt-10 space-y-8">

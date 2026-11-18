@@ -71,7 +71,7 @@ export default function Home() {
               what you see and teaches you to spot fakes on your own.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/tools-to-double-check/using-veritas">Use the Veritas extension</ButtonLink>
+              <ButtonLink href="/tools-to-double-check/using-veritas#check-a-picture">Check a picture</ButtonLink>
               <ButtonLink href="/spot-the-slop" variant="dark">
                 Start learning
               </ButtonLink>
@@ -162,7 +162,14 @@ export default function Home() {
             A browser extension is in the works. Right-click any image to check it with Veritas.
           </p>
           <div className="mt-10 grid items-center gap-8 rounded-card border border-line bg-surface p-6 md:grid-cols-2">
-            <ImagePlaceholder label="Browser extension preview" className="aspect-[16/9]" />
+            <Image
+              src="/images/veritas/veritas-extension-new.webp"
+              alt="The Veritas browser extension on a news article: the photo is outlined and labeled Likely AI-generated, the Veritas right-click menu is open, and the side panel shows the findings."
+              width={1600}
+              height={1075}
+              sizes="(min-width: 768px) 600px, 100vw"
+              className="h-auto w-full rounded-image border border-line"
+            />
             <div>
               <h3 className="font-heading text-h4 font-bold">Browser extension</h3>
               <p className="mt-2 text-body text-ink-muted">

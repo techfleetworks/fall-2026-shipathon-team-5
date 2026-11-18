@@ -101,8 +101,9 @@ on every pull request.
 4. Render builds the Docker image and gives you an address like
    `https://team5-backend.onrender.com`. Check `/api/health` returns `{"status":"ok"}`.
 
-It deploys from `develop` automatically once GitHub's checks pass. Change
-`branch` in `render.yaml` to `main` for launch.
+It deploys from `main` automatically once GitHub's checks pass, the same
+branch the live Vercel site is built from. Work merged into `develop` goes live
+when `develop` is merged into `main`.
 
 **Free plan:** the service goes to sleep when unused, so the first check after a
 quiet spell can take up to a minute. The front end should show a friendly

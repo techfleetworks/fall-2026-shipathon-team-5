@@ -7,6 +7,9 @@ export type ToolCardContent = {
   title: string;
   text: string;
   link?: { label: string; href: string }; // outside links open in a new tab
+  // Picture for the top of the card. "contain" shows the whole picture (good for
+  // tall phone screenshots); "cover" fills the space and may trim the edges.
+  image?: { src: string; alt: string; fit?: "cover" | "contain" };
 };
 
 export type ToolSection = {
@@ -28,8 +31,23 @@ export const toolSections: ToolSection[] = [
     guideHref: "/tools-to-double-check/using-veritas",
     guideLabel: "Read the Veritas guide",
     cards: [
-      { title: "Veritas the browser extension", text: "Right-click on an image or video to verify." },
-      { title: "Veritas the mobile app", text: "Verify an image or video on your screen." },
+      {
+        title: "Veritas the browser extension",
+        text: "Right-click on an image or video to verify.",
+        image: {
+          src: "/images/veritas/veritas-extension-new.webp",
+          alt: "The Veritas browser extension on a news article: the photo is outlined and labeled Likely AI-generated, the Veritas right-click menu is open, and the side panel shows the findings.",
+        },
+      },
+      {
+        title: "Veritas the mobile app",
+        text: "Verify an image or video on your screen.",
+        image: {
+          src: "/images/veritas/veritas-mobile-group.webp",
+          alt: "Three Veritas app screens: the home screen, a check in progress, and a result.",
+          fit: "contain",
+        },
+      },
     ],
   },
   {

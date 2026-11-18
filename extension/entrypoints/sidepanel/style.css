@@ -1,0 +1,80 @@
+/* Veritas design tokens (same as the website's globals.css). */
+:root {
+  --canvas: #f3f3f1; --surface: #fff; --subtle: #e7e7e3; --line: #d6d6d1;
+  --ink: #16171a; --ink-muted: #55575e; --primary: #41dcc6;
+  --ai: #b4232a; --ai-soft: #fde8e8; --unclear: #8a5a00; --unclear-soft: #fdf3de;
+  --ok: #0b7a4f; --ok-soft: #e3f6ee;
+  --heading: "Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
+  color-scheme: light;
+  font: 15px/1.5 "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--ink);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--canvas); }
+main { padding: 16px; max-width: 520px; }
+h1, h2 { font-family: var(--heading); margin: 0; }
+h1 { font-size: 22px; }
+h2 { font-size: 18px; margin: 20px 0 8px; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+.top { display: flex; align-items: center; gap: 8px; }
+.logo { display: block; width: 32px; height: 32px; flex: none; }
+.scanned { margin: 14px 0 0; padding: 8px 12px; border-radius: 4px; background: var(--subtle);
+  color: var(--ink-muted); font-size: 13px; overflow-wrap: anywhere; }
+
+.card { margin-top: 14px; padding: 16px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+.card-title { margin: 0 0 8px; }
+.summary { display: flex; align-items: center; gap: 14px; }
+.caption { margin: 0 0 6px; color: var(--ink-muted); font-size: 13px; }
+.message { margin: 12px 0 0; font-size: 15px; }
+.hint { margin: 4px 0 0; color: var(--ink-muted); font-size: 13px; }
+.thumb { display: block; width: 100%; max-height: 180px; margin-top: 12px; object-fit: cover; border-radius: 2px; }
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+
+.pill { display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 4px 10px;
+  border-radius: 4px; font-weight: 600; font-size: 14px; }
+.pill.ai { background: var(--ai-soft); color: var(--ai); }
+.pill.unclear { background: var(--unclear-soft); color: var(--unclear); }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+
+.ring { position: relative; flex: none; width: 80px; height: 80px; }
+.ring svg { display: block; }
+.ring-track { fill: none; stroke: var(--subtle); stroke-width: 8; }
+.ring-value { fill: none; stroke-width: 8; stroke-linecap: round; }
+.ring-value.ai { stroke: var(--ai); } .ring-value.unclear { stroke: var(--unclear); } .ring-value.ok { stroke: var(--ok); }
+.ring-number { position: absolute; inset: 0; display: grid; place-items: center; font: 700 22px/1 var(--heading); }
+.ring-checking { display: grid; place-items: center; border: 8px solid var(--subtle); border-radius: 50%; }
+.spinner { width: 28px; height: 28px; border: 3px solid var(--subtle); border-top-color: var(--ink);
+  border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+
+.section-head { display: flex; align-items: baseline; justify-content: space-between; }
+.count { color: var(--ink-muted); font-size: 13px; }
+.signals, .chips, .actions { list-style: none; margin: 0; padding: 0; }
+.signals { display: grid; gap: 8px; }
+.signal { display: flex; gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+.signal-icon { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--subtle); font: italic 700 14px/1 Georgia, serif; }
+.signal strong { display: block; font-size: 15px; }
+.signal p { margin: 2px 0 0; color: var(--ink-muted); font-size: 13px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips li { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 4px;
+  background: var(--subtle); font-size: 13px; font-weight: 500; }
+.chips li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
+
+.actions { display: grid; gap: 8px; }
+.button { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px;
+  border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink);
+  font-weight: 600; text-decoration: none; }
+.button:hover { border-color: var(--primary); background: var(--primary); }
+.button.primary { width: 100%; margin-top: 14px; border-color: var(--primary); background: var(--primary);
+  font: inherit; font-weight: 600; cursor: pointer; }
+.button.primary:hover { border-color: var(--ink); }
+.button:disabled { opacity: 0.6; cursor: default; }
+
+.problem-icon { display: grid; place-items: center; flex: none; width: 80px; height: 80px; border-radius: 50%;
+  background: var(--subtle); color: var(--ink); }
+.card .card-title { margin: 0; font-size: 20px; }
+.footnote { margin-top: 20px; color: var(--ink-muted); font-size: 12px; text-align: center; }
