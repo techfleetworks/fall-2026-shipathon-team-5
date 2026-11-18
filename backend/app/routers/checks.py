@@ -12,6 +12,7 @@ from app.schemas import (
     TextCheckResult,
 )
 from app.services import image_check, scam_rules
+from app.services.classifier import ImageClassifier, get_classifier
 
 router = APIRouter(prefix="/api", tags=["checks"])
 
@@ -34,7 +35,10 @@ def health() -> dict[str, str]:
 )
 @limiter.limit(check_limit)
 async def check_image(
-    request: Request, file: UploadFile, settings: Settings = Depends(get_settings)
+    request: Request,
+    file: UploadFile,
+    settings: Settings = Depends(get_settings),
+    classifier: ImageClassifier | None = Depends(get_classifier),
 ) -> ImageCheckResult:
     # Read in chunks and stop as soon as the limit is passed. Note: the web
     # framework buffers uploads over 1 MB in a temporary file that is deleted
@@ -62,8 +66,9 @@ async def check_image(
             415,
             "This file looks damaged or incomplete. Please try saving the picture again.",
         )
-    # Reading credentials is CPU work; run it off the event loop.
-    return await run_in_threadpool(image_check.check_image, picture)
+    # Reading credentials and running the classifier are CPU work; run them
+    # off the event loop.
+    return await run_in_threadpool(image_check.check_image, picture, None, classifier)
 
 
 @router.post(

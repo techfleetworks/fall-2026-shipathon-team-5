@@ -1,3 +1,8 @@
+# Test sets
+
+* [Scam checker](#scam-checker-test-sets)
+* [AI-image detectors](image_detectors/README.md)
+
 # Scam checker test sets
 
 Two labeled sets of messages of the kind older adults in the US and UK
@@ -90,3 +95,4 @@ reserved `.example` domain, and phone numbers use ranges set aside for fiction
 Add a row with a new id, run the evaluation, and if the new message shows a
 mistake, record it in your pull request. Never delete a row just because the
 checker gets it wrong.
+
