@@ -82,3 +82,12 @@ Feature: Check a picture
     When they upload it for checking
     Then the verdict is "likely_ai"
     And a clue mentions "Example Image Generator"
+
+  @audience:visitor @usecase:image-camera-details @category:happy @quality:functional @severity:high
+  Scenario: A phone photo gets a reassuring clue, but is never called real
+    Given a visitor has a phone photo with camera details
+    When they upload it for checking
+    Then the verdict is "uncertain"
+    And no estimate is given
+    And a clue mentions "details from a camera"
+    And a clue mentions "anyone can copy them"

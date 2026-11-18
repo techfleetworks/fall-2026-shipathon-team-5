@@ -91,6 +91,15 @@ that variable. Why this model and these thresholds:
 * If the model fails on a picture, the check answers from the picture's own
   data as before.
 
+### Camera details
+
+When nothing else settles the question, the check also reads the EXIF camera
+details phones and cameras add (device, date taken, exposure). They're shown
+as a reassuring clue ("usually means a real photo, but these details can be
+copied"), and the verdict stays `uncertain`. They aren't signed, so they never
+make an answer "likely real". See
+[ADR 0007](../docs/adr/0007-camera-details-as-a-clue.md).
+
 ## Scam warning types
 
 Each item in `red_flags` has a `type` the front end can use for an icon or
