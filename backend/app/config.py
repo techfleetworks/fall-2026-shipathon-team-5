@@ -29,9 +29,8 @@ class Settings(BaseSettings):
     # The model's label meaning "made with AI", if it isn't a usual name.
     classifier_ai_label: str | None = None
     classifier_threads: int = 1
-    # Turn off ONNX Runtime's graph optimisations and memory pools. The chosen
-    # model (SwinV2) peaks at about 1.4 GB with them and 382 MB without, and
-    # scores change by at most 0.01. Required on the 512 MB free plan.
+    # Turn off ONNX Runtime's graph optimisations, memory pools and weight
+    # pre-packing so the model fits the 512 MB free plan (see classifier.py).
     classifier_low_memory: bool = True
     # Scores at or above the high threshold are reported as "likely_ai".
     # Below the low one, the model found no clear signs of AI (still

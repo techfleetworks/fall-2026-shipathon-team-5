@@ -1,6 +1,6 @@
 # Plan: AI-image classifier on the free Render plan
 
-Status: in progress (steps 1–7 done; confirming before merge). Written 2026-11-18. Branch: `backend/image-classifier`.
+Status: steps 1–7 done; ready for a pull request once the rebuilt image is checked. Written 2026-11-18. Branch: `backend/image-classifier`.
 
 ## Progress
 
@@ -20,11 +20,15 @@ Last updated 2026-11-18.
   revision `0df8696b5db0`, checks its SHA-256 and turns the classifier on.
 * ✅ Step 6: the Docker smoke test runs with 512 MB, checks the classifier
   answers and that peak memory stays under 450 MB.
+* ✅ Built and run locally under 512 MB / 0.1 CPU: 15–20 s per check. The
+  first version used about 563 MB; weights mapped from disk and no weight
+  pre-packing bring it to about 225 MB of the API's own memory (ADR 0006).
+* ✅ Threshold confirmed in low-memory mode with the API's own code on 300
+  more pictures: same verdict for 599/600 scores (ADR 0006, Confirmation).
 * **Next:**
-  * Build the image locally and on GitHub; check memory and speed.
-  * **Before merging to main** (main deploys to Render): re-score the test
-    set in low-memory mode with the backend's own preprocessing and confirm
-    the threshold (ADR 0006, Confirmation).
+  * Rebuild the image and re-check memory locally, then push and open a pull
+    request; the GitHub Docker check measures memory too.
+  * After deploying: watch memory and speed on Render.
   * Step 8: video checks.
 
 ## Why

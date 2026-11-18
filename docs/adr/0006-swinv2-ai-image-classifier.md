@@ -30,7 +30,7 @@ social media copy. Full method and numbers: `backend/evaluation/image_detectors/
 |---|---|---|---|
 | `onnx-community/ai-image-detect-distilled-ONNX` (ViT, int8, MIT) | 15 MB | 98 MB | 0.64 / 0.64 |
 | `onnx-community/ai-image-detection-ONNX` (ViT, CIFAKE, int8, Apache-2.0) | 87 MB | 230 MB | 0.55 / 0.56 |
-| `SoldadoXara/ai-image-detector-deploy-ONNX` (SwinV2, uint8, Apache-2.0) | 199 MB | 382 MB in low-memory mode (1.4 GB default) | 0.93 / 0.92 |
+| `SoldadoXara/ai-image-detector-deploy-ONNX` (SwinV2, uint8, Apache-2.0) | 199 MB | about 1.4 GB default; see below for the API | 0.93 / 0.92 |
 
 ## Decision Outcome
 
@@ -46,8 +46,16 @@ AI pictures.
   real. The model never makes a picture "likely_real".
 * Content Credentials and AI labels that settle the question win, and then
   the model doesn't run.
-* ONNX Runtime runs in low-memory mode (no graph optimisations, no memory
-  pools), one check at a time.
+* ONNX Runtime runs in low-memory mode, one check at a time: no graph
+  optimisations, memory pools or weight pre-packing, and the Docker build
+  moves the weights into a separate `.onnx_data` file so they're mapped from
+  disk instead of copied. Measured in the whole API (ONNX Runtime 1.32): about
+  **225 MB** of its own memory at peak, plus about 240 MB of mapped weights
+  the system can drop and re-read; 465 MB in total. Without these steps it
+  used about 563 MB and only survived Docker's 512 MB limit by swapping.
+* Pictures are decoded at full resolution. Decoding JPEGs at reduced size
+  (a speed-up tried first) changed some scores by up to 0.75; it's now only
+  used for pictures over about 4,096 px on both sides, to protect memory.
 * `tests/test_image_detector_baseline.py` fails if the threshold would raise
   false alarms above the measured numbers.
 
@@ -59,17 +67,28 @@ AI pictures.
   test set, and the wording always calls it an estimate.
 * Bad, because a check takes about **15 s** on 0.1 CPU (1.4 s on one laptop
   core). The site and extension already say it can take up to a minute.
-* Bad, because memory is tight: 382 MB for the model plus the rest of the
-  backend is close to 512 MB. The Docker smoke test must check it.
-* Bad, because the threshold was chosen with optimisations on; low-memory
-  mode moves scores by up to 0.01, and one real tuning photo scores 0.976.
-  Re-check the false alarms in low-memory mode before turning it on.
+* Bad, because memory is still fairly tight on 512 MB. The Docker smoke test
+  checks it on every pull request.
+* Bad, because in its middle range the model is very sensitive: changing
+  pixel values by a millionth moved one picture's score between 0.51 and
+  0.77. Scores near 0.985 are much steadier (see Confirmation), which is
+  why only very high scores count.
 
 ### Confirmation
 
-Before turning the classifier on in production: re-score the test set in
-low-memory mode with the backend's own preprocessing, confirm the Docker
-image stays under 450 MB, and run the guard tests.
+Done on 2026-11-18 with 300 more OpenFakeTiny core test pictures (150 AI,
+150 real; 87 also in the first set), each as is and as a social media copy:
+the API's own code in low-memory mode against the evaluation's code in
+optimised mode.
+
+* Same verdict for 599 of 600 scores. The one difference was an AI picture
+  at 0.9848 instead of 0.985 (a missed catch, not a false alarm).
+* Scores of 0.95 or more differed by at most 0.007.
+* At 0.985 the API caught **103/150** AI pictures (69%) as is and **84/150**
+  (56%) as social media copies, and called **1/150** and **0/150** real
+  photos AI.
+
+Still to confirm on Render itself: memory and speed under real traffic.
 
 ## More Information
 

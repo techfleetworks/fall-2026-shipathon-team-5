@@ -221,3 +221,11 @@ def test_both_memory_modes_give_the_same_scores(model_dir):
     fast = ImageClassifier(model_dir, low_memory=False)
     data = picture((140, 140, 140))
     assert low.score_bytes(data) == pytest.approx(fast.score_bytes(data), abs=1e-6)
+
+
+def test_ordinary_jpegs_are_decoded_in_full(fake, monkeypatch):
+    seen = []
+    monkeypatch.setattr(fake, "ai_score", lambda image: seen.append(image.size) or 0.0)
+    fake.score_bytes(picture(WHITE, "JPEG", size=(4000, 3000)))
+    fake.score_bytes(picture(WHITE, "JPEG", size=(8200, 6000)))
+    assert seen == [(4000, 3000), (4100, 3000)]

@@ -82,7 +82,9 @@ that variable. Why this model and these thresholds:
   verdict `likely_ai`, with the score as `ai_likelihood`. On the test set
   that catches about 54–66% of AI pictures and flags about 2% of real photos
   or fewer.
-* It takes about 15 s per check on the free plan's 0.1 CPU.
+* It takes about 15–20 s per check on the free plan's 0.1 CPU, and the API
+  uses about 225 MB of its own memory plus about 240 MB of model weights
+  mapped from disk.
 * Anything lower stays `uncertain` with `ai_likelihood` `null`, plus a clue
   saying whether the detector wasn't sure or found no clear signs of AI. The
   model never makes a picture `likely_real`.

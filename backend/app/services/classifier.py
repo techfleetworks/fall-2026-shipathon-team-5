@@ -57,6 +57,10 @@ AI_LABELS = frozenset(
 
 Band = Literal["high", "middle", "low"]
 
+# JPEGs are decoded at reduced size only if the result is still at least this
+# big on both sides (see ImageClassifier.score_bytes).
+_DRAFT_MIN_SIDE = 2048
+
 
 class ClassifierError(Exception):
     """The model folder is missing, incomplete or doesn't look like an image classifier."""
@@ -211,12 +215,16 @@ class ImageClassifier:
         options.inter_op_num_threads = 1
         options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
         if low_memory:
-            # Measured with the SwinV2 model: about 1.4 GB peak with graph
-            # optimisations and memory pools, 382 MB without, scores within
-            # 0.01. The free plan has 512 MB for everything.
+            # The free plan has 512 MB for everything. Measured with SwinV2
+            # (ORT 1.32, one 256x256 picture): no graph optimisations, memory
+            # pools or weight pre-packing, plus weights kept in a separate
+            # .onnx_data file (the Docker build does this) so they're mapped
+            # from disk, takes the process from about 620 MB to 213 MB of
+            # its own memory. Scores are the same; speed too.
             options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_DISABLE_ALL
             options.enable_cpu_mem_arena = False
             options.enable_mem_pattern = False
+            options.add_session_config_entry("session.disable_prepacking", "1")
         else:
             options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
         self._session = ort.InferenceSession(str(self.path), options, providers=["CPUExecutionProvider"])
@@ -239,10 +247,11 @@ class ImageClassifier:
 
     def score_bytes(self, data: bytes) -> float:
         with Image.open(io.BytesIO(data)) as image:
-            # For JPEGs, decode at a reduced size straight away: much faster
-            # and lighter than decoding a 12-megapixel photo in full.
-            target = max(self.preprocessing.height, self.preprocessing.width) * 2
-            image.draft("RGB", (target, target))
+            # Decode in full: the model looks at fine detail, and decoding a
+            # JPEG at reduced size changed some scores by up to 0.75 on the
+            # test set. Only very large JPEGs (both sides over 2 x 2048 px) are
+            # decoded at reduced size, to stay within the free plan's memory.
+            image.draft("RGB", (_DRAFT_MIN_SIDE, _DRAFT_MIN_SIDE))
             return self.ai_score(image)
 
 
