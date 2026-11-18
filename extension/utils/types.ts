@@ -49,7 +49,14 @@ export interface PlatformLabel {
 export type CheckState =
   | { status: 'checking'; srcUrl: string; pageUrl?: string; startedAt: number }
   | { status: 'done'; srcUrl: string; pageUrl?: string; result: CheckImageResult; finishedAt: number }
-  | { status: 'error'; srcUrl: string; pageUrl?: string; message: string };
+  | {
+      status: 'error';
+      srcUrl: string;
+      pageUrl?: string;
+      message: string;
+      /** Set when the side panel's "Try again" can re-run this check: the tab and any site label. */
+      retry?: { tabId: number; label: PlatformLabel | null };
+    };
 
 export const RESULT_MESSAGE = 'veritas:state' as const;
 
@@ -65,4 +72,6 @@ export type SocialRequest =
   | { type: 'veritas:check-frames'; frames: string[]; label: PlatformLabel | null }
   | { type: 'veritas:capture-tab'; rect: { x: number; y: number; width: number; height: number }; dpr: number }
   // The "Why?" button on the picture's label.
-  | { type: 'veritas:open-panel' };
+  | { type: 'veritas:open-panel' }
+  // The side panel's "Try again" button, after a check failed.
+  | { type: 'veritas:retry' };

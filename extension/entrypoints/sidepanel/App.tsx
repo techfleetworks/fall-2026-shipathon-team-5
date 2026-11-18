@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GUIDE_LINKS, canSearch, googleLensUrl, tinEyeUrl } from '@/utils/links';
 import { lastCheck } from '@/utils/storage';
-import type { CheckImageResult, CheckState } from '@/utils/types';
+import type { CheckImageResult, CheckState, SocialRequest } from '@/utils/types';
 import { displayFor } from '@/utils/verdicts';
 
 // The Veritas side panel (Firefox: sidebar). Shows the latest check: the page it was on,
@@ -74,13 +74,7 @@ function Result({ state }: { state: CheckState }) {
       </section>
     );
   }
-  if (state.status === 'error') {
-    return (
-      <section className="card" role="alert">
-        <p className="message">{state.message}</p>
-      </section>
-    );
-  }
+  if (state.status === 'error') return <Failed state={state} />;
   return <Done srcUrl={state.srcUrl} result={state.result} />;
 }
 
@@ -136,6 +130,54 @@ function Done({ srcUrl, result }: { srcUrl: string; result: CheckImageResult }) 
         {result.platformLabel && <li>The site's own AI label</li>}
       </ul>
 
+      <ShareActions srcUrl={srcUrl} />
+    </>
+  );
+}
+
+/** The check didn't finish. Say so plainly, offer to try again, and keep the other checks close. */
+function Failed({ state }: { state: Extract<CheckState, { status: 'error' }> }) {
+  const [retrying, setRetrying] = useState(false);
+  const retry = () => {
+    setRetrying(true);
+    void browser.runtime.sendMessage({ type: 'veritas:retry' } satisfies SocialRequest);
+  };
+
+  return (
+    <>
+      <section className="card" role="alert">
+        <div className="summary">
+          <span className="problem-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="28" height="28">
+              <path d="M12 3 2.5 20h19L12 3Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+              <path d="M12 10v4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <circle cx="12" cy="17.2" r="1.2" fill="currentColor" />
+            </svg>
+          </span>
+          <div>
+            <p className="caption">Result</p>
+            <h2 className="card-title">We couldn't check this picture</h2>
+          </div>
+        </div>
+        <p className="message">{state.message}</p>
+        <p className="hint">This doesn't tell you anything about the picture itself.</p>
+        {state.srcUrl && <img className="thumb" src={state.srcUrl} alt="The picture you tried to check" />}
+        {state.retry && (
+          <button type="button" className="button primary" onClick={retry} disabled={retrying}>
+            {retrying ? 'Trying again…' : 'Try again'}
+          </button>
+        )}
+      </section>
+
+      <ShareActions srcUrl={state.srcUrl} />
+    </>
+  );
+}
+
+/** Outside checks for any picture: where it came from, and what to look for. */
+function ShareActions({ srcUrl }: { srcUrl: string }) {
+  return (
+    <>
       <h2>Before you share</h2>
       <ul className="actions">
         {canSearch(srcUrl) && (

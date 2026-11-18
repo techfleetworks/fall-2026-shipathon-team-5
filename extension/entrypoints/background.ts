@@ -66,6 +66,11 @@ export default defineBackground(() => {
 
   // Hover-button flow on X, Facebook and YouTube (see social.content.ts).
   browser.runtime.onMessage.addListener((msg: SocialRequest, sender, sendResponse) => {
+    // From the side panel, which isn't in a tab.
+    if (msg.type === 'veritas:retry') {
+      void retryLastCheck();
+      return;
+    }
     const tabId = sender.tab?.id;
     if (tabId == null) return;
 
@@ -91,8 +96,15 @@ async function runImageCheck(tabId: number, srcUrl: string, label: PlatformLabel
     const result = withLabel(await checkImage(blob, resized), label);
     await finish(tabId, srcUrl, result, pageUrl);
   } catch (err) {
-    await fail(tabId, srcUrl, err, pageUrl);
+    await fail(tabId, srcUrl, err, pageUrl, { tabId, label });
   }
+}
+
+/** "Try again" in the side panel: run the failed picture check once more. */
+async function retryLastCheck() {
+  const state = await lastCheck.getValue();
+  if (state?.status !== 'error' || !state.retry) return;
+  await runImageCheck(state.retry.tabId, state.srcUrl, state.retry.label, state.pageUrl);
 }
 
 async function runFramesCheck(tabId: number, frames: string[], label: PlatformLabel | null, pageUrl?: string) {
@@ -134,10 +146,16 @@ async function finish(tabId: number, srcUrl: string, result: CheckImageResult, p
   await setBadge(tabId, shown.badge, shown.badgeColor);
 }
 
-async function fail(tabId: number, srcUrl: string, err: unknown, pageUrl?: string) {
+async function fail(
+  tabId: number,
+  srcUrl: string,
+  err: unknown,
+  pageUrl?: string,
+  retry?: { tabId: number; label: PlatformLabel | null },
+) {
   const message = err instanceof CheckError ? err.message : 'Something went wrong. Please try again.';
   console.error('[Veritas]', err);
-  await publish(tabId, { status: 'error', srcUrl, pageUrl, message });
+  await publish(tabId, { status: 'error', srcUrl, pageUrl, message, retry });
 }
 
 /**
