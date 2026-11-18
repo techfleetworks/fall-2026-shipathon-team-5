@@ -16,6 +16,7 @@ import io
 from PIL import Image, UnidentifiedImageError
 
 from app.schemas import ContentCredentials, ImageCheckResult, Signal
+from app.services.camera_details import CameraDetails, read_camera_details
 from app.services.classifier import Estimate, ImageClassifier, estimate
 from app.services.content_credentials import Credentials, TrustStore, read_credentials
 
@@ -193,6 +194,38 @@ def _with_estimate(
     return None, "uncertain", [*others, clue, _OTHER_CHECKS], message
 
 
+def _with_camera_details(
+    signals: list[Signal], message: str, camera: CameraDetails, model: Estimate | None
+) -> tuple[list[Signal], str]:
+    """Add the camera clue to an answer that stays "uncertain". It reassures,
+    but never becomes "likely real": these details can be copied onto any picture."""
+    taken = f", taken on {camera.taken_text}" if camera.taken_text else ""
+    clue = Signal(
+        label="Has details from a camera",
+        explanation=f"The picture contains details that phones and cameras add when they "
+        f"take a photo ({camera.device}{taken}). AI tools don't add these, so this points "
+        "to a real photo. But they aren't proof: anyone can copy them onto another picture.",
+    )
+    others = [s for s in signals if s is not _OTHER_CHECKS]
+    if model is not None and model.band == "middle":
+        message = (
+            f"This picture has details from a camera ({camera.device}), which usually means "
+            "a real photo, but our detector found some signs that could come from AI. "
+            "Check it another way to be sure."
+        )
+    elif model is not None:
+        message = (
+            f"We found no clear signs of AI, and this picture has details from a camera "
+            f"({camera.device}). That usually means a real photo, but these details can be copied."
+        )
+    else:
+        message = (
+            f"This picture has details from a camera ({camera.device}), which usually means "
+            "a real photo. These details can be copied, so we can't be sure."
+        )
+    return [*others, clue, _OTHER_CHECKS], message
+
+
 def check_image(
     data: bytes,
     trust: TrustStore | None = None,
@@ -202,10 +235,17 @@ def check_image(
     likelihood, verdict, signals, message = _assess(creds)
     # The picture's own data wins when it settles the question; the model only
     # runs when it doesn't (which also saves the free plan's CPU).
+    model = None
     if verdict == "uncertain" and classifier is not None:
         model = estimate(classifier, data)
         if model is not None:
             likelihood, verdict, signals, message = _with_estimate(signals, message, model)
+    # Camera details only help when nothing else settled the question; they
+    # never override a signed record, an AI label or a confident detector.
+    if verdict == "uncertain" and not creds.found:
+        camera = read_camera_details(data)
+        if camera is not None:
+            signals, message = _with_camera_details(signals, message, camera, model)
     return ImageCheckResult(
         ai_likelihood=likelihood,
         verdict=verdict,

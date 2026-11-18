@@ -82,6 +82,13 @@ def png_picture(ctx):
     ctx["upload"] = ("photo.png", PNG_BYTES, "image/png")
 
 
+@given("a visitor has a phone photo with camera details")
+def phone_photo(ctx):
+    from tests.test_camera_details import photo
+
+    ctx["upload"] = ("cat.jpg", photo(), "image/jpeg")
+
+
 @given(parsers.parse('a visitor has the test picture "{name}"'))
 def named_test_picture(ctx, name):
     ctx["upload"] = (name, fixture_bytes(name), "image/jpeg")
