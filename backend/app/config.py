@@ -20,6 +20,22 @@ class Settings(BaseSettings):
     # Leave unset when running without such a provider.
     client_ip_header: str | None = None
 
+    # AI-image classifier (see app/services/classifier.py). Leave the folder
+    # unset to run without it: picture checks then use only the picture's own
+    # data, as before.
+    classifier_model_dir: str | None = None
+    # ONNX file name inside the folder; by default the quantized one is found.
+    classifier_model_file: str | None = None
+    # The model's label meaning "made with AI", if it isn't a usual name.
+    classifier_ai_label: str | None = None
+    classifier_threads: int = 1
+    # Scores at or above the high threshold are reported as "likely_ai".
+    # Below the low one, the model found no clear signs of AI (still
+    # "uncertain": the model can't prove a photo is real). PLACEHOLDERS until
+    # the thresholds are measured on the test set (plan step 3).
+    classifier_high_threshold: float = 0.9
+    classifier_low_threshold: float = 0.5
+
 
 @lru_cache
 def get_settings() -> Settings:
