@@ -1,6 +1,6 @@
 -r requirements.txt
 pytest>=8,<10
-pytest-bdd>=8,<10
+pytest-bdd>=9.0.1,<10
 httpx>=0.28.1,<1
 # Builds the tiny fake model used in the classifier tests.
 onnx>=1.17,<2
