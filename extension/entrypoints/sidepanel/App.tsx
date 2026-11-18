@@ -19,9 +19,18 @@ export default function App() {
   return (
     <main>
       <header className="top">
-        <span className="logo" aria-hidden="true">
-          V
-        </span>
+        <svg className="logo" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+          <rect width="100" height="100" rx="28" fill="#41DCC6" />
+          <path
+            d="M28.5 34 L50 71.5 L71.5 34"
+            fill="none"
+            stroke="#16171A"
+            strokeWidth="10.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle cx="73.3" cy="26.8" r="8.5" fill="#16171A" />
+        </svg>
         <h1>Veritas</h1>
       </header>
       {state?.pageUrl && <p className="scanned">Checked on: {shortUrl(state.pageUrl)}</p>}

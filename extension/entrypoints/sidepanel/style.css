@@ -18,8 +18,7 @@ h2 { font-size: 18px; margin: 20px 0 8px; }
 a:focus-visible, button:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
 
 .top { display: flex; align-items: center; gap: 8px; }
-.logo { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px;
-  background: var(--primary); color: var(--ink); font: 700 20px/1 var(--heading); }
+.logo { display: block; width: 32px; height: 32px; flex: none; }
 .scanned { margin: 14px 0 0; padding: 8px 12px; border-radius: 4px; background: var(--subtle);
   color: var(--ink-muted); font-size: 13px; overflow-wrap: anywhere; }
 

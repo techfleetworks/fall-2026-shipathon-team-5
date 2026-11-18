@@ -1,3 +1,4 @@
+import { LOGO_SVG } from '@/utils/logo';
 import { removeCard, renderCard } from '@/utils/card';
 import {
   bestImageUrl,
@@ -40,9 +41,9 @@ export default defineContentScript({
           padding: 6px 12px; border: 0; border-radius: 999px; background: #111; color: #fff;
           font: 600 14px/1 system-ui, sans-serif; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,.3); }
         button:focus-visible { outline: 3px solid #6fd6c3; outline-offset: 2px; }
-        .v { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 4px; background: #6fd6c3; color: #111; }
+        .v { display: block; width: 18px; height: 18px; } .v svg { display: block; width: 100%; height: 100%; }
       </style>
-      <button type="button" aria-label="Check with Veritas"><span class="v">V</span>Check</button>`;
+      <button type="button" aria-label="Check with Veritas"><span class="v">${LOGO_SVG}</span>Check</button>`;
     const button = shadow.querySelector('button')!;
     document.documentElement.append(host);
 
