@@ -1,7 +1,8 @@
 # Veritas browser extension
 
 On **X, Facebook and YouTube**, point at a photo (or a YouTube thumbnail) and click the **Check** button that appears.
-On other sites, right-click an image and choose **Check with Veritas**.
+On other sites, right-click an image and choose **Veritas › Check this image**.
+The answer appears as a label on the picture, and the details open in the Veritas side panel (Firefox: sidebar).
 Built with [WXT](https://wxt.dev) + React + TypeScript. One codebase builds for Chrome (and Edge, Brave, Arc) and Firefox.
 
 ## Run it
@@ -26,8 +27,9 @@ and choose `extension/.output/chrome-mv3`.
 
 1. Open X, Facebook or YouTube and point at a photo or a YouTube thumbnail.
 2. Click **Check**. The first check can take up to a minute while the free server wakes up.
-3. A result card appears on the picture, and the toolbar icon shows **AI**, **?** (we can't tell) or **OK**.
-   Click the icon for what was found and what to do before sharing.
+3. A label appears on the picture (for example **Likely AI-generated · 90%**) with a dashed outline, and the
+   side panel opens with what was found and what to do before sharing. Click **Why?** on the label, or the
+   toolbar icon, to open the panel again. The toolbar icon also shows **AI**, **?** (we can't tell) or **OK**.
 4. If Facebook shows its "AI info" badge or YouTube shows "Altered or synthetic content", that label is
    shown as the first clue, and a "can't tell" result becomes "likely made with AI".
 
@@ -35,7 +37,14 @@ and choose `extension/.output/chrome-mv3`.
 video never carry Content Credentials, so until the backend has an AI-image classifier the answer would
 always be "we can't tell". The frame-grabbing code is kept for then.
 
-On other sites, right-click an image and choose **Check with Veritas**. The first time, the browser asks to let Veritas read images on all sites.
+On other sites, right-click an image and choose **Veritas**, then:
+
+* **Check this image**: checks it, as above. The first time, the browser asks to let Veritas read images on all sites.
+* **Find the original source**: opens TinEye, sorted oldest first.
+* **Reverse image search**: opens Google Lens.
+* **What should I look for?**: opens the images checklist on the Veritas website.
+
+The two search items send the picture's web address to TinEye or Google, and only when someone picks them.
 
 ## Where things live
 
@@ -46,11 +55,13 @@ On other sites, right-click an image and choose **Check with Veritas**. The firs
 | `entrypoints/social.content.ts` | Hover **Check** button on X, Facebook and YouTube; grabs video frames |
 | `utils/platforms.ts` | Per-site details: which images count, best image URL, platform AI labels. **Fix selectors here when a site changes.** |
 | `entrypoints/content.ts` | Right-click flow on other sites (injected only after a click) |
-| `utils/card.ts` | The result card drawn on the page |
-| `entrypoints/popup/` | React panel opened from the toolbar icon |
+| `utils/card.ts` | The label and dashed outline drawn on the checked picture |
+| `entrypoints/sidepanel/` | React side panel (Firefox: sidebar), opened by the toolbar icon, a check, or **Why?** |
+| `utils/panel.ts` | Opens the side panel in Chrome and the sidebar in Firefox |
+| `utils/links.ts` | TinEye, Google Lens and website links for "Before you share" and the right-click menu |
 | `utils/api.ts` | Calls `POST /api/check-image`, plus mock results (`/api/check-frames` isn't built yet) |
 | `utils/types.ts` | The API response contract. Keep in sync with `backend/app/schemas.py` |
-| `utils/verdicts.ts` | How each verdict looks (card, popup, badge) and the website links. "Can't tell" never looks like "real" |
+| `utils/verdicts.ts` | How each verdict looks (label, side panel, badge) and the website links. "Can't tell" never looks like "real" |
 | `utils/storage.ts` | Last result, kept in session storage (cleared when the browser closes) |
 
 ## Build for the stores

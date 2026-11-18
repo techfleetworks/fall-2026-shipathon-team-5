@@ -1,61 +1,106 @@
-import type { CheckState } from './types';
+import type { CheckState, SocialRequest } from './types';
 import { displayFor } from './verdicts';
 
-// The result card drawn on top of the page, next to the checked image or video.
+// The label drawn on the checked picture: a dashed outline around it and a tag in the
+// top-left corner ("Likely made with AI · 90%"), with "Why?" to open the side panel.
 // Shared by the right-click flow (content.ts) and the social-site buttons (social.content.ts).
+// If the picture can't be found on the page, the tag shows in the top-right corner instead.
+
+const TONE_COLOR = { ai: '#b4232a', unclear: '#8a5a00', ok: '#0b7a4f', neutral: '#16171a' } as const;
 
 let host: HTMLElement | null = null;
+let anchorEl: Element | null = null;
+let resizeObserver: ResizeObserver | null = null;
 
 export function renderCard(state: CheckState, anchor?: Element | null) {
   if (!host) {
     host = document.createElement('veritas-result');
-    // Shadow DOM keeps the page's CSS from breaking our card, and ours from breaking the page.
+    // Shadow DOM keeps the page's CSS from breaking our label, and ours from breaking the page.
     host.attachShadow({ mode: 'open' });
-    document.body.append(host);
+    document.documentElement.append(host);
+    window.addEventListener('resize', place);
   }
-  const root = host.shadowRoot!;
-  const rect = anchor?.getBoundingClientRect();
-  const top = (rect ? rect.top + window.scrollY : window.scrollY) + 12;
-  const left = (rect ? rect.left + window.scrollX : window.scrollX) + 12;
+  if (anchor !== undefined && anchor !== anchorEl) {
+    resizeObserver?.disconnect();
+    anchorEl = anchor;
+    if (anchor) {
+      resizeObserver = new ResizeObserver(place);
+      resizeObserver.observe(anchor);
+    }
+  }
 
+  const { tone, text, detail } = describe(state);
+  const color = TONE_COLOR[tone];
+  const root = host.shadowRoot!;
   root.innerHTML = `
     <style>
-      .card { position: absolute; top: ${top}px; left: ${left}px; z-index: 2147483647;
-        width: 300px; padding: 14px 16px; border-radius: 10px; background: #fff; color: #111;
-        font: 15px/1.45 system-ui, sans-serif; box-shadow: 0 4px 24px rgba(0,0,0,.18); }
-      .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-weight: 600; font-size: 14px; }
-      .ai { background: #fde7e7; color: #b42318; } .ok { background: #e3f4ea; color: #1f7a4d; }
-      .unclear { background: #fff3d6; color: #8a5a00; }
-      button { margin-top: 10px; border: 1px solid #ccc; background: #fff; border-radius: 6px;
-        padding: 6px 12px; font: inherit; color: #111; cursor: pointer; }
-      .note { margin-top: 8px; font-size: 13px; color: #555; }
-      .message { margin: 8px 0 0; font-size: 16px; font-weight: 600; }
+      :host { all: initial; }
+      .frame { position: absolute; z-index: 2147483646; box-sizing: border-box; pointer-events: none;
+        border: 3px dashed ${color}; border-radius: 2px; }
+      .tag { position: absolute; z-index: 2147483647; display: flex; align-items: center; gap: 6px;
+        max-width: min(420px, 90vw); font: 600 14px/1.3 system-ui, -apple-system, "Segoe UI", sans-serif; }
+      .tag.floating { position: fixed; top: 16px; right: 16px; }
+      .label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 4px;
+        background: ${color}; color: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+      .detail { font-weight: 400; }
+      .spin { width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff;
+        border-radius: 50%; animation: spin 1s linear infinite; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+      button { min-height: 32px; padding: 0 10px; border: 0; border-radius: 6px; background: #fff;
+        color: #16171a; font: inherit; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+      button:hover { background: #41dcc6; }
+      button:focus-visible { outline: 3px solid #41dcc6; outline-offset: 2px; }
+      .close { width: 32px; padding: 0; font-size: 18px; line-height: 1; }
     </style>
-    <div class="card" role="dialog" aria-live="polite" aria-label="Veritas result">
-      ${body(state)}
-      <div class="note">No checker is perfect. Check where it came from too.</div>
-      <button type="button" id="close">Close</button>
+    <div class="frame" ${anchorEl ? '' : 'hidden'}></div>
+    <div class="tag ${anchorEl ? '' : 'floating'}" role="status" aria-live="polite">
+      <span class="label">
+        ${state.status === 'checking' ? '<span class="spin" aria-hidden="true"></span>' : ''}
+        <span>${escapeHtml(text)}${detail ? ` <span class="detail">${escapeHtml(detail)}</span>` : ''}</span>
+      </span>
+      ${state.status === 'done' ? '<button type="button" id="why">Why?</button>' : ''}
+      <button type="button" class="close" id="close" aria-label="Remove the Veritas label">×</button>
     </div>`;
 
   root.getElementById('close')?.addEventListener('click', removeCard);
+  root.getElementById('why')?.addEventListener('click', () => {
+    void browser.runtime.sendMessage({ type: 'veritas:open-panel' } satisfies SocialRequest);
+  });
+  place();
 }
 
 export function removeCard() {
+  resizeObserver?.disconnect();
+  resizeObserver = null;
+  window.removeEventListener('resize', place);
   host?.remove();
   host = null;
+  anchorEl = null;
 }
 
-function body(state: CheckState): string {
-  if (state.status === 'checking') {
-    return '<div>Checking…</div><div class="note">The first check can take up to a minute while the server wakes up.</div>';
-  }
-  if (state.status === 'error') return `<div>${escapeHtml(state.message)}</div>`;
+/** Keep the outline and tag on the picture. Page coordinates, so scrolling needs no work. */
+function place() {
+  const root = host?.shadowRoot;
+  if (!root || !anchorEl) return;
+  const r = anchorEl.getBoundingClientRect();
+  const top = r.top + window.scrollY;
+  const left = r.left + window.scrollX;
+  const frame = root.querySelector<HTMLElement>('.frame');
+  const tag = root.querySelector<HTMLElement>('.tag');
+  if (frame) Object.assign(frame.style, { top: `${top}px`, left: `${left}px`, width: `${r.width}px`, height: `${r.height}px` });
+  if (tag) Object.assign(tag.style, { top: `${top + 12}px`, left: `${left + 12}px` });
+}
 
-  const { verdict, message } = state.result;
-  const shown = displayFor(verdict);
-  return `<span class="pill ${shown.tone}">${escapeHtml(shown.text)}</span>
-    <p class="message">${escapeHtml(message)}</p>
-    <div class="note">Click the Veritas icon in your toolbar to see why.</div>`;
+function describe(state: CheckState): { tone: keyof typeof TONE_COLOR; text: string; detail?: string } {
+  if (state.status === 'checking') return { tone: 'neutral', text: 'Veritas is checking…' };
+  if (state.status === 'error') return { tone: 'neutral', text: state.message };
+  const shown = displayFor(state.result.verdict);
+  const likelihood = state.result.ai_likelihood;
+  // Only show a percentage with an AI verdict, where it reads naturally ("90% likely AI").
+  const detail =
+    state.result.verdict === 'likely_ai' && likelihood != null ? `· ${Math.round(likelihood * 100)}%` : undefined;
+  return { tone: shown.tone, text: shown.text, detail };
 }
 
 export function escapeHtml(s: string) {

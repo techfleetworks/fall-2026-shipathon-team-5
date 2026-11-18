@@ -11,6 +11,8 @@ export default defineConfig({
   manifest: {
     name: 'Veritas',
     description: 'Right-click any image to check whether it is likely AI-generated.',
+    // Clicking the toolbar icon opens the Veritas side panel (Firefox: sidebar). See utils/panel.ts.
+    action: { default_title: 'Open Veritas' },
     permissions: ['contextMenus', 'activeTab', 'scripting', 'storage'],
     host_permissions: [
       `${new URL(API_URL).origin}/*`,
