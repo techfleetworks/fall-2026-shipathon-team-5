@@ -20,6 +20,27 @@ class Settings(BaseSettings):
     # Leave unset when running without such a provider.
     client_ip_header: str | None = None
 
+    # AI-image classifier (see app/services/classifier.py). Leave the folder
+    # unset to run without it: picture checks then use only the picture's own
+    # data, as before.
+    classifier_model_dir: str | None = None
+    # ONNX file name inside the folder; by default the quantized one is found.
+    classifier_model_file: str | None = None
+    # The model's label meaning "made with AI", if it isn't a usual name.
+    classifier_ai_label: str | None = None
+    classifier_threads: int = 1
+    # Turn off ONNX Runtime's graph optimisations, memory pools and weight
+    # pre-packing so the model fits the 512 MB free plan (see classifier.py).
+    classifier_low_memory: bool = True
+    # Scores at or above the high threshold are reported as "likely_ai".
+    # Below the low one, the model found no clear signs of AI (still
+    # "uncertain": the model can't prove a photo is real). Measured for the
+    # SwinV2 model: 0.985 keeps false alarms to about 2% (ADR 0006). Change
+    # them only after re-measuring; tests/test_image_detector_baseline.py
+    # guards them.
+    classifier_high_threshold: float = 0.985
+    classifier_low_threshold: float = 0.5
+
 
 @lru_cache
 def get_settings() -> Settings:

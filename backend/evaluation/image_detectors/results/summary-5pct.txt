@@ -1,0 +1,45 @@
+
+=== distilled-vit-int8  (500 pictures x 2 versions)
+  How well it separates real from AI (AUC: 0.5 = coin flip, 1.0 = perfect)
+    original  core 0.59 | reddit-images 0.73 | reddit-video 0.55 | ALL 0.64
+    social    core 0.59 | reddit-images 0.73 | reddit-video 0.55 | ALL 0.64
+  Threshold tuned on the tuning part for <= 5% false alarms: 0.6371
+    holdout original  core           AI caught   16% of  37 | real photos flagged    4% of  45
+    holdout original  reddit-images  AI caught   10% of  50 | real photos flagged    2% of  47
+    holdout original  reddit-video   AI caught    0% of  13 | real photos flagged    0% of  20
+    holdout original  ALL            AI caught   11% of 100 | real photos flagged    3% of 112
+    holdout social    core           AI caught   16% of  37 | real photos flagged    4% of  45
+    holdout social    reddit-images  AI caught   10% of  50 | real photos flagged    2% of  47
+    holdout social    reddit-video   AI caught    0% of  13 | real photos flagged    5% of  20
+    holdout social    ALL            AI caught   11% of 100 | real photos flagged    4% of 112
+  For comparison, at the default 0.5: AI caught 50%, real photos flagged 31% (holdout, both versions)
+
+=== swinv2-uint8  (500 pictures x 2 versions)
+  How well it separates real from AI (AUC: 0.5 = coin flip, 1.0 = perfect)
+    original  core 0.95 | reddit-images 0.95 | reddit-video 0.81 | ALL 0.93
+    social    core 0.91 | reddit-images 0.95 | reddit-video 0.81 | ALL 0.92
+  Threshold tuned on the tuning part for <= 5% false alarms: 0.5000
+    holdout original  core           AI caught   84% of  37 | real photos flagged    0% of  45
+    holdout original  reddit-images  AI caught   82% of  50 | real photos flagged   11% of  47
+    holdout original  reddit-video   AI caught   23% of  13 | real photos flagged    5% of  20
+    holdout original  ALL            AI caught   75% of 100 | real photos flagged    5% of 112
+    holdout social    core           AI caught   73% of  37 | real photos flagged    0% of  45
+    holdout social    reddit-images  AI caught   78% of  50 | real photos flagged    2% of  47
+    holdout social    reddit-video   AI caught   15% of  13 | real photos flagged    5% of  20
+    holdout social    ALL            AI caught   68% of 100 | real photos flagged    2% of 112
+  For comparison, at the default 0.5: AI caught 72%, real photos flagged 4% (holdout, both versions)
+
+=== vit-cifake-int8  (500 pictures x 2 versions)
+  How well it separates real from AI (AUC: 0.5 = coin flip, 1.0 = perfect)
+    original  core 0.72 | reddit-images 0.42 | reddit-video 0.52 | ALL 0.55
+    social    core 0.73 | reddit-images 0.42 | reddit-video 0.52 | ALL 0.56
+  Threshold tuned on the tuning part for <= 5% false alarms: 0.9960
+    holdout original  core           AI caught    3% of  37 | real photos flagged    2% of  45
+    holdout original  reddit-images  AI caught    4% of  50 | real photos flagged    6% of  47
+    holdout original  reddit-video   AI caught    0% of  13 | real photos flagged   10% of  20
+    holdout original  ALL            AI caught    3% of 100 | real photos flagged    5% of 112
+    holdout social    core           AI caught    3% of  37 | real photos flagged    4% of  45
+    holdout social    reddit-images  AI caught    4% of  50 | real photos flagged    6% of  47
+    holdout social    reddit-video   AI caught    0% of  13 | real photos flagged   10% of  20
+    holdout social    ALL            AI caught    3% of 100 | real photos flagged    6% of 112
+  For comparison, at the default 0.5: AI caught 88%, real photos flagged 78% (holdout, both versions)

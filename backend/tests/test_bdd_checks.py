@@ -6,7 +6,8 @@ import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
 
 from app.config import get_settings
-from tests.conftest import PNG_BYTES, fixture_bytes
+from app.services.classifier import get_classifier
+from tests.conftest import PNG_BYTES, StubClassifier, fixture_bytes
 
 scenarios("checks/check-text.feature", "checks/check-image.feature")
 
@@ -96,6 +97,11 @@ def large_picture(ctx):
     ctx["upload"] = ("big.png", PNG_BYTES + b"\x00" * get_settings().max_image_bytes, "image/png")
 
 
+@given(parsers.parse("our AI-image detector gives the picture a score of {score:f}"))
+def detector_score(client, score):
+    client.app.dependency_overrides[get_classifier] = lambda: StubClassifier(score)
+
+
 @when("they upload it for checking")
 def upload(ctx, client):
     ctx["response"] = client.post("/api/check-image", files={"file": ctx["upload"]})
@@ -110,6 +116,11 @@ def verdict_is(ctx, verdict):
 @then("no estimate is given")
 def no_estimate(ctx):
     assert ctx["response"].json()["ai_likelihood"] is None
+
+
+@then(parsers.parse("an estimate of {score:f} is given"))
+def estimate_given(ctx, score):
+    assert ctx["response"].json()["ai_likelihood"] == pytest.approx(score)
 
 
 @then(parsers.parse('the content credentials status is "{status}"'))
