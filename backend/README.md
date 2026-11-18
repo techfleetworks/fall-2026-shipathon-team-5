@@ -65,13 +65,14 @@ The reader never contacts the internet while reading an upload. The trust
 lists are kept in `app/trust/` (see the README there for updating them). Why:
 [ADR 0005](../docs/adr/0005-read-content-credentials-for-picture-checks.md).
 
-### AI-image classifier (not in the Docker image yet)
+### AI-image classifier
 
 `app/services/classifier.py` runs the SwinV2 AI-image detector with ONNX
 Runtime when `APP_CLASSIFIER_MODEL_DIR` points at its folder (the ONNX file,
 `config.json` and `preprocessor_config.json` from
-`SoldadoXara/ai-image-detector-deploy-ONNX`). It's off by default until the
-model is built into the Docker image. Why this model and these thresholds:
+`SoldadoXara/ai-image-detector-deploy-ONNX`). The Docker image includes it and
+turns it on; when you run the API without Docker, it's off unless you set
+that variable. Why this model and these thresholds:
 [ADR 0006](../docs/adr/0006-swinv2-ai-image-classifier.md); measurements in
 `evaluation/image_detectors/`.
 
@@ -101,12 +102,16 @@ How the risk level is worked out: [ADR 0003](../docs/adr/0003-weighted-scam-warn
 ```powershell
 cd backend
 docker build -t team5-backend .
-docker run --rm -p 8000:8000 team5-backend
+docker run --rm -p 8000:8000 --memory=512m --cpus=0.1 team5-backend
 ```
 
-Then open http://localhost:8000/docs. A GitHub workflow
-(`.github/workflows/backend-docker.yml`) builds the image and checks it answers
-on every pull request.
+The build downloads the AI-image classifier (about 200 MB) and checks it
+against the pinned hash in the `Dockerfile`. `--memory` and `--cpus` give you
+Render's free plan, so a picture check takes about 15 s; leave `--cpus` out to
+go faster. Then open http://localhost:8000/docs. A GitHub workflow
+(`.github/workflows/backend-docker.yml`) builds the image on every pull
+request and checks it answers, that the classifier runs, and that memory
+stays under 450 MB.
 
 ## Deploy to Render
 
@@ -177,7 +182,7 @@ framework in a temporary file that's deleted when the request ends.
 
 ## Next steps
 
-1. Ship the AI-image classifier in the Docker image ([plan](../docs/plans/image-classifier.md)).
+1. Confirm the AI-image classifier's threshold in low-memory mode before merging to main ([plan](../docs/plans/image-classifier.md)).
 2. Read Content Credentials from video too.
 3. Add an ML scam-message classifier on top of the rules.
 4. Install the team's standards checks from the enterprise-software-AI-skills repo (`.claude/skills/bootstrap`).

@@ -19,12 +19,14 @@ jobs:
       - name: Build image
         run: docker build -t team5-backend backend
       - name: Start container
-        run: docker run -d --name api -p 8000:8000 team5-backend
+        # Same memory as Render's free plan.
+        run: docker run -d --name api -p 8000:8000 --memory=512m team5-backend
       - name: Check the API answers
         run: |
-          for i in $(seq 1 20); do
+          # Loading the AI-image classifier takes a while.
+          for i in $(seq 1 60); do
             if curl -fsS http://localhost:8000/api/health; then break; fi
-            sleep 1
+            sleep 2
           done
           curl -fsS http://localhost:8000/api/health | grep -q '"ok"'
           curl -fsS -X POST http://localhost:8000/api/check-text \
@@ -36,6 +38,17 @@ jobs:
             http://localhost:8000/api/check-image | tee /tmp/image.json
           grep -q '"source":"ai_generated"' /tmp/image.json
           grep -q '"status":"untrusted_signer"' /tmp/image.json
+          # A picture with no record goes to the AI-image classifier.
+          curl -fsS -F "file=@backend/tests/fixtures/images/plain.jpg;type=image/jpeg" \
+            http://localhost:8000/api/check-image | tee /tmp/plain.json
+          grep -q 'detector' /tmp/plain.json
+      - name: Memory stays under 450 MB
+        run: |
+          # Highest memory use since the container started (cgroup v2), after
+          # loading the model and checking a picture with it.
+          peak=$(docker exec api cat /sys/fs/cgroup/memory.peak)
+          echo "Peak memory: $((peak / 1048576)) MiB (limit 450 MiB; Render's free plan has 512 MB)"
+          test "$peak" -lt $((450 * 1048576))
       - name: Show logs if something failed
         if: failure()
         run: docker logs api

@@ -1,6 +1,6 @@
 # Plan: AI-image classifier on the free Render plan
 
-Status: in progress (steps 1–4 done). Written 2026-11-18. Branch: `backend/image-classifier`.
+Status: in progress (steps 1–7 done; confirming before merge). Written 2026-11-18. Branch: `backend/image-classifier`.
 
 ## Progress
 
@@ -16,13 +16,15 @@ Last updated 2026-11-18.
 * ✅ Step 6, partly: unit tests and Gherkin scenarios with a tiny fake model,
   and `tests/test_image_detector_baseline.py` guarding the threshold.
 * ✅ Step 7, partly: ADR 0006 written.
+* ✅ Step 5: the Docker build downloads SwinV2 (`model_uint8.onnx`) pinned to
+  revision `0df8696b5db0`, checks its SHA-256 and turns the classifier on.
+* ✅ Step 6: the Docker smoke test runs with 512 MB, checks the classifier
+  answers and that peak memory stays under 450 MB.
 * **Next:**
-  * Step 5: download the SwinV2 files in the Docker build, pinned to a
-    revision and SHA-256s, and set `APP_CLASSIFIER_MODEL_DIR` in the image.
-  * Before turning it on: re-score the test set in low-memory mode with the
-    backend's own preprocessing and confirm the threshold (ADR 0006,
-    Confirmation).
-  * Step 6, rest: the Docker smoke test checks memory stays under 450 MB.
+  * Build the image locally and on GitHub; check memory and speed.
+  * **Before merging to main** (main deploys to Render): re-score the test
+    set in low-memory mode with the backend's own preprocessing and confirm
+    the threshold (ADR 0006, Confirmation).
   * Step 8: video checks.
 
 ## Why
