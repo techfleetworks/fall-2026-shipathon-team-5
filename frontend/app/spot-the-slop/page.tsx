@@ -104,7 +104,7 @@ export default function Page() {
               </h2>
               <p className="mt-3 max-w-2xl text-body-lg text-ink-muted">{reverseSearchSummary.intro}</p>
             </div>
-            <ButtonLink href="/spot-the-slop/reverse-image-search" variant="outline-teal">
+            <ButtonLink href="/spot-the-slop/reverse-image-search" variant="dark">
               Read the step-by-step guide
             </ButtonLink>
           </div>
@@ -131,7 +131,7 @@ export default function Page() {
                 What happened, and the clue that would have caught it.
               </p>
             </div>
-            <ButtonLink href="/spot-the-slop/viral-hoaxes" variant="outline-teal">
+            <ButtonLink href="/spot-the-slop/viral-hoaxes" variant="dark">
               See all hoaxes
             </ButtonLink>
           </div>
@@ -155,7 +155,7 @@ export default function Page() {
                   Words commonly used on this site and elsewhere.
               </p>
             </div>
-            <ButtonLink href="/spot-the-slop/glossary" variant="outline-teal">
+            <ButtonLink href="/spot-the-slop/glossary" variant="dark">
               See all terms
             </ButtonLink>
           </div>

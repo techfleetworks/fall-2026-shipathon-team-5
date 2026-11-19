@@ -4,6 +4,7 @@ import Image from "next/image";
 import PictureChecker from "@/components/PictureChecker";
 import { findSection } from "@/lib/sitemap";
 import { useVeritasIntro, veritasFeatures } from "@/lib/content/useVeritas";
+import { ButtonLink } from "@/components/ui/Button";
 
 export const metadata: Metadata = { title: "Use Veritas to verify" };
 
@@ -54,6 +55,16 @@ export default function Page() {
                     </li>
                   ))}
                 </ul>
+                {feature.action && (
+                  // Placeholder until there's a link: points at this section, so it goes nowhere.
+                  <ButtonLink
+                    href={feature.action.href ?? `#${feature.id}`}
+                    newTab={feature.action.href?.startsWith("http") ?? false}
+                    className="mt-8"
+                  >
+                    {feature.action.label}
+                  </ButtonLink>
+                )}
               </div>
             </Container>
           </section>

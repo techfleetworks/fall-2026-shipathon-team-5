@@ -33,7 +33,7 @@ export const checklists: Record<string, Checklist> = {
       alt: "A sound mixing desk with lit-up sliders.",
     },
     intro:
-      "Scammers can copy a voice from a few seconds of video. Here are some ways you can tell when a call or a voice might not be authentic.",
+      "Scammers can copy a voice from a few seconds of video. Here is an example you can use to practice using the checklist of items below.",
     media: {
       type: "audio",
       title: "Listen: an AI-generated voice",
@@ -45,11 +45,19 @@ export const checklists: Record<string, Checklist> = {
       ],
     },
     closely: {
-      title: "Listen closely",
+      title: "What to notice in potentially AI-generated audio",
       items: [
         {
           title: "Listen for breathing and pauses",
           text: "Cloned voices often run long sentences with no breaths, or pause in odd places. Real people breathe, stumble, and say “um”.",
+        },
+        {
+          title: "Pay attention to pronunciation",
+          text: "AI-generated speech often stumbles or puts odd stress over unfamiliar words, so pay attention to names, addresses, and uncommon words.",
+        },
+        {
+          title: "Be mindful of tone and emotion",
+          text: "Check for whether the tone and emotion of the voice matches the situation. Also keep in mind flat or calm delivery in what should be an urgent situation.",
         },
         {
           title: "Listen for audio artifacts and background noise",
@@ -77,15 +85,15 @@ export const checklists: Record<string, Checklist> = {
       alt: "Dozens of old photo slides scattered on a white surface.",
     },
     intro:
-      "AI images can look perfect at a glance. Zoom in and work through this list. One odd detail is a clue; three or more is a strong signal.",
+      "AI images can look perfect at a glance. Here is an example you can use to practice using the checklist of items below.",
     media: {
       type: "image",
       title: "Look closely at this AI-generated image",
-      src: "/images/checklists/ai-photo-example.webp",
+      src: "/images/checklists/ai-image-example.webp",
       alt: "AI-generated image of a smiling woman waving at a music festival, under a banner with nonsense lettering.",
     },
     closely: {
-      title: "Look closely",
+      title: "What to notice in potentially AI-generated images",
       items: [
         { title: "Hands and fingers", text: "Count them. Extra, missing or fused fingers can be common in AI images." },
         { title: "Text and signs", text: "Letters that look like a language but don’t spell anything." },
@@ -115,7 +123,7 @@ export const checklists: Record<string, Checklist> = {
       alt: "A wall of old TV screens showing glitchy, distorted images.",
     },
     intro:
-      "Deepfake videos often break down when a face turns, a hand moves, or the light changes. Slow the video down and watch for these.",
+      "Deepfake videos often break down when a face turns, a hand moves, or the light changes. Here is an example you can use to practice using the checklist of items below.",
     media: {
       type: "video",
       title: "Watch: an AI-generated video",
@@ -123,7 +131,7 @@ export const checklists: Record<string, Checklist> = {
       poster: "/images/checklists/ai-video-poster.webp",
     },
     closely: {
-      title: "Watch closely",
+      title: "What to notice in potentially AI-generated",
       items: [
         {
           title: "Physics and lighting",
