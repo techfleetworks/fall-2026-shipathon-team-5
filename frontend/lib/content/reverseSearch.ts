@@ -79,3 +79,14 @@ export const reverseSearchTerms = [
   "Lateral reading",
   "Fact-checker",
 ];
+
+// The short version shown on the Learn to spot the slop page, linking to the full guide.
+export const reverseSearchSummary = {
+  intro: "Search with a picture instead of words to find where it first appeared.",
+  // Draft steps: replace with the team's wording.
+  bullets: [
+    "Save the picture, or take a screenshot of it.",
+    "Upload it to a reverse image search tool such as Google Lens, TinEye, or Bing Visual Search.",
+    "Look for the oldest result and compare it with what you saw. A different date or place is a red flag.",
+  ],
+};

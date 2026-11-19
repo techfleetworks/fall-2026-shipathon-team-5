@@ -9,13 +9,15 @@ import { featuredHoaxes, hoaxSizers } from "@/lib/content/hoaxes";
 import { glossary } from "@/lib/content/glossary";
 import { platforms } from "@/lib/content/platforms";
 import { checklists } from "@/lib/content/checklists";
+import { reverseSearchSummary } from "@/lib/content/reverseSearch";
 
 export const metadata: Metadata = { title: "Learn to spot the slop" };
 
-// The four parts of this page. "id" is the #anchor other pages link to.
+// The five parts of this page. "id" is the #anchor other pages link to.
 const parts = [
   { id: "checklists", label: "Checklists" },
   { id: "ai-on-your-feed", label: "AI on your feed" },
+  { id: "reverse-image-search", label: "Reverse image search" },
   { id: "viral-hoaxes", label: "Real-life AI hoaxes" },
   { id: "glossary", label: "AI terms glossary" },
 ];
@@ -92,8 +94,33 @@ export default function Page() {
         </Container>
       </section>
 
+      {/* How to do a reverse image search (moved from Tools to double-check) */}
+      <section id="reverse-image-search" className="scroll-mt-20 bg-surface py-16">
+        <Container>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="font-heading text-h3 font-bold md:text-h2">
+                How to do a reverse image search
+              </h2>
+              <p className="mt-3 max-w-2xl text-body-lg text-ink-muted">{reverseSearchSummary.intro}</p>
+            </div>
+            <ButtonLink href="/spot-the-slop/reverse-image-search" variant="dark">
+              Read the step-by-step guide
+            </ButtonLink>
+          </div>
+          <ul className="mt-8 max-w-3xl space-y-4">
+            {reverseSearchSummary.bullets.map((bullet) => (
+              <li key={bullet} className="flex gap-3 text-body-lg">
+                <span aria-hidden="true" className="mt-2.5 size-2.5 shrink-0 rounded-full bg-primary" />
+                {bullet}
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
       {/* Real-life AI hoaxes (moved from the home page) */}
-      <section id="viral-hoaxes" className="scroll-mt-20 bg-surface py-16">
+      <section id="viral-hoaxes" className="scroll-mt-20 py-16">
         <Container>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -104,7 +131,7 @@ export default function Page() {
                 What happened, and the clue that would have caught it.
               </p>
             </div>
-            <ButtonLink href="/spot-the-slop/viral-hoaxes" variant="outline-teal">
+            <ButtonLink href="/spot-the-slop/viral-hoaxes" variant="dark">
               See all hoaxes
             </ButtonLink>
           </div>
@@ -119,7 +146,7 @@ export default function Page() {
       </section>
 
       {/* AI terms glossary */}
-      <section id="glossary" className="scroll-mt-20 py-16">
+      <section id="glossary" className="scroll-mt-20 bg-surface py-16">
         <Container>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -128,13 +155,13 @@ export default function Page() {
                   Words commonly used on this site and elsewhere.
               </p>
             </div>
-            <ButtonLink href="/spot-the-slop/glossary" variant="outline-teal">
+            <ButtonLink href="/spot-the-slop/glossary" variant="dark">
               See all terms
             </ButtonLink>
           </div>
           <dl className="mt-8 grid gap-4 md:grid-cols-2">
             {glossary.slice(0, 4).map((item) => (
-              <div key={item.term} className="rounded-card border border-line bg-surface p-6">
+              <div key={item.term} className="rounded-card border border-line bg-canvas p-6">
                 <dt className="font-heading text-h5 font-bold">{item.term}</dt>
                 <dd className="mt-2 text-body text-ink-muted">{item.definition}</dd>
               </div>

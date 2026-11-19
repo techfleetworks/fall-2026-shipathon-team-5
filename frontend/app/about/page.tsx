@@ -55,6 +55,16 @@ export default function Page() {
                 Unsplash
                 <span className="sr-only"> (opens in a new tab)</span>
               </a>
+              {" "}and{" "}
+              <a
+                href="https://www.pexels.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold underline underline-offset-2 hover:text-ink-muted"
+              >
+                Pexels
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
               .
             </p>
           </div>
