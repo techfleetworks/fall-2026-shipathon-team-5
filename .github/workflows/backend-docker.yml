@@ -19,12 +19,14 @@ jobs:
       - name: Build image
         run: docker build -t team5-backend backend
       - name: Start container
-        run: docker run -d --name api -p 8000:8000 team5-backend
+        # Same memory as Render's free plan.
+        run: docker run -d --name api -p 8000:8000 --memory=512m team5-backend
       - name: Check the API answers
         run: |
-          for i in $(seq 1 20); do
+          # Loading the AI-image classifier takes a while.
+          for i in $(seq 1 60); do
             if curl -fsS http://localhost:8000/api/health; then break; fi
-            sleep 1
+            sleep 2
           done
           curl -fsS http://localhost:8000/api/health | grep -q '"ok"'
           curl -fsS -X POST http://localhost:8000/api/check-text \
@@ -36,6 +38,24 @@ jobs:
             http://localhost:8000/api/check-image | tee /tmp/image.json
           grep -q '"source":"ai_generated"' /tmp/image.json
           grep -q '"status":"untrusted_signer"' /tmp/image.json
+          # A picture with no record goes to the AI-image classifier.
+          curl -fsS -F "file=@backend/tests/fixtures/images/plain.jpg;type=image/jpeg" \
+            http://localhost:8000/api/check-image | tee /tmp/plain.json
+          grep -q 'detector' /tmp/plain.json
+      - name: Memory fits the free plan
+        run: |
+          # After loading the model and checking pictures with it. The model's
+          # weights are mapped from disk (RssFile), which the system can drop
+          # and re-read under pressure; the API's own memory (RssAnon) can't.
+          # Measured 2026-11-18: about 225 MiB own, 465 MiB in total.
+          docker exec api grep -E 'VmHWM|RssAnon|RssFile' /proc/1/status
+          anon_kb=$(docker exec api awk '/RssAnon/ {print $2}' /proc/1/status)
+          peak_kb=$(docker exec api awk '/VmHWM/ {print $2}' /proc/1/status)
+          test "$anon_kb" -lt $((350 * 1024))   # own memory, with room for busy moments
+          test "$peak_kb" -lt $((500 * 1024))   # everything, under Render's 512 MB
+          # And the container was never killed for running out of memory.
+          docker exec api cat /sys/fs/cgroup/memory.events
+          test "$(docker exec api awk '/^oom_kill / {print $2}' /sys/fs/cgroup/memory.events)" = 0
       - name: Show logs if something failed
         if: failure()
         run: docker logs api

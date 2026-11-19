@@ -55,3 +55,39 @@ Feature: Check a picture
     Given a visitor has a picture larger than the size limit
     When they upload it for checking
     Then the request is refused with status 413
+
+  @audience:visitor @usecase:image-classifier-likely-ai @category:happy @quality:functional @severity:critical
+  Scenario: Our detector is very sure a picture with no record was made with AI
+    Given our AI-image detector gives the picture a score of 0.99
+    And a visitor has a PNG picture
+    When they upload it for checking
+    Then the verdict is "likely_ai"
+    And an estimate of 0.99 is given
+    And a clue mentions "treat this as an estimate"
+
+  @audience:visitor @usecase:image-classifier-never-real @category:edge @quality:safety @severity:critical
+  Scenario: Our detector finding no signs of AI never calls a picture real
+    Given our AI-image detector gives the picture a score of 0.02
+    And a visitor has a PNG picture
+    When they upload it for checking
+    Then the verdict is "uncertain"
+    And no estimate is given
+    And a clue mentions "doesn't prove the picture is real"
+    And a clue mentions "reverse image search"
+
+  @audience:visitor @usecase:image-credentials-beat-classifier @category:edge @quality:functional @severity:high
+  Scenario: A picture's own record of being made with AI beats the detector
+    Given our AI-image detector gives the picture a score of 0.02
+    And a visitor has the test picture "ai_generated.jpg"
+    When they upload it for checking
+    Then the verdict is "likely_ai"
+    And a clue mentions "Example Image Generator"
+
+  @audience:visitor @usecase:image-camera-details @category:happy @quality:functional @severity:high
+  Scenario: A phone photo gets a reassuring clue, but is never called real
+    Given a visitor has a phone photo with camera details
+    When they upload it for checking
+    Then the verdict is "uncertain"
+    And no estimate is given
+    And a clue mentions "details from a camera"
+    And a clue mentions "anyone can copy them"

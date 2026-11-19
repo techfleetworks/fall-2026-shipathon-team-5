@@ -1,9 +1,12 @@
 """Checks a picture for evidence of how it was made.
 
-Today the evidence is the picture's own data: Content Credentials (C2PA) and
-IPTC "made with AI" labels (see content_credentials.py). There is no AI-image
-classifier yet, so when a picture carries no such data the honest answer is
-"we can't tell", and the visitor is pointed to other checks.
+The best evidence is the picture's own data: Content Credentials (C2PA) and
+IPTC "made with AI" labels (see content_credentials.py). When that data
+settles the question, it wins. Otherwise, if an AI-image classifier is
+configured (see classifier.py), its estimate is added: a very confident
+score makes the verdict "likely_ai"; anything else stays "uncertain", because
+the model can't prove a picture is real. The visitor is always pointed to
+other checks when we can't tell.
 
 Pictures are processed in memory only and never saved.
 """
@@ -13,6 +16,8 @@ import io
 from PIL import Image, UnidentifiedImageError
 
 from app.schemas import ContentCredentials, ImageCheckResult, Signal
+from app.services.camera_details import CameraDetails, read_camera_details
+from app.services.classifier import Estimate, ImageClassifier, estimate
 from app.services.content_credentials import Credentials, TrustStore, read_credentials
 
 # File signatures ("magic bytes") of the image types we accept.
@@ -155,9 +160,92 @@ def _assess(c: Credentials) -> tuple[float | None, str, list[Signal], str]:
     ], "We couldn't find any record of how this picture was made, which is common. That doesn't mean it's real."
 
 
-def check_image(data: bytes, trust: TrustStore | None = None) -> ImageCheckResult:
+_MODEL_HIGH = Signal(
+    label="Looks made with AI",
+    explanation="Our AI-image detector, which looks at the picture itself, gives it a "
+    "high chance of being made with AI. Detectors can be wrong, especially with "
+    "edited or heavily compressed pictures, so treat this as an estimate.",
+)
+_MODEL_MIDDLE = Signal(
+    label="Our detector isn't sure",
+    explanation="Our AI-image detector found some signs that could come from AI, but "
+    "not enough to say. Real photos can show these signs too.",
+)
+_MODEL_LOW = Signal(
+    label="No clear signs of AI found",
+    explanation="Our AI-image detector didn't find clear signs of AI. That doesn't "
+    "prove the picture is real: detectors miss many AI pictures, especially from "
+    "newer AI tools.",
+)
+
+
+def _with_estimate(
+    signals: list[Signal], message: str, model: Estimate
+) -> tuple[float | None, str, list[Signal], str]:
+    """Add the classifier's estimate to an answer the picture's own data
+    couldn't settle."""
+    others = [s for s in signals if s is not _OTHER_CHECKS]
+    if model.band == "high":
+        return round(model.score, 2), "likely_ai", [_MODEL_HIGH, *others, _OTHER_CHECKS], (
+            "Our detector thinks this picture was probably made with AI. "
+            "It's an estimate, so check it another way too."
+        )
+    clue = _MODEL_MIDDLE if model.band == "middle" else _MODEL_LOW
+    return None, "uncertain", [*others, clue, _OTHER_CHECKS], message
+
+
+def _with_camera_details(
+    signals: list[Signal], message: str, camera: CameraDetails, model: Estimate | None
+) -> tuple[list[Signal], str]:
+    """Add the camera clue to an answer that stays "uncertain". It reassures,
+    but never becomes "likely real": these details can be copied onto any picture."""
+    taken = f", taken on {camera.taken_text}" if camera.taken_text else ""
+    clue = Signal(
+        label="Has details from a camera",
+        explanation=f"The picture contains details that phones and cameras add when they "
+        f"take a photo ({camera.device}{taken}). AI tools don't add these, so this points "
+        "to a real photo. But they aren't proof: anyone can copy them onto another picture.",
+    )
+    others = [s for s in signals if s is not _OTHER_CHECKS]
+    if model is not None and model.band == "middle":
+        message = (
+            f"This picture has details from a camera ({camera.device}), which usually means "
+            "a real photo, but our detector found some signs that could come from AI. "
+            "Check it another way to be sure."
+        )
+    elif model is not None:
+        message = (
+            f"We found no clear signs of AI, and this picture has details from a camera "
+            f"({camera.device}). That usually means a real photo, but these details can be copied."
+        )
+    else:
+        message = (
+            f"This picture has details from a camera ({camera.device}), which usually means "
+            "a real photo. These details can be copied, so we can't be sure."
+        )
+    return [*others, clue, _OTHER_CHECKS], message
+
+
+def check_image(
+    data: bytes,
+    trust: TrustStore | None = None,
+    classifier: ImageClassifier | None = None,
+) -> ImageCheckResult:
     creds = read_credentials(data, detect_image_type(data), trust)
     likelihood, verdict, signals, message = _assess(creds)
+    # The picture's own data wins when it settles the question; the model only
+    # runs when it doesn't (which also saves the free plan's CPU).
+    model = None
+    if verdict == "uncertain" and classifier is not None:
+        model = estimate(classifier, data)
+        if model is not None:
+            likelihood, verdict, signals, message = _with_estimate(signals, message, model)
+    # Camera details only help when nothing else settled the question; they
+    # never override a signed record, an AI label or a confident detector.
+    if verdict == "uncertain" and not creds.found:
+        camera = read_camera_details(data)
+        if camera is not None:
+            signals, message = _with_camera_details(signals, message, camera, model)
     return ImageCheckResult(
         ai_likelihood=likelihood,
         verdict=verdict,
