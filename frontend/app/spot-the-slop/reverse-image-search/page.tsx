@@ -14,7 +14,7 @@ import {
 
 export const metadata: Metadata = { title: "How to do a reverse image search" };
 
-const HREF = "/tools-to-double-check/reverse-image-search";
+const HREF = "/spot-the-slop/reverse-image-search";
 
 const linkClass =
   "font-semibold underline underline-offset-2 hover:text-ink-muted";

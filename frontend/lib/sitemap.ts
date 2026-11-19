@@ -31,6 +31,13 @@ export const pageGroups: Record<PageGroup, { title: string; backLabel: string; b
 export const sections: Section[] = [
   {
     number: 1,
+    title: "Use Veritas to verify",
+    href: "/use-veritas",
+    description: "Check posts without leaving the page or app you’re in.",
+    children: [], // everything is on the /use-veritas page itself
+  },
+  {
+    number: 2,
     title: "Learn to spot the slop",
     href: "/spot-the-slop",
     description:
@@ -45,19 +52,9 @@ export const sections: Section[] = [
       { title: "Facebook and Messenger: what to check before you share", href: "/spot-the-slop/ai-on-your-feed/facebook-messenger", shortTitle: "Facebook and Messenger", group: "platforms" },
       { title: "WhatsApp: what to check before you share", href: "/spot-the-slop/ai-on-your-feed/whatsapp", shortTitle: "WhatsApp", group: "platforms" },
       { title: "X (formerly Twitter): what to check before you share", href: "/spot-the-slop/ai-on-your-feed/x", shortTitle: "X (formerly Twitter)", group: "platforms" },
+      { title: "How to do a reverse image search", href: "/spot-the-slop/reverse-image-search", shortTitle: "Reverse image search" },
       { title: "Real-life AI hoaxes that went viral", href: "/spot-the-slop/viral-hoaxes", shortTitle: "Viral hoaxes" },
       { title: "AI terms glossary", href: "/spot-the-slop/glossary", shortTitle: "Glossary" },
-    ],
-  },
-  {
-    number: 2,
-    title: "Tools to double-check",
-    href: "/tools-to-double-check",
-    description: "Tools and steps for checking content before you share it.",
-    children: [
-      { title: "Using Veritas to verify", href: "/tools-to-double-check/using-veritas", shortTitle: "Using Veritas" },
-      { title: "How to do a reverse image search", href: "/tools-to-double-check/reverse-image-search", shortTitle: "Reverse image search" },
-      { title: "Educational orgs and initiatives", href: "/tools-to-double-check/educational-orgs", shortTitle: "Educational-orgs" },
     ],
   },
   {
@@ -90,23 +87,24 @@ export function findPage(href: string): { page: PageLink; section: Section } {
   throw new Error(`No page in sitemap for ${href}`);
 }
 
-// Footer columns (desktop only). Grouped like the Figma footer: Learn / Tools / About.
+// Footer columns (desktop only): Veritas / Learn / About.
 export const footerGroups: { title: string; links: PageLink[] }[] = [
+  {
+    title: "Veritas",
+    links: [
+      { title: "Use Veritas to verify", href: "/use-veritas" },
+      { title: "Check a picture now", href: "/use-veritas#check-a-picture" },
+      { title: "Quiz your skills", href: "/quiz-your-skills" },
+    ],
+  },
   {
     title: "Learn",
     links: [
       { title: "Learn to spot the slop", href: "/spot-the-slop" },
       { title: "AI on your feed", href: "/spot-the-slop#ai-on-your-feed" },
+      { title: "Reverse image search", href: "/spot-the-slop/reverse-image-search" },
       { title: "Real-life AI hoaxes", href: "/spot-the-slop/viral-hoaxes" },
       { title: "AI terms glossary", href: "/spot-the-slop/glossary" },
-    ],
-  },
-  {
-    title: "Tools",
-    links: [
-      { title: "Tools to double-check", href: "/tools-to-double-check" },
-      { title: "Using Veritas to verify", href: "/tools-to-double-check/using-veritas" },
-      { title: "Quiz your skills", href: "/quiz-your-skills" },
     ],
   },
   {

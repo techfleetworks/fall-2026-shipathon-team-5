@@ -1,21 +1,20 @@
 import Link from "next/link";
 import Container from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
-import HeroQuizLoader from "@/components/HeroQuizLoader";
 import { checklists } from "@/lib/content/checklists";
 import Image from "next/image";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 
 const steps = [
   {
+    title: "Check",
+    text: "Download the free browser extension to check an image, seeing the reasons behind it. A mobile app is in the works.",
+    href: "/use-veritas",
+  },
+  {
     title: "Learn",
     text: "Short guides on AI images, voice clones, and how to trace a claim back to its source.",
     href: "/spot-the-slop",
-  },
-  {
-    title: "Check",
-    text: "Download the free browser extension to check an image, with the reasons and sources behind it.",
-    href: "/tools-to-double-check",
   },
   {
     title: "Practice",
@@ -34,18 +33,18 @@ const guides: {
     title: "Spotting AI-generated images",
     meta: "4 min · 8 checks",
     href: "/spot-the-slop/images-and-visuals",
-    image: checklists["images-and-visuals"].cardImage, // same photo as on the Learn page
+    image: checklists["images-and-visuals"].cardImage,
   },
   {
     title: "Spotting voice clones",
     meta: "3 min · 4 steps",
     href: "/spot-the-slop/audio-and-voice",
-    image: checklists["audio-and-voice"].cardImage, // same photo as on the Learn page
+    image: checklists["audio-and-voice"].cardImage,
   },
   {
     title: "How to do a reverse image search",
     meta: "4 min · 4 steps",
-    href: "/tools-to-double-check/reverse-image-search",
+    href: "/spot-the-slop/reverse-image-search",
     image: {
       src: "/images/reverse-search/reverse-image-home.webp",
       alt: "A 3D search bar with a magnifying glass icon.",
@@ -58,29 +57,39 @@ export default function Home() {
     <main className="flex-1">
       {/* Hero (dark) */}
       <section className="bg-deep text-inverse">
-        <Container className="grid items-center gap-12 py-20 lg:grid-cols-2 lg:py-28">
+        <Container className="grid items-center gap-12 py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-10 lg:py-28">
           <div>
-            <p className="inline-flex items-center gap-1.5 rounded-card bg-surface px-2 py-1 text-caption font-medium text-ink">
+            <p className="flex w-fit items-center gap-1.5 rounded-card bg-surface px-2 py-1 text-caption font-medium text-ink">
               <span aria-hidden="true">★</span> Free · No sign-up
             </p>
             <h1 className="mt-4 font-heading text-h2 font-bold sm:text-h1 lg:text-display">
               Can you spot the slop?
             </h1>
             <p className="mt-6 max-w-xl text-body-lg text-inverse-muted">
-              AI images and inauthentic videos are everywhere. Veritas helps you check
-              what you see and teaches you to spot fakes on your own.
+              AI images and inauthentic videos are everywhere.
+            </p>
+            <p className="mt-6 max-w-xl text-body-lg text-inverse-muted">
+              The Veritas browser extension and mobile app help you verify AI-generated content as
+              you browse social media, all while teaching you how to spot fakes on your own.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/tools-to-double-check/using-veritas#check-a-picture">Check a picture</ButtonLink>
+              <ButtonLink href="/use-veritas">Use Veritas</ButtonLink>
               <ButtonLink href="/spot-the-slop" variant="dark">
                 Start learning
               </ButtonLink>
             </div>
           </div>
 
-          {/* Preview of the Real or AI? quiz. Hidden on phones. */}
-          <div className="mx-auto hidden w-full max-w-md md:block">
-            <HeroQuizLoader />
+          <div className="hidden md:block lg:relative lg:self-stretch">
+            <Image
+              src="/images/veritas/veritas-extension-mobile.webp"
+              alt="Veritas checking a news article in the browser, where the photo is labeled Likely AI-generated and the side panel lists the findings, next to the Veritas mobile app's home screen."
+              width={1800}
+              height={962}
+              preload
+              sizes="(min-width: 1024px) 720px, 100vw"
+              className="h-auto w-full lg:absolute lg:inset-0 lg:h-full lg:object-contain lg:object-right"
+            />
           </div>
         </Container>
       </section>
@@ -117,7 +126,7 @@ export default function Home() {
                 Short, visual guides. Each one takes about 4 minutes.
               </p>
             </div>
-            <ButtonLink href="/spot-the-slop" variant="outline-teal">
+            <ButtonLink href="/spot-the-slop" variant="dark">
               See all guides
             </ButtonLink>
           </div>
@@ -152,40 +161,6 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* Not sure about something? Verify it (browser extension) */}
-      <section className="py-20">
-        <Container>
-          <h2 className="font-heading text-h3 font-bold md:text-h2">
-            Not sure about something? Verify it
-          </h2>
-          <p className="mt-3 max-w-2xl text-body-lg text-ink-muted">
-            A browser extension is in the works. Right-click any image to check it with Veritas.
-          </p>
-          <div className="mt-10 grid items-center gap-8 rounded-card border border-line bg-surface p-6 md:grid-cols-2">
-            <Image
-              src="/images/veritas/veritas-extension-new.webp"
-              alt="The Veritas browser extension on a news article: the photo is outlined and labeled Likely AI-generated, the Veritas right-click menu is open, and the side panel shows the findings."
-              width={1600}
-              height={1075}
-              sizes="(min-width: 768px) 600px, 100vw"
-              className="h-auto w-full rounded-image border border-line"
-            />
-            <div>
-              <h3 className="font-heading text-h4 font-bold">Browser extension</h3>
-              <p className="mt-2 text-body text-ink-muted">
-                Labels AI images and adds context notes right inside your feed and on news sites.
-              </p>
-              <ButtonLink
-                href="/tools-to-double-check/using-veritas"
-                variant="outline-teal"
-                className="mt-6"
-              >
-                How it works
-              </ButtonLink>
-            </div>
-          </div>
-        </Container>
-      </section>
     </main>
   );
 }

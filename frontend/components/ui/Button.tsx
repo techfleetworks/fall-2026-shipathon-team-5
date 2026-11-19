@@ -20,15 +20,22 @@ type Props = {
   children: React.ReactNode;
 };
 
+// newTab: open the link in a new tab (for other websites). Screen readers are told so.
 export function ButtonLink({
   href,
   variant = "primary",
   className = "",
+  newTab = false,
   children,
-}: Props & { href: string }) {
+}: Props & { href: string; newTab?: boolean }) {
   return (
-    <Link href={href} className={`${base} ${variants[variant]} ${className}`}>
+    <Link
+      href={href}
+      className={`${base} ${variants[variant]} ${className}`}
+      {...(newTab && { target: "_blank", rel: "noopener noreferrer" })}
+    >
       {children}
+      {newTab && <span className="sr-only"> (opens in a new tab)</span>}
     </Link>
   );
 }

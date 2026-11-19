@@ -228,7 +228,7 @@ function Result({
 
       <p className="mt-8 text-body">
         No checker is perfect. Before you share, also{" "}
-        <Link href="/tools-to-double-check/reverse-image-search" className="font-semibold underline">
+        <Link href="/spot-the-slop/reverse-image-search" className="font-semibold underline">
           search for where the picture came from
         </Link>{" "}
         and look for the clues in our{" "}
