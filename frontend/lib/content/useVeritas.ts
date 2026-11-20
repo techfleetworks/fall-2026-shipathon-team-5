@@ -23,7 +23,7 @@ export const veritasFeatures: VeritasFeature[] = [
       "Right-click any image or video to check it.",
       "Works on social media platforms you view in the browser, such as YouTube, Facebook, and X.",
     ],
-    action: { label: "Download the extension" },
+    action: { label: "Download the extension (coming soon)" },
     image: {
       src: "/images/veritas/veritas-extension-new.webp",
       alt: "The Veritas browser extension on a news article: the photo is outlined and labeled Likely AI-generated, the Veritas right-click menu is open, and the side panel shows the findings.",
