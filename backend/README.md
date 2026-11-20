@@ -97,7 +97,9 @@ When nothing else settles the question, the check also reads the EXIF camera
 details phones and cameras add (device, date taken, exposure). They're shown
 as a reassuring clue ("usually means a real photo, but these details can be
 copied"), and the verdict stays `uncertain`. They aren't signed, so they never
-make an answer "likely real". See
+make an answer "likely real". Likewise, when the detector finds no signs of AI
+at all (score at or below `APP_CLASSIFIER_NO_SIGNS_THRESHOLD`), that's shown as
+a stronger reassuring clue, and the verdict still stays `uncertain`. See
 [ADR 0007](../docs/adr/0007-camera-details-as-a-clue.md).
 
 ## Scam warning types
