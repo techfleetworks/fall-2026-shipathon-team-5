@@ -35,7 +35,7 @@ the front end before making them.
 | Method | Path | Sends | Returns | Status |
 |---|---|---|---|---|
 | GET | `/api/health` | nothing | `{"status": "ok"}` | Works |
-| POST | `/api/check-image` | form upload, field `file` (JPG/PNG/WEBP, max 10 MB) | `verdict`, `ai_likelihood` (or null), `content_credentials`, `signals`, `message` | Works: reads Content Credentials (C2PA) and AI labels. AI-image classifier built but off until a model is chosen |
+| POST | `/api/check-image` | form upload, field `file` (JPG/PNG/WEBP, max 10 MB) | `verdict`, `ai_likelihood` (or null), `content_credentials`, `signals`, `message` | Works: reads Content Credentials (C2PA), AI labels and camera details, and runs the SwinV2 AI-image detector |
 | POST | `/api/check-text` | JSON `{"text": "..."}` (20–10,000 characters) | `risk`, `red_flags` (with `start`/`end` positions to highlight), `message` | Works, weighted rules (English, US and UK scams). Measured in `evaluation/` |
 | GET | `/api/quiz` | nothing | list of quiz pictures with answers and explanations | **Placeholder data** |
 
@@ -195,7 +195,6 @@ framework in a temporary file that's deleted when the request ends.
 
 ## Next steps
 
-1. Confirm the AI-image classifier's threshold in low-memory mode before merging to main ([plan](../docs/plans/image-classifier.md)).
-2. Read Content Credentials from video too.
-3. Add an ML scam-message classifier on top of the rules.
-4. Install the team's standards checks from the enterprise-software-AI-skills repo (`.claude/skills/bootstrap`).
+1. Read Content Credentials from video too, and judge video frames so the extension's video checks can be switched on.
+2. Add an ML scam-message classifier on top of the rules.
+3. Install the team's standards checks from the enterprise-software-AI-skills repo (`.claude/skills/bootstrap`).
