@@ -2,7 +2,7 @@
 
 **Learn to spot AI fakes before you share them.**
 
-Veritas helps people tell whether the pictures, videos and posts in their social media feeds were made or changed with AI. It has two parts that work together:
+Veritas helps people tell whether the pictures, videos, and posts in their social media feeds were made or changed with AI. It has two parts that work together:
 
 1. **An educational website** with plain-language checklists, social media platform guides, real AI hoaxes that went viral, a glossary, and a "Real or AI?" quiz.
 2. **A browser extension** that checks a picture right where you see it (on X, Facebook, YouTube, or any site via right-click) and explains what it found.
@@ -12,7 +12,6 @@ Both talk to the same **backend API**, which reads a picture's Content Credentia
 Built by Team 5 for the Tech Fleet Fall 2026 Shipathon.
 
 | | |
-| --- | --- |
 | Live website | https://fall-2026-shipathon-team-5.vercel.app |
 | License | [MIT](LICENSE) |
 
@@ -130,8 +129,6 @@ Navigation is defined once in [`lib/sitemap.ts`](frontend/lib/sitemap.ts) and dr
 | 4 | About us | `/about` | The team and how AI was used to build the site |
 
 Old URLs (`/check-before-you-believe`, `/tools-to-double-check/*`, `/skill-check/*`) redirect permanently in [`next.config.ts`](frontend/next.config.ts), so links from older extension builds keep working.
-
-```
 
 ### Content lives in data files
 
@@ -369,4 +366,3 @@ Each part has its own workflow in `.github/workflows/`, run on pull requests tha
 - If you change the API response, update `backend/app/schemas.py`, `frontend/lib/api.ts` and `extension/utils/types.ts` in the same pull request.
 - Check new UI against the accessibility rules above (word + icon for verdicts, 44 px targets, 4.5:1 contrast, keyboard access).
 - Record significant technical decisions as a new ADR in `docs/adr/`.
-
