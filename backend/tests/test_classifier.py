@@ -142,7 +142,8 @@ def test_model_never_calls_a_picture_real(fake):
     assert result.verdict == "uncertain"
     assert result.ai_likelihood is None
     labels = [s.label for s in result.signals]
-    assert "No clear signs of AI found" in labels
+    # A near-zero score gets the stronger clue (ADR 0007), still never "real".
+    assert {"No clear signs of AI found", "No signs of AI found at all"} & set(labels)
     assert labels[-1] == "Try other checks too"
 
 

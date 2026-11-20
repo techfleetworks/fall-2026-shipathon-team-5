@@ -107,3 +107,37 @@ def test_content_credentials_are_never_replaced_by_camera_details():
     result = check_image(fixture_bytes("tampered.jpg"))
     assert result.content_credentials.status == "invalid"
     assert "Has details from a camera" not in labels(result)
+
+
+def test_no_signs_of_ai_at_all_is_a_stronger_clue_but_still_uncertain():
+    result = check_image(JPEG_BYTES, classifier=StubClassifier(0.0001))
+    assert result.verdict == "uncertain"
+    assert result.ai_likelihood is None
+    assert "No signs of AI found at all" in labels(result)
+    assert "can't be sure" in result.message
+
+
+def test_a_low_but_not_tiny_score_keeps_the_plain_clue():
+    result = check_image(JPEG_BYTES, classifier=StubClassifier(0.1))
+    assert "No signs of AI found at all" not in labels(result)
+    assert "No clear signs of AI found" in labels(result)
+
+
+def test_no_signs_and_camera_details_together():
+    result = check_image(photo(), classifier=StubClassifier(0.0001))
+    assert result.verdict == "uncertain"
+    assert "no signs of AI at all" in result.message
+    assert "Apple iPhone 15" in result.message
+    assert {"No signs of AI found at all", "Has details from a camera"} <= set(labels(result))
+
+
+def test_no_signs_threshold_comes_from_settings(monkeypatch):
+    from app.config import get_settings
+
+    monkeypatch.setenv("APP_CLASSIFIER_NO_SIGNS_THRESHOLD", "0.2")
+    get_settings.cache_clear()
+    try:
+        result = check_image(JPEG_BYTES, classifier=StubClassifier(0.1))
+        assert "No signs of AI found at all" in labels(result)
+    finally:
+        get_settings.cache_clear()
