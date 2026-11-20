@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     # guards them.
     classifier_high_threshold: float = 0.985
     classifier_low_threshold: float = 0.5
+    # At or below this score the detector found no signs of AI at all. Only
+    # ever a reassuring clue, never "likely real": in evaluation/image_detectors,
+    # about 1 in 4 real photos scored this low, but so did up to 1 in 20 pictures
+    # from the newest AI generators (ADR 0007).
+    classifier_no_signs_threshold: float = 0.00035
 
 
 @lru_cache

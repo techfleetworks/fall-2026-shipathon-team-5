@@ -15,6 +15,7 @@ import io
 
 from PIL import Image, UnidentifiedImageError
 
+from app.config import get_settings
 from app.schemas import ContentCredentials, ImageCheckResult, Signal
 from app.services.camera_details import CameraDetails, read_camera_details
 from app.services.classifier import Estimate, ImageClassifier, estimate
@@ -171,6 +172,11 @@ _MODEL_MIDDLE = Signal(
     explanation="Our AI-image detector found some signs that could come from AI, but "
     "not enough to say. Real photos can show these signs too.",
 )
+_MODEL_NONE = Signal(
+    label="No signs of AI found at all",
+    explanation="Our AI-image detector found no signs of AI in this picture. That's "
+    "common for real photos, but some new AI pictures can fool it too, so it isn't proof.",
+)
 _MODEL_LOW = Signal(
     label="No clear signs of AI found",
     explanation="Our AI-image detector didn't find clear signs of AI. That doesn't "
@@ -190,8 +196,19 @@ def _with_estimate(
             "Our detector thinks this picture was probably made with AI. "
             "It's an estimate, so check it another way too."
         )
+    if _no_signs(model):
+        return None, "uncertain", [*others, _MODEL_NONE, _OTHER_CHECKS], (
+            "Our detector found no signs of AI at all, which is common for real photos. "
+            "Some new AI pictures fool it too, so we can't be sure."
+        )
     clue = _MODEL_MIDDLE if model.band == "middle" else _MODEL_LOW
     return None, "uncertain", [*others, clue, _OTHER_CHECKS], message
+
+
+def _no_signs(model: Estimate | None) -> bool:
+    """The detector found no signs of AI at all: a stronger reassurance, but
+    never a "likely real" verdict (ADR 0007)."""
+    return model is not None and model.band == "low" and model.score <= get_settings().classifier_no_signs_threshold
 
 
 def _with_camera_details(
@@ -212,6 +229,12 @@ def _with_camera_details(
             f"This picture has details from a camera ({camera.device}), which usually means "
             "a real photo, but our detector found some signs that could come from AI. "
             "Check it another way to be sure."
+        )
+    elif _no_signs(model):
+        message = (
+            f"We found no signs of AI at all, and this picture has details from a camera "
+            f"({camera.device}). That usually means a real photo, but some AI pictures fool "
+            "our detector and camera details can be copied."
         )
     elif model is not None:
         message = (

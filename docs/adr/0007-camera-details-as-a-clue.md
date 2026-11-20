@@ -4,7 +4,7 @@ date: 2026-11-18
 decision-makers: Team 5 backend developer
 ---
 
-# Show camera details (EXIF) as a clue, never as "likely real"
+# Show camera details and "no signs of AI" as clues, never as "likely real"
 
 ## Context and Problem Statement
 
@@ -38,6 +38,26 @@ without letting copied camera details make an AI picture look verified.
 * Text from EXIF is cleaned and limited to 40 characters, since it comes from
   the upload.
 
+### Also: "no signs of AI at all"
+
+We used the 250 real photos in the test set to ask whether a very low
+detector score could mean "likely real" (`evaluation/image_detectors`, holdout
+pictures not used to set the cut-off):
+
+| Cut-off | Real photos at or below it | AI pictures at or below it |
+|---|---|---|
+| Loose (0.0019) | 55–57% | 6% (up to 15% in some groups) |
+| Strict (0.00035) | 27–35% | 2% (5% for the newest generators) |
+| Very strict (0.00016) | 19–26% | 1–2% (up to 5% for the newest generators) |
+
+Some AI pictures fool the detector completely, so a "likely real" verdict
+would sometimes reassure people about a fake they were already suspicious
+of. Instead, at or below the strict cut-off
+(`APP_CLASSIFIER_NO_SIGNS_THRESHOLD`, 0.00035), the answer stays "uncertain"
+with a stronger clue: "no signs of AI at all, which is common for real
+photos, but some new AI pictures fool it too". Low-memory mode, as on Render,
+agreed with these scores on 44 of 45 near-zero pictures.
+
 ### Consequences
 
 * Good, because phone photos checked straight from the device get a clear,
@@ -50,6 +70,7 @@ without letting copied camera details make an AI picture look verified.
 
 ### Confirmation
 
-`tests/test_camera_details.py` and a Gherkin scenario. Making the clue turn
-the verdict into "likely_real" fails 4 tests; showing it when the detector is
-confident fails 1.
+`tests/test_camera_details.py` and a Gherkin scenario. Making the camera clue
+turn the verdict into "likely_real" fails 4 tests; showing it when the
+detector is confident fails 1; making "no signs at all" answer "likely_real"
+fails 3.
