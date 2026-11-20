@@ -71,7 +71,7 @@ Each part has its own README with more detail: [`frontend/README.md`](frontend/R
 | Styling | [Tailwind CSS](https://tailwindcss.com) 4 with design tokens in `@theme` |
 | Fonts | Archivo Narrow (headings), Public Sans (body) via `next/font/google` |
 | Extension | [WXT](https://wxt.dev), React 19, TypeScript, Manifest V3 (Chrome, Edge, Brave, Arc, Firefox) |
-| Backend | Python 3.11+, FastAPI _(Karolyne: add key libraries, e.g. C2PA reader, classifier, rate limiter)_ |
+| Backend | Python 3.11+, FastAPI, Uvicorn; [c2pa-python](https://github.com/contentauth/c2pa-python) (Content Credentials), Pillow (picture checks, camera details), ONNX Runtime + NumPy (SwinV2 AI-image detector), slowapi (rate limiting), pydantic-settings (configuration) |
 | Hosting | Vercel (website), Render with Docker (backend) |
 | CI | GitHub Actions: lint, type check, build and `npm audit` per part; backend tests |
 
@@ -249,7 +249,7 @@ Python + FastAPI service that checks pictures and text and serves the quiz. Why 
 | `GET` | `/api/health` | Health check (used by Render) |
 | `POST` | `/api/check-image` | Check a picture (multipart field `file`, max 10 MB) |
 | `POST` | `/api/check-text` | Check text for scam warning signs |
-| `GET` | `/api/quiz` | _TODO (Karolyne): describe_ |
+| `GET` | `/api/quiz` | Example quiz pictures with answers. **Placeholder data:** the website's quiz reads `frontend/lib/content/quiz.ts` instead |
 
 Interactive docs at `http://localhost:8000/docs` when running locally.
 
@@ -284,7 +284,27 @@ Used by both `frontend/lib/api.ts` and `extension/utils/types.ts`. **Change all 
 
 ### Running locally
 
-_TODO (Karolyne): short version of the setup (venv, `requirements-dev.txt`, `.env`, `uvicorn app.main:app --reload`) and macOS/Linux notes._
+Needs Python 3.11 or newer. From the repository root:
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt
+cp .env.example .env             # Windows: copy .env.example .env
+uvicorn app.main:app --reload
+```
+
+Then open http://localhost:8000/docs to try every endpoint.
+
+Run this way, the AI-image detector is off and pictures are judged only by their own data (Content Credentials, AI labels, camera details). To run the full check, including the detector, use Docker. The image downloads the model and checks it against a pinned hash:
+
+```bash
+docker build -t team5-backend .   # still inside backend/
+docker run --rm -p 8000:8000 --memory=512m --cpus=0.1 team5-backend
+```
+
+`--memory` and `--cpus` copy Render's free plan, so a picture check takes about 15 seconds; leave `--cpus` out to go faster.
 
 ### Configuration
 
@@ -294,15 +314,36 @@ _TODO (Karolyne): short version of the setup (venv, `requirements-dev.txt`, `.en
 | `APP_ALLOWED_ORIGIN_REGEX` | Optional pattern for Vercel preview URLs |
 | `APP_RATE_LIMIT` | Default `10/minute` per visitor ([ADR 0002](docs/adr/0002-in-memory-rate-limiting.md)) |
 | `APP_CLIENT_IP_HEADER` | Header carrying the real visitor IP (`True-Client-IP` on Render) |
-| _TODO (Karolyne)_ | _Any others, e.g. model settings_ |
+| `APP_MAX_IMAGE_BYTES` | Largest picture accepted (default 10 MB) |
+| `APP_MIN_TEXT_CHARS`, `APP_MAX_TEXT_CHARS` | Message length accepted by `/api/check-text` (default 20 to 10,000 characters) |
+| `APP_CLASSIFIER_MODEL_DIR` | Folder holding the SwinV2 ONNX model. Unset means the detector is off. The Docker image sets it |
+| `APP_CLASSIFIER_MODEL_FILE` | ONNX file in that folder (`model_uint8.onnx` in Docker) |
+| `APP_CLASSIFIER_HIGH_THRESHOLD` | Score that makes a picture "likely AI" (default 0.985, [ADR 0006](docs/adr/0006-swinv2-ai-image-classifier.md)). Re-measure before changing |
+| `APP_CLASSIFIER_LOW_THRESHOLD` | Below this, the detector found "no clear signs of AI" (default 0.5) |
+| `APP_CLASSIFIER_NO_SIGNS_THRESHOLD` | At or below this, "no signs of AI at all" (default 0.00035, [ADR 0007](docs/adr/0007-camera-details-as-a-clue.md)). Still never "likely real" |
+| `APP_CLASSIFIER_THREADS`, `APP_CLASSIFIER_LOW_MEMORY` | CPU threads (default 1) and low-memory mode (default on), so the model fits Render's 512 MB |
+
+For local runs, copy `backend/.env.example` to `backend/.env`. Never commit `.env`.
 
 ### Tests
 
-_TODO (Karolyne): `python -m pytest` runs unit tests in `tests/` and Gherkin scenarios in `features/`. Describe `evaluation/` and how to run it._
+From `backend/`, `python -m pytest` runs the unit tests in `tests/` and the Gherkin scenarios in `features/`. They cover the API, Content Credentials, the AI-image detector (with a tiny fake model, so nothing is downloaded), camera details and rate limiting. Two baseline tests fail if a change makes the scam checker or the detector's thresholds worse than measured.
+
+`evaluation/` holds the labeled test sets behind the numbers we report:
+
+| Folder | What it measures | How to run |
+| --- | --- | --- |
+| `evaluation/` | Scam checker on 160 labeled messages, plus 40 held-out ones never used for tuning. Main set: 91% of scams caught, 1% false alarms. Held-out set: 60% caught, 5% false alarms | `python -m evaluation.evaluate_scam_checker` (add `--details` or `--holdout`) |
+| `evaluation/image_detectors/` | Three free AI-image detectors on 500 labeled pictures from OpenFakeTiny. SwinV2 scored 0.93 AUC; the others 0.64 and 0.56 | See [its README](backend/evaluation/image_detectors/README.md). The pictures aren't committed (CC BY-NC license); `extract.py` rebuilds them |
+
+Details: [`backend/evaluation/README.md`](backend/evaluation/README.md).
 
 ### Privacy and data handling
 
-_TODO (Karolyne): confirm that uploaded pictures are checked in memory and not stored, and what (if anything) is logged._
+- **Pictures and messages are checked in memory and never saved.** Uploads over 1 MB are briefly buffered by the framework in a temporary file that's deleted when the request ends.
+- **Their content is never logged.** The app logs only that the detector loaded at startup, and an error if it fails on a picture (without the picture). The server's access log records each request's method, path and status.
+- **Rate limiting keeps a count per visitor's IP address in memory** for about a minute, then forgets it. Nothing is written to disk.
+- **No outside calls while checking.** Content Credentials trust lists and the detector model are built into the server, so a picture never leaves it.
 
 ---
 
@@ -334,7 +375,7 @@ _TODO (Karolyne): confirm that uploaded pictures are checked in memory and not s
 | Part | Where | Deploys from | Notes |
 | --- | --- | --- | --- |
 | Website | Vercel | `main` | Set `NEXT_PUBLIC_API_URL` under Settings → Environment Variables, then redeploy |
-| Backend | Render (Docker, free plan) | `main`, after checks pass | Configured in [`render.yaml`](render.yaml). Sleeps when idle. _TODO (Karolyne): add any manual steps._ |
+| Backend | Render (Docker, free plan) | `main`, after checks pass | Configured in [`render.yaml`](render.yaml). Sleeps when idle, so the first check can take up to a minute. One-time setup: New → Blueprint, then set `APP_ALLOWED_ORIGINS` (and optionally `APP_ALLOWED_ORIGIN_REGEX`). See [`backend/README.md`](backend/README.md#deploy-to-render) |
 | Extension | Chrome Web Store / Firefox Add-ons | Manual | `npm run zip` / `npm run zip:firefox`. Not yet published. |
 
 Because the website and backend both deploy from `main`, changes go live together when `develop` is merged into `main`.
@@ -357,8 +398,8 @@ Each part has its own workflow in `.github/workflows/`, run on pull requests tha
 | --- | --- |
 | `frontend-tests.yml` | `npm ci`, lint, type check and build on Node 22 and 24; `npm audit --omit=dev` |
 | `extension-tests.yml` | `npm ci`, type check, Chrome and Firefox builds on Node 22 and 24; confirms the build points at the live backend; `npm audit --omit=dev` |
-| `backend-tests.yml` | _TODO (Karolyne)_ |
-| `backend-docker.yml` | _TODO (Karolyne)_ |
+| `backend-tests.yml` | `python -m pytest` on Python 3.11, 3.12 and 3.14; `pip-audit` for known vulnerabilities |
+| `backend-docker.yml` | Builds the Docker image, checks that it answers picture and text checks with the detector running, that memory stays under Render's 512 MB, and that it doesn't run as root. Also runs on pushes to `develop` |
 
 ### Before opening a pull request
 
