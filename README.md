@@ -11,9 +11,7 @@ Both talk to the same **backend API**, which reads a picture's Content Credentia
 
 Built by Team 5 for the Tech Fleet Fall 2026 Shipathon.
 
-| | |
-| Live website | https://fall-2026-shipathon-team-5.vercel.app |
-| License | [MIT](LICENSE) |
+| Live website | https://fall-2026-shipathon-team-5.vercel.app | License | [MIT](LICENSE) |
 
 ---
 
